@@ -1,0 +1,87 @@
+  import profilepic1 from '../../../../assets/profilepic1.jpg';
+  import prachipic from '../../../../assets/prachipic.jpg';
+    import requestedPhoto from '../../../../assets/request-photo.jpg';
+
+  
+  export const profileData = [
+  {
+    id: 1,
+    name: "Ayushi C",
+    isVerified: true,
+    isOnline: true,
+    age: 26,
+    height: "5' 3\"",
+    religion: "Hindu",
+    caste: "Jat",
+    language: "Hindi",
+    maritalStatus: "Never Married",
+    location: "Noida, Uttar Pradesh",
+    profession: "Software Developer / Programmer",
+    description: "Namaste! It is a pleasure sharing a few things about myself. I am a Bachelors in Engineering. Modern...",
+    hasCarousel: true,
+    images: [profilepic1, profilepic1],
+    isProtected: false,
+    isNew: false,
+    showContactOptions: false
+  },
+  {
+    id: 2,
+    name: "Ayushi C",
+    isVerified: true,
+    isOnline: true,
+    age: 26,
+    height: "5' 3\"",
+    religion: "Hindu",
+    caste: "Jat",
+    language: "Hindi",
+    maritalStatus: "Never Married",
+    location: "Noida, Uttar Pradesh",
+    profession: "Software Developer / Programmer",
+    description: "Namaste! It is a pleasure sharing a few things about myself. I am a Bachelors in Engineering. Modern...",
+    hasCarousel: false,
+    image: prachipic,
+    isProtected: false,
+    isNew: false,
+    showContactOptions: false
+  },
+  {
+    id: 3,
+    name: "Ayushi C",
+    isVerified: true,
+    isOnline: true,
+    age: 26,
+    height: "5' 3\"",
+    religion: "Hindu",
+    caste: "Jat",
+    language: "Hindi",
+    maritalStatus: "Never Married",
+    location: "Noida, Uttar Pradesh",
+    profession: "Software Developer / Programmer",
+    description: "Namaste! It is a pleasure sharing a few things about myself. I am a Bachelors in Engineering. Modern...",
+    hasCarousel: false,
+    image: requestedPhoto,
+    isProtected: false,
+    isNew: true,
+    showContactOptions: false
+  },
+  {
+    id: 4,
+    name: "Ayushi C",
+    isVerified: true,
+    isOnline: true,
+    age: 26,
+    height: "5' 3\"",
+    religion: "Hindu",
+    caste: "Jat",
+    language: "Hindi",
+    maritalStatus: "Never Married",
+    location: "Noida, Uttar Pradesh",
+    profession: "Software Developer / Programmer",
+    description: "Namaste! It is a pleasure sharing a few things about myself. I am a Bachelors in Engineering. Modern...",
+    hasCarousel: false,
+    image: profilepic1,
+    isProtected: true,
+    isNew: false,
+    showContactOptions: false
+  }
+];

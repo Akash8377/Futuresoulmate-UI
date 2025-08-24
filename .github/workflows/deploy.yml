@@ -1,0 +1,24 @@
+name: Deploy React Frontend
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            echo "🔁 Deploying React Frontend..."
+            cd /var/www/html/Future-Shadi-UI
+            git pull origin main
+            npm install
+            npm run build
+            echo "✅ React deployed to https://futureSoulmates.com"
