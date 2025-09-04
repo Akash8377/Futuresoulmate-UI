@@ -53,7 +53,7 @@ const ProfileDetails = ({ currentProfile, matchingRatio }) => {
         <h5 className="section-title">Contact Details</h5>
         <div className="card-box">
           <p>
-            <strong>Contact Number:</strong> +91 {formatPhone(currentProfile.phone)} 
+            <strong>Contact Number:</strong> +1 {formatPhone(currentProfile.phone)} 
             <i className="bi bi-lock-fill lock-icon"></i> 
             <span className="upgrade-text">Upgrade Now</span> to view details
           </p>

@@ -14,23 +14,29 @@ const IDVerificationForm = ({ type, onSuccess, onBack }) => {
       }
     }, []);
 
-  const typeConfig = {
-    pan: {
-      label: 'PAN Card Number',
-      placeholder: 'Enter PAN Number (e.g., ABCDE1234F)',
-      pattern: '[A-Za-z]{5}\\d{4}[A-Za-z]'
-    },
-    voter: {
-      label: 'Voter ID Number',
-      placeholder: 'Enter Voter ID Number',
-      pattern: '[A-Za-z]{3}\\d{7}'
-    },
-    driving: {
-      label: 'Driving Licence Number',
-      placeholder: 'Enter Driving Licence Number',
-      pattern: '.{5,}'
-    }
-  }[type];
+const typeConfig = {
+  ssn: {
+    label: 'Social Security Number (SSN)',
+    placeholder: 'Enter SSN (e.g., 123-45-6789)',
+    pattern: '^\\d{3}-\\d{2}-\\d{4}$' // US SSN format
+  },
+  passport: {
+    label: 'Passport Number',
+    placeholder: 'Enter Passport Number',
+    pattern: '^[A-Za-z0-9]{6,9}$' // US passports: 6–9 alphanumeric
+  },
+  drivers_license: {
+    label: 'Driver’s License Number',
+    placeholder: 'Enter Driver’s License Number',
+    pattern: '^[A-Za-z0-9]{5,15}$' // varies by state, flexible range
+  },
+  state_id: {
+    label: 'State ID Card Number',
+    placeholder: 'Enter State ID Number',
+    pattern: '^[A-Za-z0-9]{5,15}$' // similar to DL, varies by state
+  }
+}[type];
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

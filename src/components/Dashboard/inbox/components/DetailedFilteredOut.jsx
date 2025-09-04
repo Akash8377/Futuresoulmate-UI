@@ -153,7 +153,7 @@ const handleReject = async (notificationId) => {
                 )}{" "}
                 yrs, {currentReceiver.sender_height} <br />
                 {currentReceiver.sender_height} <br />
-                {currentReceiver.community}, {currentReceiver.sender_religion}{" "}
+                {currentReceiver.sender_religion}{" "}
                 <br />
                 {currentReceiver.sender_city}, {currentReceiver.sender_living_in}{" "}
                 <br />

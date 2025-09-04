@@ -59,8 +59,8 @@ const PartnerPreferences = ({ currentProfile, matchingRatio }) => {
             {renderPreferenceRow('Height', partnerPreference.basic?.heightRange)}
             {renderPreferenceRow('Marital Status', partnerPreference.basic?.maritalStatus)}
             {renderPreferenceRow('Religion', partnerPreference.community?.religion)}
-            {renderPreferenceRow('Community', partnerPreference.community?.community)}
-            {renderPreferenceRow('Mother Tongue', partnerPreference.community?.motherTongue)}
+            {renderPreferenceRow('Culture', partnerPreference.community?.community)}
+            {renderPreferenceRow('Language', partnerPreference.community?.motherTongue)}
             {renderPreferenceRow('Country', partnerPreference.location?.country)}
             {renderPreferenceRow('State', partnerPreference.location?.state)}
             {renderPreferenceRow('Qualification', partnerPreference.education?.qualification)}

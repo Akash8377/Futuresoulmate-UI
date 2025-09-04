@@ -1,7 +1,7 @@
 import React from 'react';
 import useChoicesInitializer from './ChoicesInitializer';
 import useSearchFormHandlers from './SearchFormHandlers';
-import { MARITAL_STATUS, RELIGIONS, COMMUNITIES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS } from "../../../constants/formData";
+import { MARITAL_STATUS, RELIGIONS, CULTURES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS } from "../../../constants/formData";
 
 const BasicSearchForm = () => {
   const stateList = Object.values(STATE).flat();
@@ -90,16 +90,16 @@ const BasicSearchForm = () => {
         {renderSelect("Marital Status", "maritalStatus", MARITAL_STATUS)}
         {renderSelect("Religion", "religion", RELIGIONS)}
         
-        {/* Mother Tongue - Multi-select */}
+        {/* Language - Multi-select */}
         <div className="row mb-3">
-          <div className="col-md-3"><label htmlFor="motherTongue">Mother Tongue</label></div>
+          <div className="col-md-3"><label htmlFor="motherTongue">Language</label></div>
           <div className="col-md-9">
             <select 
               id="motherTongue" 
               className="form-select" 
               multiple
               onChange={() => handleMultiSelectChange('motherTongue', 'motherTongue')}
-               placeholder="Select Mother Tongue"
+               placeholder="Select Language"
               value={formData['motherTongue']}
             >
               {LANGUAGES.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -107,7 +107,7 @@ const BasicSearchForm = () => {
           </div>
         </div>
 
-        {renderSelect("Community", "community", COMMUNITIES)}
+        {renderSelect("Community", "community", CULTURES)}
         {renderSelect("Country Living In", "country", COUNTRIES)}
         {renderSelect("State Living In", "state", stateList)}
 

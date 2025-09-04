@@ -38,7 +38,7 @@ function Accepted({chatBoxOpen,activeKey}) {
   };
 
   const applyFilterAndSort = (data) => {
-    let filtered = [...data];
+    let filtered = Array.isArray(data) && data?.length >0 ?[...data] : [];
 
     // Filter logic
     if (selectedFilter === "onlineNow") {
@@ -144,7 +144,7 @@ function Accepted({chatBoxOpen,activeKey}) {
                               currentReceiver.sender_birth_year
                             )}{" "}
                             yrs, {currentReceiver.sender_height} <br />
-                            {currentReceiver.community}, {currentReceiver.sender_religion} <br />
+                            {currentReceiver.sender_religion} <br />
                             {currentReceiver.sender_city}, {currentReceiver.sender_living_in} <br />
                             {currentReceiver.sender_qualification} <br />
                             {currentReceiver.sender_profession}

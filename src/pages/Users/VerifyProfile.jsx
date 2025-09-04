@@ -58,10 +58,11 @@ const VerifyProfile = () => {
                     onChange={(e) => handleDocSelect(e.target.value)}
                     defaultValue=""
                   >
-                    <option value="" hidden disabled>Select</option>
-                    <option value="pan">PAN Card</option>
-                    <option value="voter">Voter Card</option>
-                    <option value="driving">Driving Licence</option>
+                    <option value="" hidden disabled>Select Document</option>
+                    <option value="ssn">Social Security Number (SSN)</option>
+                    <option value="passport">Passport</option>
+                    <option value="drivers_license">Driver’s License</option>
+                    <option value="state_id">State ID Card</option>
                   </select>
                 </div>
               </div>

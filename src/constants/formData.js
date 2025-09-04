@@ -1,13 +1,13 @@
 export const INITIAL_PREFS = {
-  basic: { ageRange: "20 – 23", heightRange: "4′ 11″ – 5′ 7″", maritalStatus: "Never Married" },
-  community: { religion: "Hindu", community: "Open to All", motherTongue: "Hindi" },
-  location: { country: "India", state: "Punjab" },
-  education: { qualification: "Open to All", workingWith: "Open to All", profession: "Open to All", annualIncome: "INR 1 lakh to 5 lakhs" },
+  basic: { ageRange: "20 – 23", heightRange: "5′ 5″ – 5′ 7″", maritalStatus: "Never Married" },
+  culture: { religion: "Christian", culture: "Open to All", language: "English" },
+  location: { country: "USA", state: "California" },
+  education: { qualification: "Open to All", workingWith: "Open to All", profession: "Open to All", annualIncome: "$50,000 – $100,000" },
   otherDetails: { profileManagedBy: "Open to All", diet: "Open to All" }
 };
 export const PREFERENCE_SECTIONS = [
   { section: "basic", title: "Basic Details", iconClass: "fa fa-calendar", fields: ["ageRange", "heightRange", "maritalStatus"] },
-  { section: "community", title: "Community", iconClass: "fa fa-book", fields: ["religion", "community", "motherTongue"] },
+  { section: "culture", title: "Culture", iconClass: "fa fa-book", fields: ["religion", "culture", "language"] },
   { section: "location", title: "Location", iconClass: "fa fa-map-marker", fields: ["country", "state"] },
   { section: "education", title: "Education", iconClass: "fa fa-graduation-cap", fields: ["qualification", "workingWith", "profession", "annualIncome"] },
   { section: "otherDetails", title: "Other Details", iconClass: "fa fa-ellipsis-h", fields: ["profileManagedBy", "diet"] }
@@ -244,33 +244,34 @@ export const EDUCATION_LEVELS = [
   { value: 'Other', label: 'Other' }
 ];
 export const RELIGIONS = [
-  { value: 'Hindu', label: 'Hindu' },
+  { value: 'Christian', label: 'Christian' },        // Largest group in US
+  { value: 'Jewish', label: 'Jewish' },              // Commonly searched
   { value: 'Muslim', label: 'Muslim' },
-  { value: 'Christian', label: 'Christian' },
-  { value: 'Sikh', label: 'Sikh' },
-  { value: 'Parsi', label: 'Parsi' },
-  { value: 'Jain', label: 'Jain' },
+  { value: 'Hindu', label: 'Hindu' },                // South Asian diaspora
   { value: 'Buddhist', label: 'Buddhist' },
-  { value: 'Jewish', label: 'Jewish' },
-  { value: 'No Religion', label: 'No Religion' },
-  { value: 'Spiritual', label: 'Spiritual' },
-  { value: 'Other', label: 'Other' },
-];
-export const LANGUAGES = [
-  { value: 'Hindi', label: 'Hindi' },
-  { value: 'Marathi', label: 'Marathi' },
-  { value: 'Punjabi', label: 'Punjabi' },
-  { value: 'Bengali', label: 'Bengali' },
-  { value: 'Gujarati', label: 'Gujarati' },
-  { value: 'Urdu', label: 'Urdu' },
-  { value: 'Telugu', label: 'Telugu' },
-  { value: 'Kannada', label: 'Kannada' },
-  { value: 'English', label: 'English' },
-  { value: 'Tamil', label: 'Tamil' },
-  { value: 'Oriya', label: 'Oriya' },
-  { value: 'Marwari', label: 'Marwari' },
+  { value: 'Spiritual', label: 'Spiritual but not Religious' },
+  { value: 'No Religion', label: 'Atheist / Agnostic' },
   { value: 'Other', label: 'Other' }
 ];
+
+export const LANGUAGES = [
+  { value: 'English', label: 'English' },
+  { value: 'Spanish', label: 'Spanish' },
+  { value: 'Chinese', label: 'Chinese (Mandarin/Cantonese)' },
+  { value: 'Tagalog', label: 'Tagalog / Filipino' },
+  { value: 'Vietnamese', label: 'Vietnamese' },
+  { value: 'French', label: 'French' },
+  { value: 'Arabic', label: 'Arabic' },
+  { value: 'Korean', label: 'Korean' },
+  { value: 'Russian', label: 'Russian' },
+  { value: 'German', label: 'German' },
+  { value: 'Hindi', label: 'Hindi' }, // keep for South Asian immigrants
+  { value: 'Portuguese', label: 'Portuguese' },
+  { value: 'Italian', label: 'Italian' },
+  { value: 'Japanese', label: 'Japanese' },
+  { value: 'Other', label: 'Other' }
+];
+
 export const MONTHS = Array.from({ length: 12 }, (_, i) => ({ 
   value: String(i + 1).padStart(2, '0'), 
   label: new Date(0, i).toLocaleString('default', { month: 'long' }) 
@@ -283,76 +284,39 @@ export const YEARS = Array.from({ length: 100 }, (_, i) => ({
   value: new Date().getFullYear() - i, 
   label: new Date().getFullYear() - i 
 }));
-export const COMMUNITIES = [
-  { value: "Hindi", label: "Hindi" },
-  { value: "Punjabi", label: "Punjabi" },
-  { value: "Telugu", label: "Telugu" },
-  { value: "Tamil", label: "Tamil" },
-  { value: "Kannada", label: "Kannada" },
-  { value: "Bengali", label: "Bengali" },
-  { value: "Gujarati", label: "Gujarati" },
-  { value: "Aka", label: "Aka" },
-  { value: "Arabic", label: "Arabic" },
-  { value: "Arunachali", label: "Arunachali" },
-  { value: "Assamese", label: "Assamese" },
-  { value: "Awadhi", label: "Awadhi" },
-  { value: "Baluchi", label: "Baluchi" },
-  { value: "Bhojpuri", label: "Bhojpuri" },
-  { value: "Bhutia", label: "Bhutia" },
-  { value: "Brahui", label: "Brahui" },
-  { value: "Brij", label: "Brij" },
-  { value: "Burmese", label: "Burmese" },
-  { value: "Chattisgarhi", label: "Chattisgarhi" },
-  { value: "Chinese", label: "Chinese" },
-  { value: "Coorgi", label: "Coorgi" },
-  { value: "Dogri", label: "Dogri" },
-  { value: "English", label: "English" },
-  { value: "French", label: "French" },
-  { value: "Garhwali", label: "Garhwali" },
-  { value: "Garo", label: "Garo" },
-  { value: "Haryanavi", label: "Haryanavi" },
-  { value: "Himachali/Pahari", label: "Himachali/Pahari" },
-  { value: "Hindko", label: "Hindko" },
-  { value: "Kakbarak", label: "Kakbarak" },
-  { value: "Kanauji", label: "Kanauji" },
-  { value: "Kashmiri", label: "Kashmiri" },
-  { value: "Khandesi", label: "Khandesi" },
-  { value: "Khasi", label: "Khasi" },
-  { value: "Konkani", label: "Konkani" },
-  { value: "Koshali", label: "Koshali" },
-  { value: "Kumaoni", label: "Kumaoni" },
-  { value: "Kutchi", label: "Kutchi" },
-  { value: "Ladakhi", label: "Ladakhi" },
-  { value: "Lepcha", label: "Lepcha" },
-  { value: "Magahi", label: "Magahi" },
-  { value: "Maithili", label: "Maithili" },
-  { value: "Malay", label: "Malay" },
-  { value: "Malayalam", label: "Malayalam" },
-  { value: "Manipuri", label: "Manipuri" },
-  { value: "Marathi", label: "Marathi" },
-  { value: "Marwari", label: "Marwari" },
-  { value: "Miji", label: "Miji" },
-  { value: "Mizo", label: "Mizo" },
-  { value: "Monpa", label: "Monpa" },
-  { value: "Nepali", label: "Nepali" },
-  { value: "Odia", label: "Odia" },
-  { value: "Other", label: "Other" },
-  { value: "Pashto", label: "Pashto" },
-  { value: "Persian", label: "Persian" },
-  { value: "Rajasthani", label: "Rajasthani" },
-  { value: "Russian", label: "Russian" },
-  { value: "Sanskrit", label: "Sanskrit" },
-  { value: "Santhali", label: "Santhali" },
-  { value: "Seraiki", label: "Seraiki" },
-  { value: "Sindhi", label: "Sindhi" },
-  { value: "Sinhala", label: "Sinhala" },
-  { value: "Sourashtra", label: "Sourashtra" },
-  { value: "Spanish", label: "Spanish" },
-  { value: "Swedish", label: "Swedish" },
-  { value: "Tagalog", label: "Tagalog" },
-  { value: "Tulu", label: "Tulu" },
-  { value: "Urdu", label: "Urdu" }
+export const CULTURES = [
+  { value: "African American", label: "African American" },
+  { value: "Caucasian / White", label: "Caucasian / White" },
+  { value: "Hispanic / Latino", label: "Hispanic / Latino" },
+  { value: "Mexican American", label: "Mexican American" },
+  { value: "Puerto Rican", label: "Puerto Rican" },
+  { value: "Cuban", label: "Cuban" },
+  { value: "Native American", label: "Native American" },
+  { value: "Asian American", label: "Asian American" },
+  { value: "Chinese American", label: "Chinese American" },
+  { value: "Indian American", label: "Indian American" },
+  { value: "Pakistani American", label: "Pakistani American" },
+  { value: "Filipino American", label: "Filipino American" },
+  { value: "Vietnamese American", label: "Vietnamese American" },
+  { value: "Korean American", label: "Korean American" },
+  { value: "Japanese American", label: "Japanese American" },
+  { value: "Middle Eastern", label: "Middle Eastern" },
+  { value: "Arab American", label: "Arab American" },
+  { value: "Persian / Iranian American", label: "Persian / Iranian American" },
+  { value: "Jewish", label: "Jewish" },  // Often treated as cultural identity
+  { value: "Italian American", label: "Italian American" },
+  { value: "Irish American", label: "Irish American" },
+  { value: "German American", label: "German American" },
+  { value: "Polish American", label: "Polish American" },
+  { value: "French American", label: "French American" },
+  { value: "Greek American", label: "Greek American" },
+  { value: "Russian American", label: "Russian American" },
+  { value: "Other European", label: "Other European" },
+  { value: "Caribbean", label: "Caribbean" },
+  { value: "African (Immigrant)", label: "African (Immigrant)" },
+  { value: "Other", label: "Other" }
 ];
+
 export const MARITAL_STATUS = [
   { value: "Never Married", label: "Never Married" },
   { value: "Divorced", label: "Divorced" },
@@ -365,12 +329,15 @@ export const HEIGHTS = Array.from({ length: 60 }, (_, i) => ({
   label: `${4 + Math.floor(i / 12)}ft ${i % 12}in - ${Math.round((4 * 30.48) + (i * 2.54))}cm`,
 }));
 export const DIETS = [
-  { value: "Veg", label: "Veg" },
-  { value: "Non Veg", label: "Non Veg" },
-  { value: "Eggetarian", label: "Eggetarian" },
-  { value: "Jain", label: "Jain" },
-  { value: "Vegan", label: "Vegan" },
+  { value: "Omnivore", label: "Omnivore (No Restrictions)" }, // Default in US
+  { value: "Vegetarian", label: "Vegetarian" },
+  { value: "Pescatarian", label: "Pescatarian (Fish & Seafood)" },
+  { value: "Vegan", label: "Vegan (No Animal Products)" },
+  { value: "Kosher", label: "Kosher" },
+  { value: "Halal", label: "Halal" },
+  { value: "Other", label: "Other / Flexible" }
 ];
+
 // Work with
 export const OCCUPATIONS = [
 { value: "Government", label: "Government" },
@@ -1004,11 +971,13 @@ export const PROFESSIONS = {
   ]
 };
 export const DIET =  [
-  { value: "Veg", label: "Veg" },
-  { value: "Non-Veg", label: "Non-Veg" },
-  { value: "Jain", label: "Jain" },
-  { value: "Vegan", label: "Vegan" },
-  { value: "Eggetarian", label: "Eggetarian" },
+  { value: "Omnivore", label: "Omnivore (No Restrictions)" }, // Default in US
+  { value: "Vegetarian", label: "Vegetarian" },
+  { value: "Pescatarian", label: "Pescatarian (Fish & Seafood)" },
+  { value: "Vegan", label: "Vegan (No Animal Products)" },
+  { value: "Kosher", label: "Kosher" },
+  { value: "Halal", label: "Halal" },
+  { value: "Other", label: "Other / Flexible" }
 ];
 export const PROFILEMANAGEDBY = [
   { value: "Self", label: "Self" },
@@ -1028,6 +997,15 @@ export const QUALIFICATIONS = [
   { value: 'Other', label: 'Other' }
 ]
 export const STATE = {
+    "United States": [
+    { value: "California", label: "California" },
+    { value: "Texas", label: "Texas" },
+    { value: "New Jersey", label: "New Jersey" },
+    { value: "Illinois", label: "Illinois" },
+    { value: "New York", label: "New York" },
+    { value: "Washington", label: "Washington" },
+    { value: "Massachusetts", label: "Massachusetts" }
+  ],
   "India": [
   { value: "Andhra Pradesh", label: "Andhra Pradesh" },
   { value: "Arunachal Pradesh", label: "Arunachal Pradesh" },
@@ -1067,17 +1045,7 @@ export const STATE = {
   { value: "Ladakh", label: "Ladakh" },
   { value: "Lakshadweep", label: "Lakshadweep" },
   { value: "Puducherry", label: "Puducherry" }
-]
-,
-  "United States": [
-    { value: "California", label: "California" },
-    { value: "Texas", label: "Texas" },
-    { value: "New Jersey", label: "New Jersey" },
-    { value: "Illinois", label: "Illinois" },
-    { value: "New York", label: "New York" },
-    { value: "Washington", label: "Washington" },
-    { value: "Massachusetts", label: "Massachusetts" }
-  ],
+],
   "United Arab Emirates": [
     { value: "Dubai", label: "Dubai" },
     { value: "Abu Dhabi", label: "Abu Dhabi" },
@@ -1166,11 +1134,12 @@ export const NUMOFSIBLINGS = [
   { value: '4+', label: '4+' }
 ];
 export const FINANCIALSTATUS = [
-  { value: 'Elite', label: 'Elite' },
-  { value: 'High', label: 'High' },
-  { value: 'Middle', label: 'Middle' },
-  { value: 'Aspiring', label: 'Aspiring' }
+  { value: "Affluent / Wealthy", label: "Affluent / Wealthy" },
+  { value: "Upper Middle Class", label: "Upper Middle Class" },
+  { value: "Middle Class", label: "Middle Class" },
+  { value: "Working Class / Aspiring", label: "Working Class / Aspiring" }
 ];
+
 export const HOBBIES = [
   { value: 'Writing', label: 'Writing' },
   { value: 'Cooking', label: 'Cooking' },

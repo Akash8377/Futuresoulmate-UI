@@ -1,6 +1,6 @@
 const ContactOptions = ({profile, chatBoxOpen}) => {
-    
-  const phone = profile.phone
+      console.log("profile", profile) 
+  const phone = profile.phone || profile.receiver_phone
 
   const handleCall = () => {
     if (phone) {
@@ -9,6 +9,7 @@ const ContactOptions = ({profile, chatBoxOpen}) => {
   };
 
   const handleWhatsApp = () =>{
+    console.log("phone", phone)
     if(phone){
       window.open(`https://wa.me/${phone}`, '_blank')
     }

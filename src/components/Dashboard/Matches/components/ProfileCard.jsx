@@ -66,7 +66,7 @@ dnaMatches=false,user={}
                       src={`${config.baseURL}/uploads/profiles/${img.filename}`}
                       className="d-block w-100"
                       alt={`Profile ${idx + 1}`}
-                      style={{ height: "300px", objectFit: "cover" }}
+                      style={{ height: "330px", objectFit: "cover" }}
                     />
                   </Carousel.Item>
                 ))}
@@ -88,7 +88,7 @@ dnaMatches=false,user={}
                     <img
                       src={`${config.baseURL}/uploads/profiles/${profile.profile_image}`}
                       alt="Protected Profile"
-                      style={{ height: "300px", objectFit: "cover" }}
+                      style={{ height: "330px", objectFit: "cover" }}
                     />
                     <div className="lock-img-text text-white">
                       <i className="fa fa-lock me-1" aria-hidden="true"></i>
@@ -105,7 +105,7 @@ dnaMatches=false,user={}
                   <img
                     src={`${config.baseURL}/uploads/profiles/${profile.profile_image}`}
                     alt="Profile"
-                    style={{ height: "300px", objectFit: "cover" }}
+                    style={{ height: "330px", objectFit: "cover" }}
                   />
                   {profile.isNew && (
                     <div className="new-photo position-absolute top-0 start-0 bg-warning text-white px-2 py-1 small">
@@ -185,7 +185,7 @@ dnaMatches=false,user={}
                     </div>
                   </div>
                   <div>
-                    {profile.religion}, {profile.caste}
+                    {profile.religion}
                   </div>
                   <div>{profile.language}</div>
                 </div>

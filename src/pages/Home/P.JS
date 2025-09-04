@@ -87,18 +87,32 @@ const SearchByCity = () => {
     }
   };
 
+  // Get the current value for the dropdown
+  const getCurrentDropdownValue = () => {
+    if (!searchData.gender || !searchData.lookingFor) return "";
+    
+    const foundOption = genderOptions.find(opt => 
+      opt.gender === searchData.gender && opt.lookingFor === searchData.lookingFor
+    );
+    
+    return foundOption ? foundOption.value : "";
+  };
+
   const handleFormSubmit = async (formData) => {
     try {
       setIsLoading(true);
       setError(null);
       
-      // Create the complete data object with proper structure
+      // Log the data being sent for debugging
+      console.log("Submitting data:", {
+        ...searchData,
+        ...formData,
+      });
+      
       const completeData = {
         ...searchData,
         ...formData,
       };
-      
-      console.log("Submitting data:", completeData);
       
       const response = await axios.post(
         `${config.baseURL}/api/profile/register`,
@@ -165,6 +179,7 @@ const SearchByCity = () => {
                       <select
                         className="form-control"
                         name="genderLookingFor"
+                        value={getCurrentDropdownValue()}
                         onChange={handleInputChange}
                         required
                       >
@@ -176,7 +191,7 @@ const SearchByCity = () => {
                         ))}
                       </select>
                     </div>
-                    {/* Debug info - shows current values */}
+                    {/* Debug info - you can remove this in production */}
                     {/* <div style={{fontSize: '12px', marginTop: '5px', color: '#666'}}>
                       {searchData.gender && searchData.lookingFor ? (
                         `Selected: Gender=${searchData.gender}, LookingFor=${searchData.lookingFor}`
@@ -266,11 +281,6 @@ const SearchByCity = () => {
                   className="btn btn-filled2"
                   type="button"
                   onClick={() => {
-                    // Check if gender and lookingFor are set before opening modal
-                    if (!searchData.gender || !searchData.lookingFor) {
-                      toast.error("Please select your gender preference");
-                      return;
-                    }
                     setShowModal(true);
                   }}
                   disabled={!searchData.gender || !searchData.lookingFor || !searchData.religion || !searchData.motherTongue}

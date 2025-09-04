@@ -41,7 +41,7 @@ const Requested = ({chatBoxOpen, activeKey}) => {
 
   // Filter and sort logic
   const applyFilterAndSort = (data) => {
-    let filtered = [...data];
+    let filtered = Array.isArray(data) && data?.length >0 ?[...data] : [];
 
     // Filtering
     if (selectedFilter === "onlineNow") {
@@ -143,7 +143,6 @@ const Requested = ({chatBoxOpen, activeKey}) => {
                               currentReceiver.receiver_birth_year
                             )}{" "}
                             yrs, {currentReceiver.receiver_height} <br />
-                            {currentReceiver.receiver_community},{" "}
                             {currentReceiver.receiver_religion} <br />
                             {currentReceiver.receiver_city},{" "}
                             {currentReceiver.receiver_living_in} <br />
@@ -187,7 +186,7 @@ const Requested = ({chatBoxOpen, activeKey}) => {
                     <div className="Filtered-out">
                       <img src="images/filtredout.jpg"/>
                       <h4>No sent request found.</h4>
-                      <Link to="/matches" className=" text-decoration-none" style={{color:"#d61962"}}>View All
+                      <Link to="/matches" className=" text-decoration-none" style={{color:"#0977af"}}>View All
                         Matches <i className="fa fa-angle-right" aria-hidden="true"></i></Link>
                     </div>
                   </div>

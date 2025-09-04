@@ -208,8 +208,7 @@ const TodaysMatches = ({chatBoxOpen}) => {
                       <div className="row text-dark mb-2">
                         <div className="col-6">
                           <div>{calculateAge(currentProfile.dob)} yrs, {currentProfile.height}</div>
-                          <div>{currentProfile.religion}, {currentProfile.sub_community}</div>
-                          <div>{currentProfile.mother_tongue || currentProfile.community}</div>
+                          <div>{currentProfile.religion}</div>
                         </div>
                         <div className="col-6">
                           <div>{currentProfile.marital_status}</div>

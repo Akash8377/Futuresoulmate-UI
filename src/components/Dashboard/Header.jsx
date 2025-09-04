@@ -73,7 +73,7 @@ const Header = ({ unreadNotificationCount }) => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg topbar">
+    <nav className="navbar navbar-expand-lg topbar dashboard">
       <div className="container-fluid px-4 px-md-4">
         <NavLink className="navbar-brand" to="/">
           <img src="/images/dashbard-logo.png" alt="Shaadi" className="brand-logo" />
@@ -88,7 +88,7 @@ const Header = ({ unreadNotificationCount }) => {
         </button>
 
         <div className="collapse navbar-collapse" id="shaadiNav">
-          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3 text-center">
+          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3  text-start text-lg-center ">
             <li className="nav-item">
               <NavLink
                 className="nav-link text-white"
@@ -96,7 +96,7 @@ const Header = ({ unreadNotificationCount }) => {
                 title="My Shaadi"
                 onClick={() => setActiveTab("")}
               >
-                My Shaadi
+                Profile
               </NavLink>
             </li>
             <li className="nav-item">

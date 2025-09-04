@@ -32,7 +32,7 @@ const Step1 = ({ formData, setFormData, nextStep, prevStep }) => {
             </label>
           ))}
         </div>
-        <h5 className="modal-title">Gender</h5>
+        {/* <h5 className="modal-title">Gender</h5>
         <div className="toggle-group">
           {["male", "female"].map((gender) => (
             <label key={gender} className="custom-radio">
@@ -46,7 +46,7 @@ const Step1 = ({ formData, setFormData, nextStep, prevStep }) => {
               <span className="switch-label">{gender.charAt(0).toUpperCase() + gender.slice(1)}</span>
             </label>
           ))}
-        </div>
+        </div> */}
         <div className="modal-footer border-0 justify-content-center p-0 footer-modal mt-4">
           <button
             type="button"

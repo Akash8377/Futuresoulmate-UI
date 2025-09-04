@@ -42,28 +42,28 @@ const SucessStory = () => {
   const stories = [
     {
       img: "images/shreya.png",
-      name: "Shreyashree & Sukdev",
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      name: "Olivia & Ethan",
+      text: "I never believed in online matchmaking until I met someone special here. The process felt personal, and the connection was real."
     },
     {
       img: "images/preeti.png",
-      name: "Shreyashree & Sukdev1",
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      name: "Emma & Liam",
+      text: "Future SoulMates helped me find someone who shares my values and life goals. It's been a wonderful journey."
     },
     {
-      img: "images/shreya.png",
-      name: "Shreyashree & Sukdev2",
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      img: "images/noah.png",
+      name: "Sophia & Mason",
+      text: "FutureSoulmates completely changed the way I looked at finding love"
     },
     {
-      img: "images/preeti.png",
-      name: "Shreyashree & Sukdev3",
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      img: "images/mason.png",
+      name: "Madison & Noah",
+      text: "I had almost given up on online dating until I tried FutureSoulmates."
     }
   ];
 
   return (
-    <section className="success-story">
+    <section className="success-story home-story">
       <div className="success-img-left d-none d-md-block" />
       <div className="container">
         <div className="row">

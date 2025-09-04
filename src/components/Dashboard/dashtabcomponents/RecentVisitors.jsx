@@ -21,7 +21,7 @@ function SampleNextArrow(props) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#e6007e",
+        background: "#0977af",
         borderRadius: "50%",
         width: "35px",
         height: "35px",
@@ -42,7 +42,7 @@ function SamplePrevArrow(props) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#e6007e",
+        background: "#0977af",
         borderRadius: "50%",
         width: "35px",
         height: "35px",
@@ -154,7 +154,7 @@ const RecentVisitors = () => {
                 {visitor.city}
               </p>
               {connections[visitor.user_id] === 1 || visitor.connectionRequest === 1 ? (<p style={{
-                    color: "#e6007e",
+                    color: "#0977af",
                     padding: "6px 16px",
                     fontWeight: "bold",
                   }}>Connected</p>):(<div className="connect-btn mt-2">
@@ -162,7 +162,7 @@ const RecentVisitors = () => {
                   href="#"
                   className="btn btn-sm"
                   style={{
-                    backgroundColor: "#e6007e",
+                    backgroundColor: "#0977af",
                     color: "#fff",
                     borderRadius: "20px",
                     padding: "6px 16px",

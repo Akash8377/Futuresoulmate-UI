@@ -143,7 +143,7 @@ const Profile = ({onChangeTab}) => {
                       <td>{userInfo?.city}</td>
                     </tr>
                     <tr>
-                      <td>Mother Tongue:</td>
+                      <td>Language:</td>
                       <td>{userInfo?.mother_tongue} </td>
                     </tr>
                   </tbody>

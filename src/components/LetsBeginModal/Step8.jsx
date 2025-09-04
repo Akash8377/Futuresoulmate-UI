@@ -65,11 +65,14 @@ const Step8 = ({ formData, setFormData, nextStep, prevStep }) => {
             onChange={handleChange}
           >
             <option value="">Select Income</option>
-            {Array.from({ length: 99 }, (_, i) => (
-              <option key={i} value={`${i + 1} Lakh`}>
-                {i + 1} Lakh
-              </option>
-            ))}
+            <option value="24999">$25,000</option>
+            <option value="49999">$49,999</option>
+            <option value="74999">$74,999</option>
+            <option value="99999">$99,999</option>
+            <option value="149999">$149,999</option>
+            <option value="199999">$199,999</option>
+            <option value="200000">$200,000</option>
+            <option value="250000">$250,000+</option>
           </select>
         </div>
 

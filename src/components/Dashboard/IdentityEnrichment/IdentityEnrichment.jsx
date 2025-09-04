@@ -11,9 +11,9 @@ const IdentityEnrichment = () => {
     <div className="report-page">
       <div className="container">
         <HeroSection />
-        <SearchBar />
+        {/* <SearchBar /> */}
         <ResultsTable />
-        <Pagination />
+        {/* <Pagination /> */}
         <Disclaimer />
       </div>
     </div>

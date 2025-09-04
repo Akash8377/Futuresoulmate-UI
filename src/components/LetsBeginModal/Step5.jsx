@@ -78,35 +78,7 @@ const Step5 = ({ formData, setFormData, nextStep, prevStep }) => {
           </div>
         )}
 
-        <div style={{ marginTop: "10px" }}>
-          <h5 className="modal-title">Sub-community</h5>
-          <div className="select-control">
-            <select
-              className="form-control"
-              name="subCommunity"
-              value={formData.subCommunity}
-              onChange={handleChange}
-            >
-              {/* Frequently Used Communities */}
-              <optgroup label="FREQUENTLY USED">
-                {SUBCOMMUNITIES["FREQUENTLY USED"].map((community) => (
-                  <option key={community.value} value={community.value}>
-                    {community.label}
-                  </option>
-                ))}
-              </optgroup>
-
-              {/* All Communities */}
-              <optgroup label="ALL COMMUNITIES">
-                {SUBCOMMUNITIES["ALL COMMUNITIES"].map((community) => (
-                  <option key={community.value} value={community.value}>
-                    {community.label}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-        </div>
+        
         <div className="modal-footer border-0 justify-content-center p-0 footer-modal mt-4">
           <button
             type="button"
@@ -114,7 +86,6 @@ const Step5 = ({ formData, setFormData, nextStep, prevStep }) => {
             onClick={nextStep}
             disabled={
               !formData.city ||
-              !formData.subCommunity ||
               (livesWithFamily === "no" && !formData.familyCity)
             }
           >

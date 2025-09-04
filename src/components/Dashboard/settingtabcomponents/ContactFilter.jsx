@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import { MARITAL_STATUS, RELIGIONS, COMMUNITIES, LANGUAGES, COUNTRIES, INITIAL_PREFS } from "../../../constants/formData";
+import { MARITAL_STATUS, RELIGIONS, CULTURES, LANGUAGES, COUNTRIES, INITIAL_PREFS } from "../../../constants/formData";
 import { parseAgeRange, parseHeight, formatHeight } from "../../../utils/helpers";
 import { toast } from "../../../components/Common/Toast";
 import axios from "axios";
@@ -20,7 +20,7 @@ const ContactFilter = ({ userInfo, token }) => {
   const [heightRange, setHeightRange] = useState(parseHeight(partnerPref.basic?.heightRange));
   
   const fieldKeys = {
-    country: partnerPref.location?.country, religion: partnerPref.community?.religion, community: partnerPref.community?.community, language: partnerPref.community?.motherTongue, marital: partnerPref.basic?.maritalStatus
+    country: partnerPref.location?.country, religion: partnerPref.community?.religion, community: partnerPref.community?.community, language: partnerPref.community?.language, marital: partnerPref.basic?.maritalStatus
   };
 
 const [selectedOptions, setSelectedOptions] = useState(Object.fromEntries(
@@ -52,7 +52,7 @@ const [selectedOptions, setSelectedOptions] = useState(Object.fromEntries(
 
   // Data mapping
   const fieldData = {
-    country: COUNTRIES, religion: RELIGIONS, community: COMMUNITIES, language: LANGUAGES, marital: MARITAL_STATUS
+    country: COUNTRIES, religion: RELIGIONS, community: CULTURES, language: LANGUAGES, marital: MARITAL_STATUS
   };
 
   const getFilteredOptions = (key) => {
@@ -98,7 +98,7 @@ const [selectedOptions, setSelectedOptions] = useState(Object.fromEntries(
       ...partnerPref.community,
       religion: openToAll.religion ? "Open to All" : selectedOptions.religion.join(", ") || "",
       community: openToAll.community ? "Open to All" : selectedOptions.community.join(", ") || "",
-      motherTongue: openToAll.language ? "Open to All" : selectedOptions.language.join(", ") || ""
+      language: openToAll.language ? "Open to All" : selectedOptions.language.join(", ") || ""
     },
     location: {
       ...partnerPref.location,
@@ -137,8 +137,9 @@ const [selectedOptions, setSelectedOptions] = useState(Object.fromEntries(
     { key: "height", label: "Height", value: `${formatHeight(heightRange[0])} – ${formatHeight(heightRange[1])}`, color: "text-warning" },
     ...Object.keys(fieldKeys).map(key => ({
       key,
-      label: key === 'language' ? 'Mother tongue' : 
+      label: key === 'language' ? 'Language' : 
              key === 'marital' ? 'Marital Status' : 
+             key === 'community' ? 'Culture' : 
              key.charAt(0).toUpperCase() + key.slice(1),
       value: formatSelectedValues(key),
       color: `text-${key === 'country' ? 'primary' : 

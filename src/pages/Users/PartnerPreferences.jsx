@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Modal } from "react-bootstrap";
 import { camelCaseToNormalText, convertAgeRange,convertHeightRange,convertIncomeRange } from "../../utils/helpers";
-import { MARITAL_STATUS, RELIGIONS, COMMUNITIES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS, DIET, PROFILEMANAGEDBY, QUALIFICATIONS, OCCUPATIONS } from "../../constants/formData";
+import { MARITAL_STATUS, RELIGIONS, CULTURES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS, DIET, PROFILEMANAGEDBY, QUALIFICATIONS, OCCUPATIONS } from "../../constants/formData";
 import PreferenceCard from "../../components/PartnerPreferences/PreferenceCard";
 import SliderModal from "../../components/PartnerPreferences/SliderModal";
 import CheckboxModal from "../../components/PartnerPreferences/CheckboxModal";
@@ -19,7 +19,7 @@ import { setUser } from "../../features/user/userSlice";
 const FIELD_OPTIONS_MAP = {
   maritalStatus: MARITAL_STATUS,
   religion: RELIGIONS,
-  community: COMMUNITIES,
+  culture: CULTURES,
   motherTongue: LANGUAGES,
   country: COUNTRIES,
   profession: Object.values(PROFESSIONS).flat(), // Flatten the grouped professions into a single array
@@ -42,7 +42,7 @@ const PartnerPreferences = ({onlyPartnerPrefrence = false}) => {
   const [error, setError] = useState(false)
   const { userInfo, token } = useSelector(state => state.user);
   const [preferences, setPreferences] = useState(onlyPartnerPrefrence ? userInfo?.partner_preference && typeof userInfo?.partner_preference === 'object'? userInfo?.partner_preference : JSON.parse(userInfo?.partner_preference) || INITIAL_PREFS : INITIAL_PREFS );
- const [ranges, setRanges] = useState(
+const [ranges, setRanges] = useState(
   onlyPartnerPrefrence ? {
     age: convertAgeRange(preferences?.basic?.ageRange),
     height: convertHeightRange(preferences?.basic?.heightRange),
@@ -50,9 +50,10 @@ const PartnerPreferences = ({onlyPartnerPrefrence = false}) => {
   } : {
     age: [20, 23],
     height: [59, 67],
-    income: [1, 5]
+    income: [50000, 100000] // Default income range in USD
   }
 );
+
   const dispatch = useDispatch()
   const convertToFeet = useCallback((inches) => {
     const feet = Math.floor(inches / 12);
@@ -86,22 +87,24 @@ const PartnerPreferences = ({onlyPartnerPrefrence = false}) => {
     setShowModal(true);
   }, [preferences, ranges]);
 
-  const handleRangeChange = useCallback((type, value) => {
-    setRanges(prev => ({ ...prev, [type]: value }));
-    const formatValue = type === "height"
-      ? `${convertToFeet(value[0])} – ${convertToFeet(value[1])}`
-      : type === "income"
-        ? `INR ${value[0]} ${value[0] > 1 ? 'lakhs' : 'lakh'} to ${value[1]} lakhs`
-        : `${value[0]} – ${value[1]}`;
+const handleRangeChange = useCallback((type, value) => {
+  setRanges(prev => ({ ...prev, [type]: value }));
 
-    setPreferences(prev => ({
-      ...prev,
-      [type === "income" ? "education" : "basic"]: {
-        ...prev[type === "income" ? "education" : "basic"],
-        [type === "income" ? "annualIncome" : type + "Range"]: formatValue
-      }
-    }));
-  }, [convertToFeet]);
+  const formatValue = type === "height"
+    ? `${convertToFeet(value[0])} – ${convertToFeet(value[1])}`
+    : type === "income"
+      ? `$${value[0].toLocaleString()} – $${value[1].toLocaleString()}`
+      : `${value[0]} – ${value[1]}`;
+
+  setPreferences(prev => ({
+    ...prev,
+    [type === "income" ? "education" : "basic"]: {
+      ...prev[type === "income" ? "education" : "basic"],
+      [type === "income" ? "annualIncome" : type + "Range"]: formatValue
+    }
+  }));
+}, [convertToFeet]);
+
 
   const handleCheckboxChange = useCallback((field, value) => {
     setSelectedOptions(prev => {
@@ -228,22 +231,25 @@ const handleFormSubmit = async (formData) => {
   const renderModalContent = useCallback(() => {
     if (!currentField) return null;
     const { field } = currentField;
-
+    console.log("field", field)
     // Check if it's a slider field
     if (field === "ageRange" || field === "heightRange" || field === "annualIncome") {
       const type = field === "annualIncome" ? "income" : field.replace("Range", "");
       return (
         <SliderModal
-          title={camelCaseToNormalText(field)}
-          value={ranges[type]}
-          min={type === "age" ? 20 : type === "height" ? 48 : 1}
-          max={type === "age" ? 73 : type === "height" ? 84 : 20}
-          onChange={(v) => handleRangeChange(type, v)}
-          formatValue={type === "height" ?
-            (val) => `${convertToFeet(val[0])} - ${convertToFeet(val[1])}` : type === "income" ?
-            (val) => `INR ${val[0]} ${val[0] > 1 ? 'lakhs' : 'lakh'} - ${val[1]} lakhs` :
-            undefined}
-        />
+  title={camelCaseToNormalText(field)}
+  value={ranges[type]}
+  min={type === "age" ? 20 : type === "height" ? 48 : 20000}   // income min = $20,000
+  max={type === "age" ? 73 : type === "height" ? 84 : 300000}  // income max = $300,000
+  onChange={(v) => handleRangeChange(type, v)}
+  formatValue={
+    type === "height"
+      ? (val) => `${convertToFeet(val[0])} - ${convertToFeet(val[1])}`
+      : type === "income"
+        ? (val) => `$${val[0].toLocaleString()} - $${val[1].toLocaleString()}`
+        : undefined
+  }
+/>
       );
     }
 

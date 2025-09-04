@@ -40,7 +40,7 @@ function Deleted({chatBoxOpen, activeKey}) {
 
   // FILTER & SORT LOGIC
   const applyFilterAndSort = (data) => {
-    let filtered = [...data];
+    let filtered = Array.isArray(data) && data?.length >0 ?[...data] : [];
 
     // Filter
     if (selectedFilter === "onlineNow") {
@@ -143,7 +143,7 @@ function Deleted({chatBoxOpen, activeKey}) {
                               currentReceiver.sender_birth_year
                             )}{" "}
                             yrs, {currentReceiver.sender_height} <br />
-                            {currentReceiver.community}, {currentReceiver.sender_religion} <br />
+                            {currentReceiver.sender_religion} <br />
                             {currentReceiver.sender_city}, {currentReceiver.sender_living_in} <br />
                             {currentReceiver.sender_qualification} <br />
                             {currentReceiver.sender_profession}
@@ -189,7 +189,7 @@ function Deleted({chatBoxOpen, activeKey}) {
                       <div className="Filtered-out">
                         <img src="images/filtredout.jpg"/>
                         <h4>No deleted request found.</h4>
-                        <Link to="/matches" className=" text-decoration-none" style={{color:"#d61962"}}>
+                        <Link to="/matches" className=" text-decoration-none" style={{color:"#0977af"}}>
                           View All Matches <i className="fa fa-angle-right" aria-hidden="true"></i>
                         </Link>
                       </div>

@@ -222,7 +222,7 @@ const MyContactSetting = ({ userInfo, token, updateUserPhone }) => {
                       </div>
                     ) : (
                       <div>
-                        +91 {userInfo?.phone}
+                        +1 {userInfo?.phone}
                         <span className="verified-badge ms-2">
                           {userInfo?.phone_verified === 0 ? (
                             <><i className="fa fa-times-circle text-danger" aria-hidden="true"></i> Not Verified</>
@@ -347,7 +347,7 @@ const MyContactSetting = ({ userInfo, token, updateUserPhone }) => {
           ></button>
         </Modal.Header>
         <Modal.Body>
-          <p>We've sent a 4-digit OTP to +91 {phoneNumber}</p>
+          <p>We've sent a 4-digit OTP to +1 {phoneNumber}</p>
           <div className="mb-3">
             <input
               type="text"

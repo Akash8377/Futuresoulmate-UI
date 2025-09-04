@@ -56,7 +56,7 @@ const Header = () => {
   });
 
   return (
-    <section className="header">
+    <section className="header mainheader">
       <Navbar expand="lg" className="navbar">
         <Container>
           <Link className="navbar-brand" to="/">

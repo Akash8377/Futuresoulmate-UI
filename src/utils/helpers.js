@@ -125,10 +125,20 @@ export const convertHeightRange = (heightStr) => {
 };
 
 export const convertIncomeRange = (incomeStr) => {
-  if (!incomeStr) return [1, 5]; // Default fallback
-  const numbers = incomeStr.match(/\d+/g) || [1, 5];
+  if (!incomeStr) return [50000, 100000]; // Default fallback ($50K–$100K)
+
+  // Remove $ and commas
+  const cleaned = incomeStr.replace(/[$,]/g, "");
+
+  // Match full numbers (e.g., 55510, 171245)
+  const numbers = cleaned.match(/\d+/g);
+
+  if (!numbers || numbers.length === 0) return [50000, 100000];
+
   return [parseInt(numbers[0]), parseInt(numbers[1] || numbers[0])];
 };
+
+
 
 // Scroll to any component with any offset (adjust as needed)
 export const scrollToComponent = (elementId, offset = 0) => {

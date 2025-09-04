@@ -38,20 +38,23 @@ const EducationCareerSection = ({ isEditing, getValue, onDataChange, editingFiel
             <tr>
               <td>Annual Income:</td>
               <td>{isEditing && editingFields === "career" ? (
-                <select 
+               <select 
                   value={getValue('income') || ''} 
                   onChange={(e) => onDataChange('income', e.target.value)}
                   className="form-select form-select-sm d-inline-block w-75"
                 >
-                  <option value="">Select</option>
-                  {Array.from({ length: 99 }, (_, i) => (
-                    <option key={i} value={`${i + 1} Lakh`}>
-                      {i + 1} Lakh
+                  <option value="">Select Income</option>
+                  {[
+                    25000, 50000, 75000, 100000, 125000, 150000,
+                    175000, 200000, 225000, 250000
+                  ].map((val) => (
+                    <option key={val} value={val}>
+                      ${val.toLocaleString()}
                     </option>
                   ))}
                 </select>
               ) : (
-                getValue('income')
+                <>{getValue('income') ? `$${Number(getValue('income')).toLocaleString()}` : ''}</>
               )}</td>
             </tr>
           </tbody>

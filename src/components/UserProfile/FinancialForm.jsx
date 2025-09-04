@@ -2,42 +2,43 @@ import React from "react";
 
 const financialOptions = [
   {
-    value: "Elite",
-    title: "Elite",
+    value: "Affluent / Wealthy",
+    title: "Affluent / Wealthy",
     details: [
-      "Senior executives or business owners",
-      "Multiple properties & assets",
-      "Annual family income 50L+"
+      "Senior executives, entrepreneurs, or high-net-worth professionals",
+      "Multiple properties, investments, and luxury lifestyle",
+      "Household income $250,000+ annually"
     ]
   },
   {
-    value: "High",
-    title: "High",
+    value: "Upper Middle Class",
+    title: "Upper Middle Class",
     details: [
-      "Professionals or mid-scale business",
-      "Own house & investments",
-      "Annual family income 30-50L"
+      "Doctors, lawyers, engineers, or mid-to-senior management professionals",
+      "Own home, stable investments, comfortable lifestyle",
+      "Household income $150,000 – $250,000 annually"
     ]
   },
   {
-    value: "Middle",
-    title: "Middle",
+    value: "Middle Class",
+    title: "Middle Class",
     details: [
-      "Family runs a small business or have office jobs",
-      "Family owns a vehicle, house & some assets",
-      "Annual family income is 10-30L"
+      "Skilled professionals, small business owners, or office jobs",
+      "Owns a home or paying mortgage, moderate savings",
+      "Household income $70,000 – $150,000 annually"
     ]
   },
   {
-    value: "Aspiring",
-    title: "Aspiring",
+    value: "Working Class / Aspiring",
+    title: "Working Class / Aspiring",
     details: [
-      "Entry-level jobs or small shops",
-      "Rented or modest accommodation",
-      "Annual family income < 10L"
+      "Entry-level professionals, service jobs, or small businesses",
+      "May rent or share accommodation, limited investments",
+      "Household income below $70,000 annually"
     ]
   }
 ];
+
 
 const FinancialForm = ({ financialStatus, handleFinancialChange, handleFinancialSubmit }) => (
   <div className="added-family-detail">

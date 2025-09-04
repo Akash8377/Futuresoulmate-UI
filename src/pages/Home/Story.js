@@ -20,10 +20,7 @@ const Story = () => {
                                         Trusted Worldwide by Over 35 Million.
                                     </h2>
                                     <p>
-                                        Lorem Ipsum&nbsp;is simply dummy text of the printing and
-                                        typesetting industry. Lorem Ipsum has been the industry's standard
-                                        dummy text ever since the 1500s, when an unknown printer took
-                                        galley of type and scrambled it to make a type specimen book.
+                                       At FutureSoulMates, we focus on helping you find a relationship based on shared values, respect, and true connection. Whether you're looking for a lifelong partner or a meaningful relationship, our platform is here to guide you through every step.
                                     </p>
                                 </div>
                             </div>

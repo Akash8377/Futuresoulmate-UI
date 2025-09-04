@@ -235,7 +235,7 @@ const saveStepData = async (currentStep) => {
       case 1:
         return (
           <>
-            <h2 style={{ fontWeight: 'bold', marginBottom: '20px',color:"#d61962" }}>FUTURE SOULMATES DNA TEST</h2>
+            <h2 style={{ fontWeight: 'bold', marginBottom: '20px',color:"#0977af" }}>FUTURE SOULMATES DNA TEST</h2>
             <h3 style={{ marginBottom: '20px' }}>Biological Attraction & Compatibility Genes</h3>
           </>
         );

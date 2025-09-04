@@ -1,12 +1,12 @@
 import React from 'react';
-import { RELIGIONS, COMMUNITIES, SUBCOMMUNITIES, LANGUAGES } from "../../../constants/formData";
+import { RELIGIONS, CULTURES, SUBCOMMUNITIES, LANGUAGES } from "../../../constants/formData";
 
 const ReligiousBackgroundSection = ({ setEditingFields, isEditing, getValue, onDataChange, editingFields, onEditClick, onSaveClick, onCancelClick }) => {
   return (
     <div className="row py-3 border-top">
       <div className="col-md-6 pe-md-4">
         <div className="d-flex justify-content-between align-items-center">
-          <h6 className="mini-section-title mb-2">Religious Background</h6>
+          <h6 className="mini-section-title mb-2">Culture & Religion</h6>
           {isEditing && editingFields === "religious" ? (
             <span className="d-flex gap-2">
               <a onClick={onSaveClick} className="mini-edit-link text-primary cursor-pointer">
@@ -43,23 +43,23 @@ const ReligiousBackgroundSection = ({ setEditingFields, isEditing, getValue, onD
               )}</td>
             </tr>
             <tr>
-              <td>Community:</td>
+              <td>Culture:</td>
               <td>{isEditing && editingFields === "religious" ? (
                 <select 
-                  value={getValue('community') || ''} 
-                  onChange={(e) => onDataChange('community', e.target.value)}
+                  value={getValue('culture') || ''} 
+                  onChange={(e) => onDataChange('culture', e.target.value)}
                   className="form-select form-select-sm d-inline-block w-75"
                 >
                   <option value="">Select</option>
-                  {COMMUNITIES.map((item) => (
+                  {CULTURES.map((item) => (
                     <option key={item.value} value={item.value}>{item.label}</option>
                   ))}
                 </select>
               ) : (
-                getValue('community')
+                getValue('culture')
               )}</td>
             </tr>
-            <tr>
+            {/* <tr>
               <td>Sub community:</td>
               <td>{isEditing && editingFields === "religious" ? (
                 <select 
@@ -75,7 +75,7 @@ const ReligiousBackgroundSection = ({ setEditingFields, isEditing, getValue, onD
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="ALL COMMUNITIES">
+                  <optgroup label="ALL CULTURES">
                     {SUBCOMMUNITIES["ALL COMMUNITIES"].map((community) => (
                       <option key={community.value} value={community.value}>
                         {community.label}
@@ -99,9 +99,9 @@ const ReligiousBackgroundSection = ({ setEditingFields, isEditing, getValue, onD
               ) : (
                 getValue('gothra') || '------'
               )}</td>
-            </tr>
+            </tr> */}
             <tr>
-              <td>Mother Tongue:</td>
+              <td>Language:</td>
               <td>{isEditing && editingFields === "religious" ? (
                 <select 
                   value={getValue('mother_tongue') || ''} 
@@ -121,7 +121,7 @@ const ReligiousBackgroundSection = ({ setEditingFields, isEditing, getValue, onD
         </table>
       </div>
 
-      <div className="col-md-6 border-start ps-md-4 mt-4 mt-md-0">
+      {/* <div className="col-md-6 border-start ps-md-4 mt-4 mt-md-0">
         <div className="d-flex justify-content-between align-items-center">
           <h6 className="mini-section-title mb-2">Astro Details</h6>
           {isEditing && editingFields === "astro" ? (
@@ -192,7 +192,7 @@ const ReligiousBackgroundSection = ({ setEditingFields, isEditing, getValue, onD
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   );
 };

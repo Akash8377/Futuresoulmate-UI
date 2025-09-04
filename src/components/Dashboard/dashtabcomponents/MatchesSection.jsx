@@ -116,7 +116,7 @@ const MatchesSection = () => {
           <div className="match-card" id="premiumMatches">
             <MatchCard data={premiumMatches} showAll={showPremiumAll} handleConnect={handleConnect}/>
             <span
-              className="view-all-link text-primary cursor-pointer"
+              className="view-all-link  cursor-pointer"
               onClick={() => setShowPremiumAll(!showPremiumAll)}
             >
               {showPremiumAll ? "View Less" : "View All"}
@@ -134,7 +134,7 @@ const MatchesSection = () => {
           <div className="match-card" id="newMatches">
             <MatchCard data={newMatches} showAll={showNewAll} handleConnect={handleConnect} />
             <span
-              className="view-all-link text-primary cursor-pointer"
+              className="view-all-link  cursor-pointer"
               onClick={() => setShowNewAll(!showNewAll)}
             >
               {showNewAll ? "View Less" : "View All"}

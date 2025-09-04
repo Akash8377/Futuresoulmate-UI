@@ -31,8 +31,8 @@ const AllelePopup = ({ showPopup, setShowPopup }) => {
       </div>
       <div className='text-start'>
         {Object.entries(hlaData.options).map(([family, alleles]) => (
-          <div key={family} style={{ marginBottom: '15px', paddingBottom: '10px', borderBottom: '2px solid #d61962' }}>
-            <strong style={{ color: '#d61962', fontSize: '16px' }}>{family}</strong> - {hlaData.descriptions[family]}
+          <div key={family} style={{ marginBottom: '15px', paddingBottom: '10px', borderBottom: '2px solid #0977af' }}>
+            <strong style={{ color: '#0977af', fontSize: '16px' }}>{family}</strong> - {hlaData.descriptions[family]}
             <div style={{ marginLeft: '15px', marginTop: '5px' }}>
               {alleles.map(allele => (
                 <div key={allele}>
@@ -170,8 +170,8 @@ const HLATest = () => {
     const { main, sub } = titles[step];
     return (
       <>
-        {step === 1 && <h2 style={{ fontWeight: 'bold', marginBottom: '20px', color: "#d61962" }}>{main}</h2>}
-        <h3 style={{ marginBottom: '20px', color: step !== 1 ? "#d61962" : "inherit" }}>
+        {step === 1 && <h2 style={{ fontWeight: 'bold', marginBottom: '20px', color: "#0977af" }}>{main}</h2>}
+        <h3 style={{ marginBottom: '20px', color: step !== 1 ? "#0977af" : "inherit" }}>
           {sub || main}
         </h3>
       </>

@@ -52,7 +52,7 @@ const handleSaveClick = async () => {
       ...updatedUserInfo,
       family_details: updatedUserInfo.family_details || {} // Ensure never null
     };
-
+    console.log("Data to send",dataToSend)
     // 5. API call
     const response = await axios.put(`${config.baseURL}/api/profile/update`, dataToSend, {
       headers: { 'Authorization': `Bearer ${token}` }

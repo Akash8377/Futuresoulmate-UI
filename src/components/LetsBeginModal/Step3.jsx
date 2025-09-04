@@ -1,6 +1,6 @@
 // Step3.jsx
 import React, { useEffect, useState } from "react";
-import { RELIGIONS, COMMUNITIES, COUNTRIES } from "../../constants/formData";
+import { RELIGIONS, CULTURES, COUNTRIES } from "../../constants/formData";
 
 const Step3 = ({ formData, setFormData, nextStep, prevStep }) => {
   const [showCommunity, setShowCommunity] = useState(false);
@@ -15,12 +15,12 @@ const Step3 = ({ formData, setFormData, nextStep, prevStep }) => {
   }, [formData.religion]);
 
   useEffect(() => {
-    if (formData.community) {
+    if (formData.culture) {
       setShowLivingIn(true);
     } else {
       setShowLivingIn(false);
     }
-  }, [formData.community]);
+  }, [formData.culture]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -58,19 +58,19 @@ const Step3 = ({ formData, setFormData, nextStep, prevStep }) => {
 
         {showCommunity && (
           <>
-            <h5 className="modal-title mt-3">Community</h5>
+            <h5 className="modal-title mt-3">Culture</h5>
             <div className="mb-3">
               <div className="select-control">
                 <select
                   className="form-control"
-                  name="community"
-                  value={formData.community}
+                  name="culture"
+                  value={formData.culture}
                   onChange={handleChange}
                 >
-                  <option value="">Select Community</option>
-                  {COMMUNITIES.map((community) => (
-                    <option key={community.value} value={community.value}>
-                      {community.label}
+                  <option value="">Select Culture</option>
+                  {CULTURES.map((culture) => (
+                    <option key={culture.value} value={culture.value}>
+                      {culture.label}
                     </option>
                   ))}
                 </select>
@@ -107,7 +107,7 @@ const Step3 = ({ formData, setFormData, nextStep, prevStep }) => {
             type="button"
             className="btn w-100 py-2 btn-filled"
             onClick={nextStep}
-            disabled={!formData.religion || (showCommunity && !formData.community) || (showLivingIn && !formData.livingIn)}
+            disabled={!formData.religion || (showCommunity && !formData.culture) || (showLivingIn && !formData.livingIn)}
           >
             Continue
           </button>

@@ -486,7 +486,7 @@ useEffect(() => {
                             <tbody>
                               <tr><td>Age / Height</td><td>: {calculateAge(hoverItem?.birth_year,hoverItem?.birth_month,hoverItem?.birth_day)}, {hoverItem?.height}</td></tr>
                               <tr><td>Religion/Community</td><td>: {hoverItem?.religion}, {hoverItem?.community}</td></tr>
-                              <tr><td>Mother Tongue</td><td>: {hoverItem?.mother_tongue}</td></tr>
+                              <tr><td>Language</td><td>: {hoverItem?.mother_tongue}</td></tr>
                               <tr><td>Profession</td><td>: {hoverItem?.profession}</td></tr>
                               <tr><td>Location</td><td>: {hoverItem?.city}, {hoverItem?.country}</td></tr>
                             </tbody>

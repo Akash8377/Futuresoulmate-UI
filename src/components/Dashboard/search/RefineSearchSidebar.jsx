@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MARITAL_STATUS, RELIGIONS, COMMUNITIES, LANGUAGES, DIET,COUNTRIES,PROFESSIONS,QUALIFICATIONS,OCCUPATIONS } from "../../../constants/formData";
+import { MARITAL_STATUS, RELIGIONS, CULTURES, LANGUAGES, DIET,COUNTRIES,PROFESSIONS,QUALIFICATIONS,OCCUPATIONS } from "../../../constants/formData";
 
 const FilterSection = ({ title, type, options, value = [], onChange, showMore = false }) => {
   const [expanded, setExpanded] = useState(!showMore);
@@ -203,7 +203,7 @@ const RefineSearchSidebar = ({ initialFilters = {}, onFilterChange, searchType }
     },
     { 
       filterKey: "motherTongue",
-      title: "Mother Tongue", 
+      title: "Language", 
       showMore: true,
       options: LANGUAGES?.map(religion => ({
         label: religion.label,
@@ -214,7 +214,7 @@ const RefineSearchSidebar = ({ initialFilters = {}, onFilterChange, searchType }
       filterKey: "community",
       title: "Community", 
       showMore: true,
-      options: COMMUNITIES?.map(religion => ({
+      options: CULTURES?.map(religion => ({
         label: religion.label,
         value: religion.value
       }))
@@ -336,12 +336,12 @@ const HeightRangeFilter = () => {
 
 const IncomeRangeFilter = () => {
   const incomeOptions = [
-    { label: 'Open for All', value: 'Open for All' },
-    { label: 'Upto INR 1 Lakh', value: '0-1' },
-    { label: 'INR 1-5 Lakh', value: '1-5' },
-    { label: 'INR 5-10 Lakh', value: '5-10' },
-    { label: 'INR 10-20 Lakh', value: '10-20' },
-    { label: 'Above 20 Lakh', value: '20+' }
+   { label: "All", value: "all" },
+  { label: "Upto $25,000", value: "0-25000" },
+  { label: "$25,000-$50,000", value: "25000-50000" },
+  { label: "$50,000-$100,000", value: "50000-100000" },
+  { label: "$100,000-$200,000", value: "100000-200000" },
+  { label: "Above $200,000", value: "200000" },
   ];
 
   return (

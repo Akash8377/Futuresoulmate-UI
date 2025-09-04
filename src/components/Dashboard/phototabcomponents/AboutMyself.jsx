@@ -9,7 +9,7 @@ import HobbiesSection from './HobbiesSection';
 
 const AboutMyself = ({ isEditing, onEditClick, onSaveClick, onCancelClick, onDataChange, updatedData }) => {
   const { userInfo } = useSelector(state => state.user);
-  // console.log("user Info", userInfo)
+  console.log("user Info", userInfo)
   const familyDetails = userInfo?.family_details ? typeof userInfo?.family_details === 'string' ? JSON.parse(userInfo?.family_details): userInfo?.family_details:{mother:"",father:"",sisters:"",brothers:""};
   const hobbies = typeof userInfo?.hobbies === 'string'  ? JSON.parse(userInfo?.hobbies) : userInfo?.hobbies;
   const [selectedHobbies, setSelectedHobbies] = useState(hobbies || []);

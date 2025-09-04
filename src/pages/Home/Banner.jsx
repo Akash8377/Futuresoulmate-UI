@@ -10,9 +10,9 @@ const Banner = () => {
                 <div className="container">
                     <div className="content-blk">
                         <h2>
-                            The <br />
-                            Elite Way <br />
-                            to Find Love
+                            Where <br />
+                            Two Souls <br />
+                            Find Forever
                         </h2>
                         <button className="btn btn-filled" type="button" onClick={()=>scrollToComponent('searchByCity', 220)}>
                             Find Your Match

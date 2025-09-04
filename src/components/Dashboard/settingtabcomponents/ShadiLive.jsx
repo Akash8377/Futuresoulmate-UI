@@ -80,7 +80,7 @@ const ShadiLive = ({ token }) => {
           type="button"
           onClick={toggleSection}
         >
-          Shadi Live
+          Live Marriage
         </button>
       </h2>
       <div

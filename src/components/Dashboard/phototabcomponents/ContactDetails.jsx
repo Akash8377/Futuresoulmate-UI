@@ -37,7 +37,7 @@ const ContactDetails = ({ isEditing, onEditClick, onSaveClick, onDataChange, upd
                     className="form-control form-control-sm d-inline-block w-auto"
                   />
                 ) : (
-                  `+91 ${userInfo?.phone}`
+                  `+1 ${userInfo?.phone}`
                 )}</td>
               </tr>
               <tr>

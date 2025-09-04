@@ -130,7 +130,7 @@ const DashProfile = ({onEditClick, notifications}) => {
                   <div className="title">{userInfo?.first_name} {userInfo?.last_name}</div>
                   <div className="small text-muted">{userInfo.profileId}</div>
                 </div>
-                <Link href="#" onClick={onEditClick} className="small fw-semibold text-decoration-none" style={{ color: '#d61962' }}>Edit</Link>
+                <Link href="#" onClick={onEditClick} className="small fw-semibold text-decoration-none" style={{ color: '#df8525' }}>Edit</Link>
               </div>
               <div className="section d-flex justify-content-between align-items-center">
                 <div>

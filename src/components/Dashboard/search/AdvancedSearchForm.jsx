@@ -1,7 +1,7 @@
 import React from 'react';
 import useChoicesInitializer from './ChoicesInitializer';
 import useSearchFormHandlers from './SearchFormHandlers';
-import { MARITAL_STATUS, RELIGIONS, COMMUNITIES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS, DIET, PROFILEMANAGEDBY, QUALIFICATIONS, OCCUPATIONS } from "../../../constants/formData";
+import { MARITAL_STATUS, RELIGIONS, CULTURES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS, DIET, PROFILEMANAGEDBY, QUALIFICATIONS, OCCUPATIONS } from "../../../constants/formData";
 
 const AdvancedSearchForm = () => {
   const stateList = Object.values(STATE).flat();
@@ -98,10 +98,10 @@ const renderSelect = (label, name, options) => (
         {renderSelect("Marital Status", "advanceMaritalStatus", MARITAL_STATUS)}
         {renderSelect("Religion", "advanceReligion", RELIGIONS)}
         
-        {/* Mother Tongue - Original Implementation */}
+        {/* Language - Original Implementation */}
         <div className="row mb-3">
           <div className="col-md-3">
-            <label htmlFor="advanceMotherTongue">Mother Tongue</label>
+            <label htmlFor="advanceMotherTongue">Language</label>
           </div>
           <div className="col-md-9">
             <select 
@@ -109,7 +109,7 @@ const renderSelect = (label, name, options) => (
               className="form-select" 
               multiple
               onChange={(e) => handleMultiSelectChange('advanceMotherTongue','advanceMotherTongue')}
-              placeholder="Select Mother Tongue"
+              placeholder="Select Language"
               value={formData['advanceMotherTongue']}
             >
               {LANGUAGES.map((item) => (
@@ -119,7 +119,7 @@ const renderSelect = (label, name, options) => (
           </div>
         </div>
 
-        {renderSelect("Community", "advanceCommunity", COMMUNITIES)}
+        {renderSelect("Community", "advanceCommunity", CULTURES)}
 
         <div className="accordion" id="accordionExample">
           {renderAccordionItem("One", "Location & Grew up in Details", <>

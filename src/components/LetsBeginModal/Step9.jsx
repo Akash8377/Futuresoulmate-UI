@@ -1,14 +1,15 @@
 // Step9.jsx
 import React, { useState } from "react";
 
-const Step9 = ({ formData, setFormData, prevStep, onSubmit }) => {
+const Step9 = ({ formData, setFormData, prevStep, onSubmit}) => {
   const [profileDescription, setProfileDescription] = useState(
     `It is a pleasure sharing a few words about my ${formData.person === "myself" ? "self" : formData.person}.
 He is currently living in ${formData.city}. With hard work and determination in achieving his goals, he has built a successful career. He needs a loving and caring girl who can be with him in all ups and downs of life.`
   );
   const [excludeFromAffiliates, setExcludeFromAffiliates] = useState(false);
-
+  const [startLoading, setStartLoading] = useState(false)
   const handleSubmit = () => {
+    setStartLoading(true)
     onSubmit({
       ...formData,
       profileDescription,
@@ -52,7 +53,7 @@ He is currently living in ${formData.city}. With hard work and determination in 
             className="btn w-100 py-2 btn-filled"
             onClick={handleSubmit}
           >
-            Create Profile
+            { startLoading ? "Creating...":"Create Profile"}
           </button>
         </div>
       </div>

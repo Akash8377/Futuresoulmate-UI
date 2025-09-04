@@ -46,7 +46,7 @@ const PartnerPrefer = ({ isEditing, onEditClick, onSaveClick, onDataChange, upda
                                 </tr>
                                 <tr>
                                     <td>Religion Community:</td>
-                                    <td>{partnerPrefrence?.community?.community}</td>
+                                    <td>{partnerPrefrence?.culture?.culture}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -56,8 +56,8 @@ const PartnerPrefer = ({ isEditing, onEditClick, onSaveClick, onDataChange, upda
                         <table className="table table-borderless table-sm mini-data mb-0">
                             <tbody>
                                 <tr>
-                                    <td>Mother Tongue:</td>
-                                    <td>{partnerPrefrence?.community?.motherTongue}</td>
+                                    <td>Language:</td>
+                                    <td>{partnerPrefrence?.culture?.language}</td>
                                 </tr>
                                 <tr>
                                     <td>Marital Status:</td>
