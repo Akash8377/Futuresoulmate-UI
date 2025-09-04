@@ -22,7 +22,7 @@ const ResultsTable = () => {
 
     try {
       const response = await axios.get(
-        // "https://api.peopledatalabs.com/v5/person/enrich",
+        "https://api.peopledatalabs.com/v5/person/enrich",
         {
           params: {
             api_key: API_KEY,
