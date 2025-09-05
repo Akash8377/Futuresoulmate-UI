@@ -86,7 +86,7 @@ dnaMatches=false,user={}
                 <div className="profile-img">
                   <div className="lock-img">
                     <img
-                      src={`${config.baseURL}/uploads/profiles/${profile.profile_image}`}
+                      src={profile.profile_image ? `${config.baseURL}/uploads/profiles/${profile.profile_image}`: "/images/no-image-found.webp"}
                       alt="Protected Profile"
                       style={{ height: "330px", objectFit: "cover" }}
                     />
@@ -103,7 +103,7 @@ dnaMatches=false,user={}
                 // standard image
                 <div className="profile-img-wrapper">
                   <img
-                    src={`${config.baseURL}/uploads/profiles/${profile.profile_image}`}
+                    src={profile.profile_image ?`${config.baseURL}/uploads/profiles/${profile.profile_image}`: "/images/no-image-found.webp"}
                     alt="Profile"
                     style={{ height: "330px", objectFit: "cover" }}
                   />

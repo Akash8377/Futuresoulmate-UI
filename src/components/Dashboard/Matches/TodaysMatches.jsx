@@ -144,10 +144,10 @@ const TodaysMatches = ({chatBoxOpen}) => {
                 <img 
                   src={currentProfile.profile_image 
                     ? `${config.baseURL}/uploads/profiles/${currentProfile.profile_image}` 
-                    : "images/matchesprofile.jpg"} 
+                    : "images/no-image-found.webp"} 
                   alt="Profile" 
                   className="w-100"
-                  style={{ height: "300px", objectFit: "cover" }}
+                  style={{ height: "300px", objectFit: "cover", objectPosition: "top", }}
                 />
               </div>
             )}

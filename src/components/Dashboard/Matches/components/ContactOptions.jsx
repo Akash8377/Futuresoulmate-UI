@@ -1,5 +1,4 @@
 const ContactOptions = ({profile, chatBoxOpen}) => {
-      console.log("profile", profile) 
   const phone = profile.phone || profile.receiver_phone
 
   const handleCall = () => {

@@ -31,6 +31,7 @@ const SearchResultsPage = ({chatBoxOpen}) => {
     }
     if (location.state?.initialResults && location.state?.initialResults?.length > 0) {
       setProfiles(location.state?.initialResults);
+      console.log("Profiles Data",location.state?.initialResults)
     }
   }, [location.state]);
 

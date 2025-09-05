@@ -6,14 +6,41 @@ import { Link } from 'react-router-dom';
 import { setUser } from '../../../features/user/userSlice';
 import { toast } from '../../Common/Toast';
 import axios from 'axios';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import BoostButton from '../../Common/BoostButton';
 
 const DashProfile = ({onEditClick, notifications}) => {
   const { userInfo, token } = useSelector(state => state.user);
   const dispatch =useDispatch()
   const [pending, setPending] = useState([])
   const [accepted, setAccepted] = useState([])
+  const [completion, setCompletion] = useState(0); // Default until API loads
   const tabComponents = {
     profile: ProfileTab,
+  };
+  // Fetch profile completion percentage from API
+  useEffect(() => {
+    const fetchCompletion = async () => {
+      try {
+        const res = await axios.get(`${config.baseURL}/api/profile/completion`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log("res.data",res.data)
+        setCompletion(res.data.completion.percent || 20); // Example: { percentage: 65 }
+      } catch (error) {
+        console.error("Error fetching profile completion", error);
+      }
+    };
+
+    fetchCompletion();
+  }, [token]);
+
+  // Get progress color
+  const getColor = (percent) => {
+    if (percent < 40) return "#e74c3c"; // Red
+    if (percent < 80) return "#f1c40f"; // Yellow
+    return "#2ecc71"; // Green
   };
 
   const fileInputRef = useRef(null);
@@ -26,7 +53,6 @@ const DashProfile = ({onEditClick, notifications}) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file size (15MB)
       if (file.size > 15 * 1024 * 1024) {
         toast.error('File size should be less than 15MB');
         return;
@@ -41,12 +67,8 @@ const DashProfile = ({onEditClick, notifications}) => {
 
       toast.error(null);
       const reader = new FileReader();
-      // reader.onloadend = () => {
-      //   setPreviewImage(reader.result);
-      // };
       reader.readAsDataURL(file);
 
-      // Upload the file immediately after selection
       uploadProfileImage(file);
     }
   };
@@ -56,9 +78,6 @@ const DashProfile = ({onEditClick, notifications}) => {
     formData.append('profile', file);
 
     try {
-      // setUploadProgress(0);
-      // setUploadSuccess(false)
-
       const response = await axios.post(`${config.baseURL}/api/profile/upload-image`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -68,13 +87,10 @@ const DashProfile = ({onEditClick, notifications}) => {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
           );
-          // setUploadProgress(percentCompleted);
         }
       });
 
-      // setUploadSuccess(true);
       toast.success("Upload successful")
-      // console.log('Upload successful:', response.data);
        const updatedUser = {
       ...userInfo,
       profile_image: response.data.imageUrl,
@@ -119,12 +135,54 @@ const DashProfile = ({onEditClick, notifications}) => {
               onChange={handleImageChange} 
               ref={fileInputRef}
               className="d-none" />
-              <div className="avatar-wrap">
-                <img id="avatarPreview" src={userInfo?.profile_image ?`${config.baseURL}/uploads/profiles/${userInfo?.profile_image}`:"images/userprofile.png"} className="avatar-img img-fluid object-fit-cover" style={{objectPosition: "top" /* This ensures the top of the image is shown */}} alt="avatar" />
-                <span className="avatar-plus" id="uploadTrigger" onClick={handleUploadClick}>
-                  <i className="fa fa-plus" aria-hidden="true"></i>
+
+                {/* Avatar with circular progress */}
+            <div className="avatar-wrap text-center" style={{ width: "120px", margin: "auto" }} >
+              <div style={{ position: "relative", width: "120px", height: "120px" }}>
+                <div style={{ transform: "rotate(180deg)" }}>
+                  <CircularProgressbar
+                    value={completion}
+                    strokeWidth={3}
+                    styles={buildStyles({
+                      pathColor: getColor(completion),
+                      trailColor: "#ccc9c9ff",
+                    })}
+                  />
+                </div>
+
+                {/* Profile Image inside circle */}
+                <img
+                  // id="avatarPreview"
+                  src={userInfo?.profile_image ? `${config.baseURL}/uploads/profiles/${userInfo?.profile_image}` : "images/userprofile.png"}
+                  className="rounded-circle cursor-pointer"
+                  style={{
+                    width: "110px",
+                    height: "110px",
+                    objectFit: "cover",
+                    objectPosition: "top",
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: "50"
+                  }}
+                  alt="avatar"
+                  id="uploadTrigger"
+                  onClick={handleUploadClick}
+                  title='Change profile picture'
+                />
+
+                {/* Upload Button */}
+                <span
+                  className="avatar-plus"
+                >
+                  <div style={{fontSize:"12px",fontWeight: "600", color: getColor(completion) }} title={`Profile ${completion}% complete`}>
+                    {completion}%
+                  </div>
                 </span>
               </div>
+
+            </div>
               <div className="section d-flex justify-content-between align-items-center">
                 <div>
                   <div className="title">{userInfo?.first_name} {userInfo?.last_name}</div>
@@ -139,15 +197,19 @@ const DashProfile = ({onEditClick, notifications}) => {
                 </div>
                 {/* <Link href="#" className="small fw-semibold text-decoration-none" style={{ color: '#d61962' }}>Upgrade</Link> */}
               </div>
-              <div className="section d-flex justify-content-between">
+              <div className="section">
+              <div className='d-flex justify-content-between'>
                 <div>
                   <div className="title" style={{ fontSize: '14px' }}>Blue Tick Verified</div>
-                  <div className="small text-muted">Valid till 4 July 2026</div>
+                  <div className="small text-muted">Valid till 4 July 2026</div>
                 </div>
                 <div className="check-badge">
                   <i className="fa fa-check-square-o" aria-hidden="true"></i>
                 </div>
               </div>
+              {/* <button class="boost-btn" onClick={() => boostProfile(token, userInfo, dispatch)}>🚀 Boost Profile</button> */}
+              <BoostButton/>
+            </div>
             </div>
           </div>
 
@@ -193,7 +255,7 @@ const DashProfile = ({onEditClick, notifications}) => {
               </table>
 
               <hr />
-              <p className="small mb-0 cursor-pointer" onClick={onEditClick}><strong>Improve your Profile</strong></p>
+              <p className="small mb-0 cursor-pointer" onClick={onEditClick}><strong>Complete Profile</strong></p>
             </div>
           </div>
 

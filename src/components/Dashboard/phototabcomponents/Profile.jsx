@@ -5,6 +5,8 @@ import { calculateAge, scrollToBottom, scrollToPercent } from '../../../utils/he
 import { setUser } from '../../../features/user/userSlice';
 import { toast } from '../../Common/Toast';
 import axios from 'axios';
+import { boostProfile } from '../../../features/user/userApi';
+import BoostButton from '../../Common/BoostButton';
 
 const Profile = ({onChangeTab}) => {
   const { userInfo, token } = useSelector(state => state.user);
@@ -109,6 +111,7 @@ const Profile = ({onChangeTab}) => {
               </label>)}
               <input type="file" id="fileUpload" className="d-none" onChange={handleImageChange} accept="image/*"/>
             </div>
+            <BoostButton/>
           </div>
           <div className="col-md-8 col-lg-9">
             <div className="row py-3">
