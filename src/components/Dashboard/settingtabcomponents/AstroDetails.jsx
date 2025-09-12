@@ -4,7 +4,8 @@ import axios from 'axios';
 import config from '../../../config';
 import { useDispatch } from "react-redux";
 import { setUser } from '../../../features/user/userSlice';
-import { RASHI_OPTIONS, NAKSHATRA_OPTIONS, MANGLIK_OPTIONS, CITY_OPTIONS } from '../../../constants/formData';
+import { RASHI_OPTIONS, NAKSHATRA_OPTIONS, MANGLIK_OPTIONS } from '../../../constants/formData';
+import { toast } from "../../Common/Toast";
 
 const AstroDetails = ({ userInfo, token }) => {
   const [isMainOpen, setIsMainOpen] = useState(false);
@@ -17,7 +18,7 @@ const AstroDetails = ({ userInfo, token }) => {
   const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
     birth_time: userInfo?.birth_time || "08:00",
-    birth_city: userInfo?.birth_city || CITY_OPTIONS[0],
+    birth_city: userInfo?.birth_city || "",
     manglik: userInfo?.manglik || "DontKnow",
     nakshatra: userInfo?.nakshatra || NAKSHATRA_OPTIONS[1].key,
     rashi: userInfo?.rashi || RASHI_OPTIONS[0].key
@@ -74,6 +75,7 @@ const AstroDetails = ({ userInfo, token }) => {
 
       setSuccess(`${type === 'settings' ? 'Privacy' : 'Astro'} settings updated successfully!`);
       setTimeout(() => setSuccess(""), 2000);
+      toast.success("Astro details updated successfully!")
     } catch (err) {
       setError(err.response?.data?.message || `Failed to update ${type} settings`);
     } finally {
@@ -311,7 +313,7 @@ const AstroDetails = ({ userInfo, token }) => {
 
             <div className="mb-3">
               <label htmlFor="raashi" className="form-label">
-                Raashi
+                Zodiac Sign(Raashi)
               </label>
               <small className="d-block text-muted">
                 This is based on lunar star sign.

@@ -108,7 +108,7 @@ const RecentVisitors = () => {
         await axios.post(`${config.baseURL}/api/notifications/send`, {
           receiver_user_id: id,
           receiver_profile_id: profileId,
-          sender_user_id: user?.id,
+          sender_user_id: user?.user_id,
           sender_profile_id: user?.profileId,
           type: "connect",
           message: `${user?.first_name} wants to connect with you`,

@@ -6,6 +6,7 @@ import MyMatches from './MyMatches';
 import NearMeMatches from './NearMeMatches';
 import MoreMatches from './MoreMatches';
 import Shortlisted from "./Shortlisted";
+import DNAMatches from "./DNAMatches";
 import ChatBox from "../inbox/components/ChatBox";
 
 // Tab component mapping
@@ -13,6 +14,7 @@ const tabComponents = {
   matches: NewMatches,
   todays: TodaysMatches,
   mymatches: MyMatches,
+  dnaMatches:DNAMatches,
   nearme: NearMeMatches,
   shortlisted: Shortlisted,
   // morematches: MoreMatches,
@@ -26,6 +28,7 @@ const tabHeadings = {
   nearme: "Near Me",
   // morematches: "More Matches",
   shortlisted:"Shortlisted",
+  dnaMatches:"DNA + HLA Matches"
 };
 
 const Matches = () => {

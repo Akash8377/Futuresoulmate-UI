@@ -66,7 +66,7 @@ const ProfileDetails = ({ currentProfile, matchingRatio }) => {
         <div className="timeline-icon"><i className="fa fa-glass" aria-hidden="true"></i></div>
         <h5 className="section-title">Lifestyle</h5>
         <div className="card-box text-center">
-          <img src="images/egg.png" alt="Egg" width="40" />
+          {/* <img src="images/egg.png" alt="Egg" width="40" /> */}
           <p className="mt-2 mb-0">{currentProfile.diet || 'Diet information not available'}</p>
         </div>
       </div>
@@ -77,7 +77,6 @@ const ProfileDetails = ({ currentProfile, matchingRatio }) => {
         <h5 className="section-title">Background</h5>
         <div className="card-box">
           <p><i className="fa fa-user" aria-hidden="true"></i> {currentProfile.religion}, {currentProfile.mother_tongue || currentProfile.community}</p>
-          <p><i className="fa fa-user" aria-hidden="true"></i> {currentProfile.sub_community}</p>
           <p><i className="fa fa-map-marker" aria-hidden="true"></i> Lives in {currentProfile.city}, {currentProfile.country}</p>
         </div>
       </div>

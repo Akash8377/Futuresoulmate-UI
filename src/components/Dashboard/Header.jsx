@@ -99,16 +99,6 @@ const Header = ({ unreadNotificationCount }) => {
                 Profile
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink
-                className="nav-link text-white"
-                to="/hla-dna"
-                title="DNA"
-                onClick={() => setActiveTab("")}
-              >
-                HLA + DNA
-              </NavLink>
-            </li>
             <li className="nav-item position-relative">
               <NavLink
                 className="nav-link text-white"

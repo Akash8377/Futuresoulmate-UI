@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import tippy from 'tippy.js';
 import axios from "axios";
-import config from "../../../../config";
-import { toast } from '../../../Common/Toast';
+import config from "../../../../../config";
+import { toast } from '../../../../Common/Toast';
 import 'tippy.js/dist/tippy.css';
-import { hlaData, hlaQuestions } from '../../../../constants/formData';
+import { hlaData, hlaQuestions } from '../../../../../constants/formData';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../../../features/user/userSlice';
+import { setUser } from '../../../../../features/user/userSlice';
 
 // Popup Component for Allele Descriptions
 const AllelePopup = ({ showPopup, setShowPopup }) => {

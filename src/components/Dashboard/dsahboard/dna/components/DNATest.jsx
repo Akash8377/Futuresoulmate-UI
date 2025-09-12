@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import config from "../../../../config"
+import config from "../../../../../config"
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import { useSelector } from 'react-redux';
-import { toast } from '../../../Common/Toast';
+import { toast } from '../../../../Common/Toast';
 import axios from "axios";
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../../../features/user/userSlice';
+import { setUser } from '../../../../../features/user/userSlice';
 
 const geneData = {
   step1: [

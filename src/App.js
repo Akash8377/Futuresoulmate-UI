@@ -18,7 +18,6 @@ import SearchResultsPage from './components/Dashboard/search/SearchResultsPage.j
 import Inbox from './components/Dashboard/inbox/Inbox.jsx';
 import OnboardingLayout from './components/Layout/OnboardingLayout';
 import DashboardLayout from './components/Layout/DashboardLayout';
-import HLA_DNA from './components/Dashboard/dna/HLA_DNA.jsx'
 import GeneticBiological from './components/Dashboard/dna/components/Biological.jsx';
 import GeneticPhyscological from './components/Dashboard/dna/components/Psycholigical.jsx';
 import GeneticBirthDefect from './components/Dashboard/dna/components/BirthDefect.jsx';
@@ -75,11 +74,10 @@ function App() {
           <Route path="/search-profile" element={<Search />} />
           <Route path="/search-results" element={<SearchResultsPage />} />
           <Route path="/inbox" element={<Inbox />} />
-          <Route path="/hla-dna" element={<HLA_DNA />} />
           <Route path="/gentics-biological-attraction" element={<GeneticBiological />} />
           <Route path="/gentics-psychological-compatibility" element={<GeneticPhyscological />} />
           <Route path="/gentics-birth-defect-risk" element={<GeneticBirthDefect />} />
-          <Route path="//identity-enrichment" element={<IdentityEnrichment />} />
+          <Route path="/identity-enrichment" element={<IdentityEnrichment />} />
         </Route>
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />

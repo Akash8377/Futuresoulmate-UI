@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import RefineSearchSidebar from "../../Matches/components/RefineSearchSidebar";
-import ProfileCard from "../../Matches/components/ProfileCard";
-import Pagination from "../../Matches/components/Pagination";
+import { useSelector, useDispatch } from "react-redux";
+import RefineSearchSidebar from "./components/RefineSearchSidebar";
+import ProfileCard from "./components/ProfileCard";
+import Pagination from "./components/Pagination";
 import axios from "axios";
-import config from "../../../../config";
-import { toast } from "../../../Common/Toast";
+import config from "../../../config";
+import { toast } from "../../Common/Toast";
+import { setUser } from "../../../features/user/userSlice";
+import { use } from "react";
 
-const DNAMatches = ({chatBoxOpen, key}) => {
+const DNAMatches = ({chatBoxOpen, key=null}) => {
   const [activeCarouselIndex, setActiveCarouselIndex] = useState(0);
   const [profiles, setProfiles] = useState([]);
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [dnaMatches, setDnaMatches] = useState(true);
   const profilesPerPage = 5;
-
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.userInfo);
+  const token = useSelector((state) => state.user.token);
 //   console.log("user info:", user)
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
@@ -40,6 +43,47 @@ const DNAMatches = ({chatBoxOpen, key}) => {
     }
   };
 
+    useEffect(() => {
+      // Fetch existing genetic marker data
+  const fetchGeneticMarkers = async () => {
+    try {
+  
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+  
+      const response = await axios.get(
+        `${config.baseURL}/api/dna/get-genetic-markers`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const data = response.data;
+      // console.log("Fetched Data:", data);
+  
+      if (data.grouped_genetic_markers) {
+        // console.log("flattenedData ",data.grouped_genetic_markers)
+        const updatedUserInfo = {...user, grouped_genetic_markers:{...data.grouped_genetic_markers}}
+        dispatch(setUser({
+          userInfo: updatedUserInfo,
+          token: token,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching genetic markers:", error);
+      if (error.response) {
+        console.error("Server response:", error.response.data);
+      }
+    }
+  };
+      fetchGeneticMarkers();
+    }, []);
+
   useEffect(() => {
     if (searchFor) fetchFilteredProfiles();
   }, [filters, searchFor, key]);
@@ -54,7 +98,7 @@ const DNAMatches = ({chatBoxOpen, key}) => {
       await axios.post(`${config.baseURL}/api/notifications/send`, {
         receiver_user_id: id,
         receiver_profile_id:profileId,
-        sender_user_id: user?.id,
+        sender_user_id: user?.user_id,
         sender_profile_id: user?.profileId,
         type: "connect",
         message: `${user?.first_name} wants to connect with you`,

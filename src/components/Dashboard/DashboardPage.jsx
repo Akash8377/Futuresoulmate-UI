@@ -6,6 +6,7 @@ import PhotosTab from "./PhotosTab";
 import PartnerTab from "./PartnerTab";
 import SettingsTab from "./SettingsTab";
 import MoreTab from "./MoreTab";
+import HLA_DNA from "./dsahboard/dna/HLA_DNA"
 import { useLocation } from 'react-router-dom';
 import ChatBox from "./inbox/components/ChatBox";
 
@@ -17,6 +18,7 @@ const tabComponents = {
   partner: PartnerTab,
   settings: SettingsTab,
   more: MoreTab,
+  dnaHla:HLA_DNA,
 };
 
 // Headings mapping
@@ -27,6 +29,7 @@ const tabHeadings = {
   partner: "Partner Preferences",
   settings: "Settings",
   more: "More",
+  dnaHla:"DNA + HLA Test"
 };
 
 const DashboardPage = () => {

@@ -1191,16 +1191,51 @@ export const HOBBIES = [
 
 // src/data/astroData.js
 export const RASHI_OPTIONS = [
+  { key: "Aries (Mesh)", label: "Aries (Mesh)" },
+  { key: "Taurus (Vrishabh)", label: "Taurus (Vrishabh)" },
+  { key: "Gemini (Mithun)", label: "Gemini (Mithun)" },
+  { key: "Cancer (Karka)", label: "Cancer (Karka)" },
+  { key: "Leo (Simha)", label: "Leo (Simha)" },
+  { key: "Virgo (Kanya)", label: "Virgo (Kanya)" },
+  { key: "Libra (Tula)", label: "Libra (Tula)" },
+  { key: "Scorpio (Vrischik)", label: "Scorpio (Vrischik)" },
+  { key: "Sagittarius (Dhanu)", label: "Sagittarius (Dhanu)" },
   { key: "Capricorn (Makar)", label: "Capricorn (Makar)" },
   { key: "Aquarius (Kumbh)", label: "Aquarius (Kumbh)" },
   { key: "Pisces (Meen)", label: "Pisces (Meen)" }
 ];
 
+
 export const NAKSHATRA_OPTIONS = [
-  { key: "Uttra Ashadha", label: "Uttra Ashadha" },
+  { key: "Ashwini", label: "Ashwini" },
+  { key: "Bharani", label: "Bharani" },
+  { key: "Krittika", label: "Krittika" },
+  { key: "Rohini", label: "Rohini" },
+  { key: "Mrigashira", label: "Mrigashira" },
+  { key: "Ardra", label: "Ardra" },
+  { key: "Punarvasu", label: "Punarvasu" },
+  { key: "Pushya", label: "Pushya" },
+  { key: "Ashlesha", label: "Ashlesha" },
+  { key: "Magha", label: "Magha" },
+  { key: "Purva Phalguni", label: "Purva Phalguni" },
+  { key: "Uttara Phalguni", label: "Uttara Phalguni" },
+  { key: "Hasta", label: "Hasta" },
+  { key: "Chitra", label: "Chitra" },
+  { key: "Swati", label: "Swati" },
+  { key: "Vishakha", label: "Vishakha" },
+  { key: "Anuradha", label: "Anuradha" },
+  { key: "Jyeshtha", label: "Jyeshtha" },
+  { key: "Moola", label: "Moola" },
+  { key: "Purva Ashadha", label: "Purva Ashadha" },
+  { key: "Uttara Ashadha", label: "Uttara Ashadha" },
   { key: "Shravana", label: "Shravana" },
-  { key: "Dhanistha", label: "Dhanistha" }
+  { key: "Dhanishta", label: "Dhanishta" },
+  { key: "Shatabhisha", label: "Shatabhisha" },
+  { key: "Purva Bhadrapada", label: "Purva Bhadrapada" },
+  { key: "Uttara Bhadrapada", label: "Uttara Bhadrapada" },
+  { key: "Revati", label: "Revati" }
 ];
+
 
 export const MANGLIK_OPTIONS = [
   { key: "Manglik", label: "Manglik" },
@@ -1209,51 +1244,6 @@ export const MANGLIK_OPTIONS = [
   { key: "Not Sure", label: "Not Sure" }
 ];
 
-export const CITY_OPTIONS = [
-  "Faridabad, Haryana, India",
-  "Delhi, India",
-  "Mumbai, India",
-  "Bangalore, India"
-];
-
-// HLA Allele Options and Descriptions
-// export const hlaData = {
-//   options: {
-//     "HLA-A": ["HLA-A*01", "HLA-A*02", "HLA-A*03", "HLA-A*11", "HLA-A*23", "HLA-A*24", "HLA-A*25", "HLA-A*26", "HLA-A*29", "HLA-A*30", "HLA-A*31", "HLA-A*32", "HLA-A*33", "HLA-A*34", "HLA-A*68", "HLA-A*69", "Other"],
-//     "HLA-B": ["HLA-B*07", "HLA-B*08", "HLA-B*13", "HLA-B*15", "HLA-B*18", "HLA-B*27", "HLA-B*35", "HLA-B*37", "HLA-B*38", "HLA-B*39", "HLA-B*40", "HLA-B*44", "HLA-B*45", "HLA-B*49", "HLA-B*50", "HLA-B*51", "HLA-B*52", "HLA-B*53", "HLA-B*57", "HLA-B*58", "Other"],
-//     "HLA-C": ["HLA-C*01", "HLA-C*02", "HLA-C*03", "HLA-C*04", "HLA-C*05", "HLA-C*06", "HLA-C*07", "HLA-C*08", "HLA-C*12", "HLA-C*14", "HLA-C*15", "HLA-C*16", "Other"],
-//     "HLA-DPA1": ["HLA-DPA1*01", "HLA-DPA1*02", "HLA-DPA1*03", "HLA-DPA1*04", "Other"],
-//     "HLA-DPB1": ["HLA-DPB1*01", "HLA-DPB1*02", "HLA-DPB1*03", "HLA-DPB1*04", "HLA-DPB1*05", "Other"],
-//     "HLA-DQA1": ["HLA-DQA1*01", "HLA-DQA1*02", "HLA-DQA1*03", "HLA-DQA1*04", "HLA-DQA1*05", "Other"],
-//     "HLA-DQB1": ["HLA-DQB1*02", "HLA-DQB1*03", "HLA-DQB1*04", "HLA-DQB1*05", "HLA-DQB1*06", "Other"],
-//     "HLA-DRB1": ["HLA-DRB1*01", "HLA-DRB1*03", "HLA-DRB1*04", "HLA-DRB1*07", "HLA-DRB1*08", "HLA-DRB1*09", "HLA-DRB1*10", "HLA-DRB1*11", "HLA-DRB1*12", "HLA-DRB1*13", "HLA-DRB1*14", "HLA-DRB1*15", "HLA-DRB1*16", "Other"],
-//     "HLA-DRB3": ["DRB3*01", "DRB3*02", "DRB3*03", "Other"],
-//     "HLA-DRB4": ["DRB4*01", "Other"],
-//     "HLA-DRB5": ["DRB5*01", "Other"]
-//   },
-//   descriptions: {
-//     "HLA-A": "Human Leukocyte Antigen A - involved in immune system regulation and presentation of peptides from inside the cell",
-//     "HLA-B": "Human Leukocyte Antigen B - plays a critical role in the immune system by presenting peptide antigens to T-cells",
-//     "HLA-C": "Human Leukocyte Antigen C - involved in immune system regulation, particularly in natural killer cell function",
-//     "HLA-DPA1": "Human Leukocyte Antigen DP alpha chain - involved in antigen presentation to immune cells",
-//     "HLA-DPB1": "Human Leukocyte Antigen DP beta chain - works with DPA1 to present antigens to T-cells",
-//     "HLA-DQA1": "Human Leukocyte Antigen DQ alpha chain - involved in immune response and associated with autoimmune diseases",
-//     "HLA-DQB1": "Human Leukocyte Antigen DQ beta chain - forms heterodimers with DQA1 to present antigens",
-//     "HLA-DRB1": "Human Leukocyte Antigen DR beta chain - critical for immune response and associated with many autoimmune conditions",
-//     "HLA-DRB3": "Human Leukocyte Antigen DR beta chain 3 - variant of DRB involved in immune response",
-//     "HLA-DRB4": "Human Leukocyte Antigen DR beta chain 4 - variant of DRB involved in immune response",
-//     "HLA-DRB5": "Human Leukocyte Antigen DR beta chain 5 - variant of DRB involved in immune response",
-//     // Specific allele descriptions
-//     "HLA-A*01": "Associated with slower HIV progression and certain autoimmune diseases",
-//     "HLA-A*02": "Most common HLA-A allele in many populations, associated with some cancer immunotherapies",
-//     "HLA-A*03": "Associated with hemochromatosis and some autoimmune conditions",
-//     "HLA-B*27": "Strongly associated with ankylosing spondylitis and other seronegative spondyloarthropathies",
-//     "HLA-B*57": "Associated with slow HIV progression and hypersensitivity to abacavir",
-//     "HLA-DRB1*15": "Strongly associated with multiple sclerosis",
-//     "HLA-DQB1*06": "Associated with narcolepsy and multiple sclerosis",
-//     "HLA-DRB1*04": "Associated with rheumatoid arthritis and type 1 diabetes",
-//   }
-// };
 export const hlaData = {
   options: {
     "HLA-A": ["HLA-A*01", "HLA-A*02", "HLA-A*03", "HLA-A*11", "HLA-A*23", "HLA-A*24", "HLA-A*25", "HLA-A*26", "HLA-A*29", "HLA-A*30", "HLA-A*31", "HLA-A*32", "HLA-A*33", "HLA-A*34", "HLA-A*68", "HLA-A*69", "Other"],

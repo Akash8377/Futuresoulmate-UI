@@ -105,7 +105,7 @@ const SettingsTab = () => {
               <AccountSetting userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('account_setting')} onDataChange={(field, value) => handleDataChange('account_setting', field, value)}/>
               <MyContactSetting userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('contact_settings')} onDataChange={(field, value) => handleDataChange('contact_settings', field, value)}/>
               <ContactFilter userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('contact_filter')} onDataChange={(field, value) => handleDataChange('contact_filter', field, value)}/>
-              {/* <AstroDetails userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('astro')} onDataChange={(field, value) => handleDataChange('astro', field, value)}/> */}
+              <AstroDetails userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('astro')} onDataChange={(field, value) => handleDataChange('astro', field, value)}/>
               <EmailSmsAlert userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('email_sms_alert')} onDataChange={(field, value) => handleDataChange('email_sms_alert', field, value)}/>
               <PrivacyOptions userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('privacy')} onDataChange={(field, value) => handleDataChange('privacy', field, value)}/>    
               <ShadiLive userInfo={userInfo} token={token}  onSaveClick={() => handleSaveClick('shadi_live')} onDataChange={(field, value) => handleDataChange('shadi_live', field, value)}/>
