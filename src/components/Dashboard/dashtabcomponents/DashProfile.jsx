@@ -193,7 +193,7 @@ const DashProfile = ({onEditClick, notifications}) => {
               <div className="section d-flex justify-content-between align-items-center">
                 <div>
                   <div className="small text-muted mb-1">Account Type</div>
-                  <div className="fw-semibold" style={{ fontSize: '14px' }}>Free Membership</div>
+                  <div className="fw-semibold" style={{ fontSize: '14px' }}>{userInfo.plan_status === "active" ? userInfo.plan_name : "Free Membership"}</div>
                 </div>
                 {/* <Link href="#" className="small fw-semibold text-decoration-none" style={{ color: '#d61962' }}>Upgrade</Link> */}
               </div>
@@ -240,9 +240,6 @@ const DashProfile = ({onEditClick, notifications}) => {
                 <tbody>
                   <tr className="head">
                     <td style={{ width: '33.33%' }}>
-                      <span className="text-primary fw-semibold">Only Premium Members</span> can avail these benefits <i className="fa fa-lock" aria-hidden="true" style={{ color: '#d61962' }}></i>
-                    </td>
-                    <td style={{ width: '33.33%' }}>
                       0<br />
                       <span className="fw-normal text-muted small">Contacts Viewed</span>
                     </td>
@@ -250,6 +247,9 @@ const DashProfile = ({onEditClick, notifications}) => {
                       0<br />
                       <span className="fw-normal text-muted small">Chats initiated</span>
                     </td>
+                    <td style={{ width: '33.33%' }}>{userInfo.plan_status === "active" ? null :(
+                      <><span className="text-primary fw-semibold">Only Premium Members</span> can avail these benefits <i className="fa fa-lock" aria-hidden="true" style={{ color: '#d61962' }}></i></>
+                    )}</td>
                   </tr>
                 </tbody>
               </table>

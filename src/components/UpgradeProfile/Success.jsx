@@ -3,18 +3,19 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
-  const sessionId = searchParams.get('session_id') || 'cs_test_a1fQrnWTIuYydLbTy02dqOvv0CsfRjDvRXDDeqzcbFCzBuE2dtcpfgMiKB';
+  const sessionId = searchParams.get('session_id');
 
   return (
+    <div className='suuces-payment'>
     <div className="container-fluid min-vh-100 bg-light">
       <div className="row justify-content-center py-5">
         <div className="col-md-6 col-lg-5">
           <div className="card shadow border-0">
-            <div className="card-body p-5 text-center">
+            <div className="card-body p-2 text-center">
               {/* Success Icon */}
               <div className="mb-4">
                 <div 
-                  className="rounded-circle bg-success d-inline-flex align-items-center justify-content-center" 
+                  className="rounded-circle d-inline-flex align-items-center justify-content-center" 
                   style={{ width: '80px', height: '80px' }}
                 >
                   <svg 
@@ -32,7 +33,7 @@ const PaymentSuccess = () => {
               </div>
 
               {/* Success Message */}
-              <h2 className="card-title mb-3 text-success">
+              <h2 className="card-title mb-3">
                 Payment Successful!
               </h2>
               
@@ -41,7 +42,7 @@ const PaymentSuccess = () => {
               </p>
 
               {sessionId && (
-                <div className="alert alert-success mb-4 text-start">
+                <div className="alert alert-successname mb-4 text-start">
                   <h6 className="alert-heading">Reference ID</h6>
                   <p className="mb-0">{sessionId}</p>
                 </div>
@@ -52,21 +53,21 @@ const PaymentSuccess = () => {
                 <Link 
                   to="/dashboard" 
                   className="btn py-2"
-                  style={{ backgroundColor: 'var(--color-primary)', borderColor: 'var(--color-primary)', color: 'white' }}
+                  style={{ backgroundColor: 'var(--color-secondary)', borderColor: 'var(--color-secondary)', color: 'white' }}
                 >
                   Go to Dashboard
                 </Link>
                 
                 <Link 
                   to="/matches" 
-                  className="btn btn-outline-success py-2"
+                  className="btn btn-outline-btn py-2"
                 >
                   Find Matches
                 </Link>
                 
                 <Link 
                   to="/" 
-                  className="btn btn-link text-muted"
+                  className="btn btn-link return-home"
                 >
                   Return Home
                 </Link>
@@ -75,6 +76,7 @@ const PaymentSuccess = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -7,11 +7,11 @@ const PaymentCancel = () => {
       <div className="row justify-content-center py-5">
         <div className="col-md-6 col-lg-5">
           <div className="card shadow border-0">
-            <div className="card-body p-5 text-center">
+            <div className="card-body p-2 text-center">
               {/* Cancel Icon */}
               <div className="mb-4">
                 <div 
-                  className="rounded-circle bg-warning d-inline-flex align-items-center justify-content-center" 
+                  className="rounded-circle bg-danger d-inline-flex align-items-center justify-content-center" 
                   style={{ width: '80px', height: '80px' }}
                 >
                   <svg 
@@ -29,7 +29,8 @@ const PaymentCancel = () => {
               </div>
 
               {/* Cancel Message */}
-              <h2 className="card-title mb-3" style={{ color: 'var(--color-secondary)' }}>
+              <div className='cancel-part'>
+              <h2 className="card-title mb-3">
                 Payment Cancelled
               </h2>
               
@@ -42,6 +43,7 @@ const PaymentCancel = () => {
                 <p className="mb-0">
                   You can upgrade your profile anytime from your dashboard to access premium features.
                 </p>
+              </div>
               </div>
 
               {/* Action Buttons */}
@@ -56,14 +58,14 @@ const PaymentCancel = () => {
                 
                 <Link 
                   to="/dashboard" 
-                  className="btn btn-outline-secondary py-2"
+                  className="btn return-dash py-2"
                 >
                   Return to Dashboard
                 </Link>
                 
                 <Link 
                   to="/search-profile" 
-                  className="btn btn-link text-muted"
+                  className="btn btn-link continue-cancel"
                 >
                   Continue with free features
                 </Link>

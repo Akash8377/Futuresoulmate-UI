@@ -16,6 +16,7 @@ const Header = ({ unreadNotificationCount }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.userInfo);
+  // console.log("UserInfo", user)
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
   const [profiles, setProfiles] = useState([]);
@@ -156,7 +157,7 @@ const Header = ({ unreadNotificationCount }) => {
 
           <div className="d-flex align-items-center gap-1 ms-lg-3">
             <button className="btn btn-sm btn-outline-light btn-upgrade d-flex align-items-center gap-1" onClick={()=> navigate('/upgrade-profile')}>
-              <i className="bi bi-gem"></i> Upgrade Now
+              <i className="bi bi-gem"></i> {user.plan_name && user.plan_status === "active"? user.plan_name : "Upgrade Now"}
             </button>
 
             {/* Help Dropdown */}
