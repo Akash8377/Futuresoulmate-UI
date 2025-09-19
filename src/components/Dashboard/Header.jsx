@@ -93,7 +93,7 @@ const Header = ({ unreadNotificationCount }) => {
               <NavLink
                 className="nav-link text-white"
                 to="/dashboard"
-                title="My Shaadi"
+                title="My Profile"
                 onClick={() => setActiveTab("")}
               >
                 Profile
@@ -155,7 +155,7 @@ const Header = ({ unreadNotificationCount }) => {
           </ul>
 
           <div className="d-flex align-items-center gap-1 ms-lg-3">
-            <button className="btn btn-sm btn-outline-light btn-upgrade d-flex align-items-center gap-1">
+            <button className="btn btn-sm btn-outline-light btn-upgrade d-flex align-items-center gap-1" onClick={()=> navigate('/upgrade-profile')}>
               <i className="bi bi-gem"></i> Upgrade Now
             </button>
 

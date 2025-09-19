@@ -1,5 +1,5 @@
 :root {
-  --color-primary: #0977AF;
+  --color-primary: #0977af;
   --color-secondary: #df8525;
   --shaadi-grey: #575757;
   --shaadi-light: #f6f6f6;
@@ -175,7 +175,6 @@ img.brand-logo {
 
 /* underline caret for active tab */
 
-
 .btn-upgrade {
   color: #fff;
   border-color: #fff;
@@ -302,7 +301,6 @@ span.click-here {
 
 .profile-edit-list div a {
   color: #2f3132;
-  ;
   text-decoration: none;
 }
 
@@ -435,7 +433,7 @@ span.click-here {
   font-size: 13px;
 }
 
-.match-row+.match-row {
+.match-row + .match-row {
   border-top: 1px solid #e5e5e5;
 }
 
@@ -534,17 +532,17 @@ span.click-here {
   font-size: 1.7rem;
   cursor: pointer;
 } */
- .avatar-plus {
-      position: absolute;
-    bottom: -9px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #ffffff;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+.avatar-plus {
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 span#uploadTrigger i {
@@ -578,7 +576,7 @@ span#uploadTrigger i {
   gap: 0.75rem;
 }
 
-.notif-row+.notif-row {
+.notif-row + .notif-row {
   border-top: 1px solid #e5e5e5;
 }
 
@@ -1724,7 +1722,8 @@ span#uploadTrigger i {
 }
 
 @media (max-width: 576px) {
-  .pagination-part .page-item:not(.active):not(:first-child):not(:last-child):not(.disabled) {
+  .pagination-part
+    .page-item:not(.active):not(:first-child):not(:last-child):not(.disabled) {
     display: none;
   }
 }
@@ -2386,15 +2385,15 @@ ul#search-tabs {
   display: none;
 }
 
-.chat-box #tab-alerts:checked~.content #alerts,
-.chat-box #tab-chats:checked~.content #chats,
-.chat-box #tab-active:checked~.content #active {
+.chat-box #tab-alerts:checked ~ .content #alerts,
+.chat-box #tab-chats:checked ~ .content #chats,
+.chat-box #tab-active:checked ~ .content #active {
   display: block;
 }
 
-.chat-box #tab-alerts:checked~.tabs label[for="tab-alerts"],
-.chat-box #tab-chats:checked~.tabs label[for="tab-chats"],
-.chat-box #tab-active:checked~.tabs label[for="tab-active"] {
+.chat-box #tab-alerts:checked ~ .tabs label[for="tab-alerts"],
+.chat-box #tab-chats:checked ~ .tabs label[for="tab-chats"],
+.chat-box #tab-active:checked ~ .tabs label[for="tab-active"] {
   background-color: var(--color-primary);
   color: var(--shaadi-light);
 }
@@ -2921,7 +2920,9 @@ ul#search-tabs {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -2935,7 +2936,7 @@ ul#search-tabs {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: .875rem;
+  font-size: 0.875rem;
   word-wrap: break-word;
   opacity: 0;
 }
@@ -2984,7 +2985,7 @@ table.dnatable {
 
 table.dnatable caption {
   font-size: 1.5em;
-  margin: .5em 0 0;
+  margin: 0.5em 0 0;
   color: var(--color-primary);
   caption-side: top;
   text-align: center;
@@ -3025,21 +3026,21 @@ table.dnatable caption {
 }
 
 table.dnatable th {
-  font-size: .85em;
-  letter-spacing: .1em;
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 table.dnatable th,
 table.dnatable td {
-  padding: .625em;
+  padding: 0.625em;
   text-align: left;
 }
 
 table.dnatable tr {
   background-color: #f8f8f8;
   border: 1px solid #ddd;
-  padding: .35em;
+  padding: 0.35em;
 }
 
 table.dnatable tr:nth-child(odd),
@@ -3068,9 +3069,9 @@ table.dnatable tr:nth-child(odd),
 .pill {
   background-color: #fff;
   border-radius: 2em;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
   display: inline-block;
-  padding: .3em .5em;
+  padding: 0.3em 0.5em;
   font-size: 13px;
   font-weight: 600;
 }
@@ -3086,7 +3087,7 @@ table.dnatable tr:nth-child(odd),
 
 .dna-wrapper h3 {
   font-size: 20px;
-  color: var(--color-primary)
+  color: var(--color-primary);
 }
 
 .result_table table {
@@ -3149,7 +3150,7 @@ button#search-tabs-tab-dna-matches {
 /* page container */
 .report-page .wrap {
   max-width: 1220px;
-  margin: 0 auto
+  margin: 0 auto;
 }
 
 /* hero header */
@@ -3159,17 +3160,17 @@ button#search-tabs-tab-dna-matches {
   color: #fff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 18px rgba(20, 84, 108, .15)
+  box-shadow: 0 8px 18px rgba(20, 84, 108, 0.15);
 }
 
 .report-page .hero-inner {
   display: grid;
-  grid-template-columns: 1.4fr .9fr;
-  gap: 10px
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 10px;
 }
 
 .report-page .hero-left {
-  padding: 20px 22px 18px
+  padding: 20px 22px 18px;
 }
 
 .report-page .hero-left h1 {
@@ -3183,7 +3184,7 @@ button#search-tabs-tab-dna-matches {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }
 
 .report-page .hero-sub span {
@@ -3199,11 +3200,11 @@ button#search-tabs-tab-dna-matches {
   border-radius: 4px;
   padding: 6px 10px;
   font-weight: 700;
-  text-decoration: none
+  text-decoration: none;
 }
 
 .report-page .modify:hover {
-  filter: brightness(.98)
+  filter: brightness(0.98);
 }
 
 .report-page .badge img {
@@ -3219,38 +3220,38 @@ button#search-tabs-tab-dna-matches {
 /* stats card on right */
 .report-page .stats {
   background: #df85254f;
-  border-left: 1px solid rgba(255, 255, 255, .25);
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
   padding: 16px;
   border-radius: 0 8px 8px 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px
+  gap: 10px;
 }
 
 .report-page .stat {
   background: var(--color-secondary);
-  border: 1px solid rgba(255, 255, 255, .35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   backdrop-filter: saturate(120%);
   border-radius: 8px;
   padding: 10px;
-  text-align: center
+  text-align: center;
 }
 
 .report-page .stat b {
   display: block;
   font-size: 18px;
-  margin-bottom: 2px
+  margin-bottom: 2px;
 }
 
 .report-page .stat span {
   font-size: 12px;
-  opacity: .95
+  opacity: 0.95;
 }
 
 /* column header band */
 .report-page .band {
   display: grid;
-  grid-template-columns: 2.2fr .6fr 2.2fr 2fr 1.1fr;
+  grid-template-columns: 2.2fr 0.6fr 2.2fr 2fr 1.1fr;
   align-items: center;
   background: #5a5a5a;
   color: #fff;
@@ -3258,33 +3259,33 @@ button#search-tabs-tab-dna-matches {
   margin-top: 14px;
   padding: 11px 14px;
   font-weight: 700;
-  letter-spacing: .02em
+  letter-spacing: 0.02em;
 }
 
 .report-page .band div {
   display: flex;
   gap: 8px;
-  align-items: center
+  align-items: center;
 }
 
 .report-page .ico {
   display: inline-block;
   width: 18px;
   height: 18px;
-  opacity: .95
+  opacity: 0.95;
 }
 
 .report-page .ico svg {
   width: 18px;
   height: 18px;
   display: block;
-  fill: #fff
+  fill: #fff;
 }
 
 /* result rows */
 .report-page .row1 {
   display: grid;
-  grid-template-columns: 2.2fr .6fr 2.2fr 2fr 1.1fr;
+  grid-template-columns: 2.2fr 0.6fr 2.2fr 2fr 1.1fr;
   gap: 0;
   border: 1px solid var(--border);
   border-top: none;
@@ -3293,7 +3294,7 @@ button#search-tabs-tab-dna-matches {
 }
 
 .report-page .row1:first-of-type {
-  border-top: 1px solid var(--border)
+  border-top: 1px solid var(--border);
 }
 
 .report-page .cell {
@@ -3314,30 +3315,30 @@ button#search-tabs-tab-dna-matches {
 .report-page .badge svg {
   width: 18px;
   height: 18px;
-  fill: #fff
+  fill: #fff;
 }
 
 .report-page .namebox {
-  min-width: 0
+  min-width: 0;
 }
 
 .report-page .namebox a {
   color: var(--color-primary);
   font-weight: 700;
   text-decoration: none;
-  font-size: 17px
+  font-size: 17px;
 }
 
 .report-page .namebox a:hover {
-  text-decoration: underline
+  text-decoration: underline;
 }
 
 .report-page .subcity {
   font-size: 12px;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
   color: #6b7d86;
   margin-top: 2px;
-  text-transform: uppercase
+  text-transform: uppercase;
 }
 
 /* age */
@@ -3350,11 +3351,11 @@ button#search-tabs-tab-dna-matches {
 .report-page .list {
   margin: 0;
   padding-left: 16px;
-  color: #33464f
+  color: #33464f;
 }
 
 .report-page .list li {
-  margin: .15rem 0;
+  margin: 0.15rem 0;
   color: #000;
 }
 
@@ -3366,7 +3367,7 @@ button#search-tabs-tab-dna-matches {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fbfdff
+  background: #fbfdff;
 }
 
 .report-page .vname {
@@ -3374,7 +3375,7 @@ button#search-tabs-tab-dna-matches {
   color: #4f6b77;
   display: flex;
   align-items: center;
-  gap: 6px
+  gap: 6px;
 }
 
 .report-page .vname .tick {
@@ -3383,13 +3384,13 @@ button#search-tabs-tab-dna-matches {
   border-radius: 50%;
   background: #58c37e;
   display: grid;
-  place-items: center
+  place-items: center;
 }
 
 .report-page .vname .tick svg {
   width: 10px;
   height: 10px;
-  fill: #fff
+  fill: #fff;
 }
 
 /* action cell */
@@ -3409,7 +3410,7 @@ button#search-tabs-tab-dna-matches {
   padding: 10px 14px;
   border-radius: 4px;
   font-weight: 600;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   cursor: pointer;
   text-decoration: none;
@@ -3420,7 +3421,7 @@ button#search-tabs-tab-dna-matches {
 }
 
 .report-page .btn:hover {
-  background: var(--color-secondary)
+  background: var(--color-secondary);
 }
 
 .report-page .likelihood {
@@ -3428,23 +3429,23 @@ button#search-tabs-tab-dna-matches {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #6a7d88
+  color: #6a7d88;
 }
 
 .report-page .dots {
   display: inline-flex;
-  gap: 3px
+  gap: 3px;
 }
 
 .report-page .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #c7e9d4
+  background: #c7e9d4;
 }
 
 .report-page .dot.on {
-  background: #36b36a
+  background: #36b36a;
 }
 
 /* pagination */
@@ -3452,7 +3453,7 @@ button#search-tabs-tab-dna-matches {
   display: flex;
   justify-content: center;
   gap: 8px;
-  padding: 20px 0
+  padding: 20px 0;
 }
 
 .report-page .page {
@@ -3461,12 +3462,12 @@ button#search-tabs-tab-dna-matches {
   border-radius: 4px;
   padding: 8px 12px;
   text-decoration: none;
-  color: var(--shaadi-grey)
+  color: var(--shaadi-grey);
 }
 
 .report-page.report-page .page.active {
   background: var(--color-primary);
-  color: #fff
+  color: #fff;
 }
 
 /* disclaimer/footer */
@@ -3477,12 +3478,12 @@ button#search-tabs-tab-dna-matches {
   border-radius: 8px;
   margin-top: 10px;
   color: #546974;
-  font-size: 12px
+  font-size: 12px;
 }
 
 .report-page .foot a {
   color: var(--color-primary);
-  text-decoration: none
+  text-decoration: none;
 }
 
 .report-page .brand {
@@ -3491,59 +3492,58 @@ button#search-tabs-tab-dna-matches {
   gap: 8px;
   margin-top: 10px;
   color: #5b6d75;
-  font-weight: 700
+  font-weight: 700;
 }
-
 
 /* rounded container card for table */
 .report-page .table {
   border: 1px solid var(--border);
   border-radius: 0 0 8px 8px;
-  overflow: hidden
+  overflow: hidden;
 }
 
 /* responsive */
-@media (max-width:980px) {
+@media (max-width: 980px) {
   .report-page .hero-inner {
-    grid-template-columns: 1fr
+    grid-template-columns: 1fr;
   }
 
   .report-page .stats {
-    border-radius: 0 0 8px 8px
+    border-radius: 0 0 8px 8px;
   }
 
   .report-page .band,
   .row {
-    grid-template-columns: 1.7fr .6fr 1.7fr 1.7fr 1fr
+    grid-template-columns: 1.7fr 0.6fr 1.7fr 1.7fr 1fr;
   }
 }
 
-@media (max-width:780px) {
+@media (max-width: 780px) {
   .report-page .band {
-    display: none
+    display: none;
   }
 
   .report-page .row {
-    grid-template-columns: 1.4fr 1fr
+    grid-template-columns: 1.4fr 1fr;
   }
 
   .report-page .cell.locations,
   .cell.relatives,
   .cell.age {
-    border-top: 1px dashed var(--border)
+    border-top: 1px dashed var(--border);
   }
 
   .report-page .cell.actions {
     grid-column: 1/ -1;
     justify-content: space-between;
     align-items: center;
-    flex-direction: row
+    flex-direction: row;
   }
 
   .report-page .meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px
+    gap: 6px;
   }
 }
 
@@ -3553,11 +3553,10 @@ button#search-tabs-tab-dna-matches {
   color: #fff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 18px rgba(20, 84, 108, .1);
+  box-shadow: 0 8px 18px rgba(20, 84, 108, 0.1);
   margin-top: 20px;
   margin-bottom: 20px;
   padding: 20px 0px;
-
 }
 
 .upload-box img {
@@ -3585,13 +3584,12 @@ button#search-tabs-tab-dna-matches {
 
 /*report page css end*/
 
-
-@media only screen and (max-width:768px) {
-.get-started1 h2:after {
+@media only screen and (max-width: 768px) {
+  .get-started1 h2:after {
     right: 70px;
-}
+  }
 
-.topbar.dashboard .navbar-toggler-icon {
+  .topbar.dashboard .navbar-toggler-icon {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
   }
 
@@ -3617,104 +3615,527 @@ button#search-tabs-tab-dna-matches {
   background: #0b6491;
 }
 
-
-
 /*comaptibility page css start*/
 
-    .compatibility-page .compat-card{background:#fff9fb;border-radius:8px;padding:22px;border:1px solid rgba(0,0,0,0.03)}
-    .compatibility-page .avatars{display:flex;align-items:center;gap:10px}
-    .compatibility-page .avatar{width:76px;height:76px;border-radius:50%;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.06);border:4px solid #fff}
-    .compatibility-page .score{font-size:36px;font-weight:700;color:var(--accent)}
-    .compatibility-page .chip{background:#fff;border-radius:8px;padding:10px 12px;display:inline-block;margin-right:8px;margin-bottom:8px;box-shadow:0 1px 0 rgba(0,0,0,0.02);}
-    .compatibility-page .left-panel .circle{width:78px;height:78px;border-radius:50%;background:linear-gradient(180deg,#fff,#fafafa);display:flex;align-items:center;justify-content:center;border:4px solid rgba(0,0,0,0.03)}
-    .compatibility-page .left-panel .metric{font-weight:700;margin-top:6px; color: var(--shaadi-grey);}
-    .compatibility-page .divider-v{border-left:1px solid rgba(0,0,0,0.06);height:100%}
-    .compatibility-page .birth-card{background:var(--card-bg);border-radius:8px;padding:18px}
-    .compatibility-page .small-muted{color:#000;font-size:13px}
-    .compatibility-page .icon-wrap{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,0.04);background:#fff}
-.compatibility-page .persondob {display: flex;justify-content: space-between;align-items: center;}
-.compatibility-page .progress-circle img {width: 30px;}
-
-
-
-  .compatibility-page .progress-circle {
-    --thickness: 5px;   
-    --value: 0;
-    --size: 80px;
-    --fg: #4caf50; 
-    --bg: #e9ecef;
-    width: var(--size);
-    height: var(--size);
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background:
-  radial-gradient(closest-side, white calc(100% - var(--thickness)), transparent 0 100%, white 0),
-  conic-gradient(var(--fg) calc(var(--value) * 1%), var(--bg) 0);
-    position: relative;
-    font-weight: 600;
-    font-size: 14px;
-    color: #333;
-  }
-  h4.AstroCompatibility
- {
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    color: #000;
+.compatibility-page .compat-card {
+  background: #fff9fb;
+  border-radius: 8px;
+  padding: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
 }
-  .compatibility-page .progress-circle::before {
-    content: "";
-    position: absolute;
-    width: calc(var(--size) - 14px);
-    height: calc(var(--size) - 14px);
-    border-radius: 50%;
-    background: #fff;
-  }
-  .compatibility-page .progress-circle span {
-    position: relative;
-    z-index: 2;
-  }
+.compatibility-page .avatars {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.compatibility-page .avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 4px solid #fff;
+}
+.compatibility-page .score {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.compatibility-page .chip {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+.compatibility-page .left-panel .circle {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff, #fafafa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid rgba(0, 0, 0, 0.03);
+}
+.compatibility-page .left-panel .metric {
+  font-weight: 700;
+  margin-top: 6px;
+  color: var(--shaadi-grey);
+}
+.compatibility-page .divider-v {
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+  height: 100%;
+}
+.compatibility-page .birth-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 18px;
+}
+.compatibility-page .small-muted {
+  color: #000;
+  font-size: 13px;
+}
+.compatibility-page .icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: #fff;
+}
+.compatibility-page .persondob {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.compatibility-page .progress-circle img {
+  width: 30px;
+}
 
-  .compatibility-page .work     { --fg: #2196f3; }  
-  .compatibility-page .influence{ --fg: #ff9800; }  
-  .compatibility-page .destiny  { --fg: #9c27b0; }  
-  .compatibility-page .mentality{ --fg: #4caf50; }  
-  .compatibility-page .compatibility   { --fg: #673ab7; }  
-  .compatibility-page .temperament  { --fg: #C2D840; }  
-  .compatibility-page .love     { --fg: #e91e63; } 
-  .compatibility-page .health   { --fg: #00bcd4; }  
+.compatibility-page .progress-circle {
+  --thickness: 5px;
+  --value: 0;
+  --size: 80px;
+  --fg: #4caf50;
+  --bg: #e9ecef;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+      closest-side,
+      white calc(100% - var(--thickness)),
+      transparent 0 100%,
+      white 0
+    ),
+    conic-gradient(var(--fg) calc(var(--value) * 1%), var(--bg) 0);
+  position: relative;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+h4.AstroCompatibility {
+  font-size: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  color: #000;
+}
+.compatibility-page .progress-circle::before {
+  content: "";
+  position: absolute;
+  width: calc(var(--size) - 14px);
+  height: calc(var(--size) - 14px);
+  border-radius: 50%;
+  background: #fff;
+}
+.compatibility-page .progress-circle span {
+  position: relative;
+  z-index: 2;
+}
 
+.compatibility-page .work {
+  --fg: #2196f3;
+}
+.compatibility-page .influence {
+  --fg: #ff9800;
+}
+.compatibility-page .destiny {
+  --fg: #9c27b0;
+}
+.compatibility-page .mentality {
+  --fg: #4caf50;
+}
+.compatibility-page .compatibility {
+  --fg: #673ab7;
+}
+.compatibility-page .temperament {
+  --fg: #c2d840;
+}
+.compatibility-page .love {
+  --fg: #e91e63;
+}
+.compatibility-page .health {
+  --fg: #00bcd4;
+}
 
 /*comaptibility page css end*/
 
-
 @media (min-width: 768px) {
-    .report-page .badge-overlay {
-        position: absolute;
-        top: 0;
-        left: 100%;
-        transform: translate(-50%, -25%);
-    }
-    /*comaptibility page css mobile*/
-.compatibility-page .avatars{gap:8px}
-      .compatibility-page .avatar{width:100px;height:100px}
-      .compatibility-page .score{font-size:28px}
+  .report-page .badge-overlay {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    transform: translate(-50%, -25%);
+  }
+  /*comaptibility page css mobile*/
+  .compatibility-page .avatars {
+    gap: 8px;
+  }
+  .compatibility-page .avatar {
+    width: 100px;
+    height: 100px;
+  }
+  .compatibility-page .score {
+    font-size: 28px;
+  }
 }
 
 @media (max-width: 576px) {
-    .report-page .pagination-part .page-item:not(.active):not(:first-child):not(:last-child):not(.disabled) {
-        display: none;
-    }
+  .report-page
+    .pagination-part
+    .page-item:not(.active):not(:first-child):not(:last-child):not(.disabled) {
+    display: none;
+  }
 }
 
 @media (max-width: 576px) {
-   .report-page  .page-link.prev-next-arrow {
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-    }
+  .report-page .page-link.prev-next-arrow {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
 }
 
 .astro-modal-width {
   max-width: 900px !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+.tooltip-box {
+  position: absolute;
+  top: 30%;
+  left: 75%;
+  z-index: 100;
+  width: 250px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  color: #333;
+  margin-top: 5px;
+}
+
+.tooltip-box:before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 10px;
+  border-width: 0 8px 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+}
+
+.tooltip-box:after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 8px;
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #ddd transparent;
+}
+
+.chip {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  height: 100%;
+}
+
+/* Custom styles for UpgradeProfile component */
+.upgrade-profile-container {
+  min-height: 100vh;
+  background-color: var(--shaadi-light);
+  padding: 3rem 0;
+}
+
+.upgrade-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.upgrade-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #1a202c;
+  margin-bottom: 1rem;
+}
+
+.upgrade-subtitle {
+  font-size: 1.125rem;
+  color: #718096;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+/* Error message styling */
+.error-alert {
+  background-color: #fed7d7;
+  border: 1px solid #feb2b2;
+  color: #c53030;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1.5rem;
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-close-btn {
+  float: right;
+  color: #9b2c2c;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Current subscription card */
+.current-subscription-card {
+  background-color: #ebf8ff;
+  border: 1px solid #bee3f8;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.current-subscription-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c5282;
+  margin-bottom: 0.5rem;
+}
+
+.current-plan-name {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.manage-subscription-btn {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+}
+
+.manage-subscription-btn:hover {
+  background-color: #ebf8ff;
+}
+
+/* Plans grid */
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .plans-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* FAQ section */
+.faq-section {
+  margin-top: 4rem;
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.faq-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1a202c;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.faq-item {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.faq-question {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+  color: #718096;
+}
+
+/* PlanCard component styles */
+.plan-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.plan-card-popular {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(9, 119, 175, 0.5);
+}
+
+.plan-card-current {
+  background-color: #ebf8ff;
+  border-color: #90cdf4;
+}
+
+.popular-badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.current-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: #c6f6d5;
+  color: #22543d;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.plan-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1a202c;
+}
+
+.plan-price {
+  margin: 1rem 0;
+}
+
+.price-amount {
+  font-size: 1.875rem;
+  font-weight: 800;
+}
+
+.price-interval {
+  color: #718096;
+}
+
+.plan-description {
+  color: #718096;
+  margin-bottom: 1.5rem;
+}
+
+.plan-description p {
+  margin-bottom: 0.5rem;
+}
+
+.plan-description ul {
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.plan-description li {
+  margin-bottom: 0.25rem;
+}
+
+.upgrade-btn {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upgrade-btn-current {
+  background-color: #cbd5e0;
+  color: #718096;
+  cursor: not-allowed;
+}
+
+.upgrade-btn-popular {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.upgrade-btn-popular:hover {
+  background-color: #075e91;
+}
+
+.upgrade-btn-regular {
+  background-color: #2d3748;
+  color: white;
+}
+
+.upgrade-btn-regular:hover {
+  background-color: #1a202c;
+}
+
+/* Loading spinner container */
+.loading-container {
+  min-height: 100vh;
+  background-color: var(--shaadi-light);
+  padding: 3rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .upgrade-title {
+    font-size: 1.875rem;
+  }
+  
+  .upgrade-subtitle {
+    font-size: 1rem;
+  }
+  
+  .plans-grid {
+    gap: 1.5rem;
+  }
+  
+  .current-subscription-card {
+    padding: 1rem;
+  }
 }

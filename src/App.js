@@ -22,6 +22,10 @@ import GeneticBiological from './components/Dashboard/dna/components/Biological.
 import GeneticPhyscological from './components/Dashboard/dna/components/Psycholigical.jsx';
 import GeneticBirthDefect from './components/Dashboard/dna/components/BirthDefect.jsx';
 import IdentityEnrichment from './components/Dashboard/IdentityEnrichment/IdentityEnrichment.jsx';
+import UpgradeProfile from './components/UpgradeProfile/UpgradeProfile.jsx';
+import PaymentSuccess from './components/UpgradeProfile/Success.jsx';
+import PaymentCancel from './components/UpgradeProfile/Cancel.jsx';
+import ScrollToTop from './components/Common/ScrollToTop';
 
 // Protected Route Wrapper for Onboarding routes
 const OnboardingRoute = () => {
@@ -51,6 +55,7 @@ function App() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Toast />
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -78,6 +83,9 @@ function App() {
           <Route path="/gentics-psychological-compatibility" element={<GeneticPhyscological />} />
           <Route path="/gentics-birth-defect-risk" element={<GeneticBirthDefect />} />
           <Route path="/identity-enrichment" element={<IdentityEnrichment />} />
+          <Route path="/upgrade-profile" element={<UpgradeProfile />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<PaymentCancel />} />
         </Route>
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />

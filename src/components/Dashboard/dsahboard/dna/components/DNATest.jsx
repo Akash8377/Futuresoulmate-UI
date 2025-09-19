@@ -218,11 +218,8 @@ const saveStepData = async (currentStep) => {
   
     if (step < 4) {
       setStep((prev) => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-    } else {
-      console.log("navigating to dna matches")
-      navigate("/hla-dna", { state: { activeKey: "hla-dna-matches" } });
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
   };
   
   const handlePrevious = () => {
