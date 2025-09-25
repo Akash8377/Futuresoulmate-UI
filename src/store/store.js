@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from '../features/user/userSlice';
-import { matchesApi } from '../components/Dashboard/dashtabcomponents/slice/matchSlice';
+import { matchesApi } from '../components/Dashboard/dashboard/dashtabcomponents/slice/matchSlice';
 
 export const store = configureStore({
   reducer: {

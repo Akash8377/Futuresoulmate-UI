@@ -127,6 +127,7 @@ const SearchResultsPage = ({chatBoxOpen}) => {
                         activeIndex={activeCarouselIndex}
                         setActiveIndex={setActiveCarouselIndex}
                         chatBoxOpen={chatBoxOpen}
+                        user={user}
                       />
                     ))
                   ) : (

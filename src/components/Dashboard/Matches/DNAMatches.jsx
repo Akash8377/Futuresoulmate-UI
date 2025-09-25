@@ -19,6 +19,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.userInfo);
   const token = useSelector((state) => state.user.token);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 //   console.log("user info:", user)
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
@@ -83,10 +84,13 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   };
       fetchGeneticMarkers();
     }, []);
+ const handleProfileUpdate = () => {
+    setRefreshTrigger(prev => prev + 1); // Trigger refetch
+  };
 
   useEffect(() => {
     if (searchFor) fetchFilteredProfiles();
-  }, [filters, searchFor, key]);
+  }, [filters, searchFor, key, refreshTrigger]);
 
   const handleConnectClick = async (id, profileId) => {
     setProfiles((prev) =>
@@ -137,6 +141,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                   chatBoxOpen={chatBoxOpen}
                   dnaMatches={dnaMatches}
                   user={user}
+                  onProfileUpdate={handleProfileUpdate}
                 />
               ))
             ) : (

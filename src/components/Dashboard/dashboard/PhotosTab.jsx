@@ -1,5 +1,5 @@
 import React from 'react'
-import Myphoto from './myphototab/Myphoto'
+import Myphoto from '../myphototab/Myphoto'
 
 const PhotosTab = ({onChangeTab}) => {
   return (

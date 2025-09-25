@@ -1,14 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import config from '../../../config';
+import config from '../../../../config';
 import ProfileTab from '../ProfileTab';
 import { Link } from 'react-router-dom';
-import { setUser } from '../../../features/user/userSlice';
-import { toast } from '../../Common/Toast';
+import { setUser } from '../../../../features/user/userSlice';
+import { toast } from '../../../Common/Toast';
 import axios from 'axios';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import BoostButton from '../../Common/BoostButton';
+import BoostButton from '../../../Common/BoostButton';
 
 const DashProfile = ({onEditClick, notifications}) => {
   const { userInfo, token } = useSelector(state => state.user);

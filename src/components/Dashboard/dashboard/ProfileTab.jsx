@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Profile from "./phototabcomponents/Profile";
-import PartnerPrefer from "./phototabcomponents/PartnerPrefer";
-import AboutMyself from "./phototabcomponents/AboutMyself";
-import ContactDetails from "./phototabcomponents/ContactDetails";
+import Profile from "../phototabcomponents/Profile";
+import PartnerPrefer from "../phototabcomponents/PartnerPrefer";
+import AboutMyself from "../phototabcomponents/AboutMyself";
+import ContactDetails from "../phototabcomponents/ContactDetails";
 import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
-import config from "../../config";
-import { toast } from "../Common/Toast";
-import { setUser } from "../../features/user/userSlice";
+import config from "../../../config";
+import { toast } from "../../Common/Toast";
+import { setUser } from "../../../features/user/userSlice";
 
 const ProfileTab = ({onChangeTab}) => {
   const { userInfo, token } = useSelector(state => state.user);

@@ -14,7 +14,7 @@ const MyMatches = ({chatBoxOpen}) => {
   const [profiles, setProfiles] = useState([]);
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger
   const user = useSelector((state) => state.user.userInfo);
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
@@ -41,9 +41,13 @@ const MyMatches = ({chatBoxOpen}) => {
     }
   };
 
+  const handleProfileUpdate = () => {
+    setRefreshTrigger(prev => prev + 1); // Trigger refetch
+  };
+
   useEffect(() => {
     if (searchFor) fetchFilteredProfiles();
-  }, [filters, searchFor]);
+  }, [filters, searchFor, refreshTrigger]);
 
   const handleConnectClick = async (id, profileId) => {
     setProfiles((prev) =>
@@ -85,13 +89,15 @@ const MyMatches = ({chatBoxOpen}) => {
           <div className="card border-0 shadow-sm mb-3">
             {currentProfiles.length > 0 ? (
               currentProfiles.map((profile) => (
-                <ProfileCard
+                 <ProfileCard
                   key={profile.id}
                   profile={profile}
                   handleConnectClick={handleConnectClick}
                   activeIndex={activeCarouselIndex}
                   setActiveIndex={setActiveCarouselIndex}
                   chatBoxOpen={chatBoxOpen}
+                  user={user}
+                  onProfileUpdate={handleProfileUpdate} // Pass the callback
                 />
               ))
             ) : (

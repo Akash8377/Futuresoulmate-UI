@@ -1,18 +1,18 @@
 import React, {useState} from "react";
-import AccountSetting from "./settingtabcomponents/AccountSetting";
-import MyContactSetting from "./settingtabcomponents/MyContactSetting";
-import ContactFilter from "./settingtabcomponents/ContactFilter";
-import AstroDetails from "./settingtabcomponents/AstroDetails";
-import EmailSmsAlert from "./settingtabcomponents/EmailSmsAlert";
-import PrivacyOptions from "./settingtabcomponents/PrivacyOptions";
-import ShadiLive from "./settingtabcomponents/ShadiLive";
-import HideAndDeleteProfile from "./settingtabcomponents/HideAndDeleteProfile";
-import Messages from "./settingtabcomponents/Messages";
+import AccountSetting from "../settingtabcomponents/AccountSetting";
+import MyContactSetting from "../settingtabcomponents/MyContactSetting";
+import ContactFilter from "../settingtabcomponents/ContactFilter";
+import AstroDetails from "../settingtabcomponents/AstroDetails";
+import EmailSmsAlert from "../settingtabcomponents/EmailSmsAlert";
+import PrivacyOptions from "../settingtabcomponents/PrivacyOptions";
+import ShadiLive from "../settingtabcomponents/ShadiLive";
+import HideAndDeleteProfile from "../settingtabcomponents/HideAndDeleteProfile";
+import Messages from "../settingtabcomponents/Messages";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import config from "../../config";
-import { toast } from "../Common/Toast";
-import { setUser } from "../../features/user/userSlice";
+import config from "../../../config";
+import { toast } from "../../Common/Toast";
+import { setUser } from "../../../features/user/userSlice";
 
 const SettingsTab = () => {
   const {userInfo, token} = useSelector(state=> state.user);

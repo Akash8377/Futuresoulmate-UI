@@ -9,7 +9,7 @@ import VerifyProfile from './pages/Users/VerifyProfile.jsx';
 import HobbiesInterests from './pages/Users/HobbiesInterests.jsx';
 import FamilyDetailsForm from './pages/Users/FamilyDetailsForm.jsx';
 import PartnerPreferences from './pages/Users/PartnerPreferences.jsx';
-import DashboardPage from './components/Dashboard/DashboardPage.jsx';
+import DashboardPage from './components/Dashboard/dashboard/DashboardPage.jsx';
 import ForgotPasswordOTP from './pages/Users/forget-password/ForgotPasswordOTP.jsx';
 import Matches from './components/Dashboard/Matches/Matches.jsx';
 import Search from './components/Dashboard/search/Search.jsx';
@@ -26,6 +26,7 @@ import UpgradeProfile from './components/UpgradeProfile/UpgradeProfile.jsx';
 import PaymentSuccess from './components/UpgradeProfile/Success.jsx';
 import PaymentCancel from './components/UpgradeProfile/Cancel.jsx';
 import ScrollToTop from './components/Common/ScrollToTop';
+import ProfilePage from './components/Dashboard/Matches/components/ProfilePage.jsx';
 
 // Protected Route Wrapper for Onboarding routes
 const OnboardingRoute = () => {
@@ -86,6 +87,7 @@ function App() {
           <Route path="/upgrade-profile" element={<UpgradeProfile />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
+          <Route path="/profile/:profileId" element={<ProfilePage />} />
         </Route>
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />

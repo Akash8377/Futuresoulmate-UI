@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetUsersByLookingForQuery } from "./slice/matchSlice";
-import calculateAge from "../../Common/commonfunctions";
-import config from "../../../config";
+import calculateAge from "../../../Common/commonfunctions";
+import config from "../../../../config";
 import axios from "axios";
-import { toast } from "../../Common/Toast";
+import { toast } from "../../../Common/Toast";
 import { useConnection } from "./ConnectionContext";
 
 

@@ -4,7 +4,7 @@ import Advertise from './dashtabcomponents/Advertise';
 import RecentVisitors from './dashtabcomponents/RecentVisitors';
 import MatchesSection from './dashtabcomponents/MatchesSection';
 import { useSelector } from "react-redux";
-import config from '../../config';
+import config from '../../../config';
 import axios from 'axios';
 import { ConnectionProvider } from './dashtabcomponents/ConnectionContext';
 

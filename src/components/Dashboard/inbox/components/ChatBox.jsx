@@ -23,11 +23,52 @@ const ChatBox = ({showChatBox = null, setShowChatBox }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [inputMessage, setInputMessage] = useState('');
   const [hoverItem, setHoverItem] = useState({});
-
+  const [profileVisitAlerts, setProfileVisitAlerts] = useState([]);
+  const [combinedAlerts, setCombinedAlerts] = useState([]);
   // Store conversations with JSON messages
   const [conversations, setConversations] = useState({});
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
+
+const fetchProfileVisitAlerts = async () => {
+  try {
+    const response = await axios.get(
+      `${config.baseURL}/api/profile-visits/visits/${currentUserId}`,
+      { params: { limit: 10 } }
+    );
+    if (response.data.success) {
+      setProfileVisitAlerts(response.data.visits);
+    }
+  } catch (error) {
+    console.error("Error fetching profile visits:", error);
+  }
+};
+
+// Combine and sort alerts whenever alertItems or profileVisitAlerts change
+useEffect(() => {
+  const combined = [
+    ...alertItems.map(item => ({
+      ...item,
+      type: 'connection_request',
+      date: item.created_at,
+      message: `${item.first_name} ${item.last_name} wants to connect with you`
+    })),
+    ...profileVisitAlerts.map(visit => ({
+      ...visit,
+      type: 'profile_visit',
+      date: visit.last_visited_at,
+      message: `${visit.first_name} ${visit.last_name} visited your profile`
+    }))
+  ].sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending (newest first)
+  
+  setCombinedAlerts(combined);
+}, [alertItems, profileVisitAlerts]);
+
+useEffect(() => {
+  if (user?.id) {
+    fetchProfileVisitAlerts();
+  }
+}, [user?.id]);
 
 useEffect(() => {
   if (showChatBox) {
@@ -47,9 +88,12 @@ useEffect(() => {
         }
       );
       const users = response.data.users || [];
-      // console.log("Users: ",users)
+      // Sort alertItems by created_at in descending order (newest first)
+      const sortedAlertItems = users.filter(u => u.connectionRequest === true)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      
       setAllUsers(users);
-      setAlertItems(users.filter(u => u.connectionRequest === true));
+      setAlertItems(sortedAlertItems);
       setActiveUsers(users.filter(u => u.online === true));
       setChatUsers(users.filter(u => u.lastMessage !== null));
     } catch (error) {
@@ -59,7 +103,6 @@ useEffect(() => {
 
   useEffect(() => {
     if (user?.id && searchFor) {
-      console.log("fetchFilteredProfiles() with user?.id ",user?.id," & searchFor ",searchFor)
       fetchFilteredProfiles();
     }
   }, [user?.id, searchFor]);
@@ -93,23 +136,18 @@ useEffect(() => {
 // Connect socket and set up listeners
   useEffect(() => {
     if (!token) {
-      console.log("User token not available");
       return;
     }
 
-    console.log("Initializing socket connection...");
     connectSocket(token);
     socketRef.current = getSocket();
 
     const socket = socketRef.current;
 
     const handleConnect = () => {
-      console.log("Socket connected, setting up listeners...");
-      
       // Join user's personal room
       if (currentUserId) {
         socket.emit('join-user-room', { userId: currentUserId });
-        console.log(`Joined user room for ${currentUserId}`);
       }
 
       // Set up message listener
@@ -117,7 +155,6 @@ useEffect(() => {
     };
 
     const handleDisconnect = () => {
-      console.log("Socket disconnected");
     };
 
     const handleConnectError = (error) => {
@@ -135,14 +172,12 @@ useEffect(() => {
     }
 
     return () => {
-      console.log("Cleaning up socket listeners...");
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
       socket.off('connect_error', handleConnectError);
       socket.off('receive-message', handleReceiveMessage);
       
       if (socket.connected) {
-        console.log("Disconnecting socket...");
         socket.disconnect();
       }
     };
@@ -178,7 +213,6 @@ useEffect(() => {
 
   useEffect(() => {
     if (selectedUser) {
-      console.log("fetching message history for selected user")
       fetchMessageHistory();
     }
   }, [selectedUser, currentUserId]);
@@ -248,35 +282,30 @@ useEffect(() => {
 
   // Socket event listeners
   useEffect(() => {
-    if (!socketRef.current) {
-      console.log("handel received message socketRef.current value ", socketRef.current)
-      return};
-    console.log("socketRef.current.on")
+    if (!socketRef.current) return;
+    
     socketRef.current.on('receive-message', handleReceiveMessage);
     
     return () => {
       if (socketRef.current) {
-        console.log("socketRef.current.off")
         socketRef.current.off('receive-message', handleReceiveMessage);
       }
     };
   }, [handleReceiveMessage]);
+
 // Join room when selected user changes
   // Handle joining conversation rooms when selectedUser changes
   useEffect(() => {
     if (!socketRef.current?.connected || !selectedUser) {
-      console.log("Socket not ready or no selected user");
       return;
     }
 
     const conversationId = getConversationId(currentUserId, selectedUser.id);
-    console.log(`Joining conversation room: ${conversationId}`);
     
     socketRef.current.emit('join-conversation', { conversationId });
 
     return () => {
       if (socketRef.current?.connected) {
-        console.log(`Leaving conversation room: ${conversationId}`);
         socketRef.current.emit('leave-conversation', { conversationId });
       }
     };
@@ -301,12 +330,6 @@ useEffect(() => {
     });
 
     const newMessage = response.data.message;
-    
-    // Update conversations state
-    // setConversations(prev => ({
-    //   ...prev,
-    //   [selectedUser.id]: [...(prev[selectedUser.id] || []), newMessage]
-    // }));
     
     // Update chatUsers state
     setChatUsers(prevUsers => {
@@ -355,21 +378,43 @@ useEffect(() => {
             <input type="radio" name="tab" id="tab-alerts" checked={activeTab === 'tab-alerts'} onChange={() => handleTabChange('tab-alerts')} />
 
             <div className="tab-content content">
-              {alertItems.map((item, index) => (
-                <div id="alerts" key={item.id} className="chat-box-tab" style={{ display: activeTab === 'tab-alerts' ? 'block' : 'none' }}>
-                  <div className="online-box">
-                    <div className="user-item" key={index}>
-                      <img src={`${config.baseURL}/uploads/profiles/${item.profile_image}`} alt={item.name} className="user-img" />
-                      <div className="user-info">
-                        <div><strong>{item.first_name}{" "}{item.last_name}</strong> {" "}
-                        {/* {item.notification_message} */}
-                        wants to connect with you
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+<div id="alerts" className="chat-box-tab" style={{ display: activeTab === 'tab-alerts' ? 'block' : 'none' }}>
+  <div className="p-2 fw-bold border-bottom">Alerts ({combinedAlerts.length})</div>
+  
+  {combinedAlerts.length > 0 ? (
+    combinedAlerts.map((alert, index) => (
+      <div className="online-box" key={`${alert.type}-${alert.id}`}>
+        <div className="user-item">
+          <img 
+            src={alert.profile_image ? 
+              `${config.baseURL}/uploads/profiles/${alert.profile_image}` : 
+              "images/default-profile.png"
+            } 
+            alt={alert.first_name} 
+            className="user-img" 
+          />
+          <div className="user-info">
+            <div>
+              <strong>{alert.first_name} {alert.last_name}</strong> {" "}
+              {alert.type === 'connection_request' 
+                ? 'wants to connect with you' 
+                : 'visited your profile'
+              }
+               <div className="text-muted small">
+                   {new Date(alert.date).toLocaleDateString()} at {' '}
+                   {new Date(alert.date).toLocaleTimeString()}
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <div className="text-center p-3 text-muted">
+      No alerts at the moment
+    </div>
+  )}
+</div>
 
              {chatUsers.map((item, index) => (
                 <div id="chats" className="chat-box-tab" style={{ display: activeTab === 'tab-chats' ? 'block' : 'none' }} key={index}>
@@ -478,7 +523,6 @@ useEffect(() => {
                       <div className="profile-card">
                         <div className="profile-left">
                           <img src={hoverItem.profile_image ? `${config.baseURL}/uploads/profiles/${hoverItem.profile_image}` : "images/womenpic.jpg"} alt={hoverItem.name} className="hover-box-profile-img" />
-                          {/* <button className="photo-btn">Request a Photo</button> */}
                         </div>
                         <div className="profile-right">
                           <h5 className="name">{hoverItem?.first_name} {hoverItem?.last_name}</h5>
@@ -491,13 +535,6 @@ useEffect(() => {
                               <tr><td>Location</td><td>: {hoverItem?.city}, {hoverItem?.country}</td></tr>
                             </tbody>
                           </table>
-                          {/* <div className="profile-actions">
-                            <button className="accept-btn">Accept</button>
-                            <button className="decline-btn">Decline</button>
-                          </div> */}
-                          {/* <div className="upgrade-text">
-                            <a href="#">Upgrade Now to start Chatting</a>
-                          </div> */}
                         </div>
                       </div>
                     </div>

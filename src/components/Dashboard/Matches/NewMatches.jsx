@@ -13,7 +13,7 @@ const NewMatches = ({chatBoxOpen}) => {
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const profilesPerPage = 5;
-
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const user = useSelector((state) => state.user.userInfo);
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
@@ -36,11 +36,13 @@ const NewMatches = ({chatBoxOpen}) => {
       console.error("Error fetching profiles", error);
     }
   };
-
+ const handleProfileUpdate = () => {
+    setRefreshTrigger(prev => prev + 1); // Trigger refetch
+  };
   useEffect(() => {
     // console.log("filters: ",filters)
     if (searchFor) fetchFilteredProfiles();
-  }, [filters, searchFor]);
+  }, [filters, searchFor,refreshTrigger]);
 
   const handleConnectClick = async (id, profileId) => {
     setProfiles((prev) =>
@@ -89,6 +91,8 @@ const NewMatches = ({chatBoxOpen}) => {
                   activeIndex={activeCarouselIndex}
                   setActiveIndex={setActiveCarouselIndex}
                   chatBoxOpen={chatBoxOpen}
+                  user={user}
+                  onProfileUpdate={handleProfileUpdate}
                 />
               ))
             ) : (

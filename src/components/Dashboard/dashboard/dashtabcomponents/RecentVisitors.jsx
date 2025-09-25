@@ -3,11 +3,11 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useSelector } from "react-redux";
-import config from "../../../config";
+import config from "../../../../config";
 import axios from "axios";
-import calculateAge from "../../Common/commonfunctions";
+import calculateAge from "../../../Common/commonfunctions";
 import { useGetUsersByLookingForQuery } from "./slice/matchSlice";
-import { toast } from "../../Common/Toast";
+import { toast } from "../../../Common/Toast";
 import { useConnection } from "./ConnectionContext";
 
 // Custom Arrow Components

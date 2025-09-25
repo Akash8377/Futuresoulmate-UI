@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetUsersByLookingForQuery } from '../dashtabcomponents/slice/matchSlice';
+import { useGetUsersByLookingForQuery } from '../dashboard/dashtabcomponents/slice/matchSlice';
 import Header from '../Header';
 import { io } from 'socket.io-client';
 import config from '../../../config';

@@ -40,3 +40,72 @@ export const boostProfile = async (token, userInfo, dispatch) => {
     );
   }
 };
+
+export const blockUser = async (userId, blockedUserId) => {
+  try {
+    console.log("Blocking user:", userId, blockedUserId);
+    const response = await fetch(`${config.baseURL}/api/block-report/block-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, blockedUserId })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error blocking user:', error);
+    throw error;
+  }
+};
+
+export const unblockUser = async (userId, blockedUserId) => {
+  try {
+    const response = await fetch(`${config.baseURL}/api/block-report/unblock-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, blockedUserId })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error unblocking user:', error);
+    throw error;
+  }
+};
+
+export const reportUser = async (reporterId, reportedUserId, reason) => {
+  try {
+    const response = await fetch(`${config.baseURL}/api/block-report/report-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ reporterId, reportedUserId, reason })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error reporting user:', error);
+    throw error;
+  }
+};
+
+export const getBlockedUsers = async (userId) => {
+  try {
+    const response = await fetch(`${config.baseURL}/api/block-report/blocked-users/${userId}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching blocked users:', error);
+    throw error;
+  }
+};
+
+export const checkIfBlocked = async (userId, targetUserId) => {
+  try {
+    const response = await fetch(`${config.baseURL}/api/block-report/check-blocked/${userId}/${targetUserId}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error checking block status:', error);
+    throw error;
+  }
+};

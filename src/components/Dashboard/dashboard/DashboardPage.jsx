@@ -6,9 +6,9 @@ import PhotosTab from "./PhotosTab";
 import PartnerTab from "./PartnerTab";
 import SettingsTab from "./SettingsTab";
 import MoreTab from "./MoreTab";
-import HLA_DNA from "./dsahboard/dna/HLA_DNA"
+import HLA_DNA from "./dna/HLA_DNA"
 import { useLocation } from 'react-router-dom';
-import ChatBox from "./inbox/components/ChatBox";
+import ChatBox from "../inbox/components/ChatBox";
 
 // Component mapping
 const tabComponents = {
