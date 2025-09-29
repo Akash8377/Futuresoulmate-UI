@@ -28,6 +28,10 @@ import PaymentCancel from './components/UpgradeProfile/Cancel.jsx';
 import ScrollToTop from './components/Common/ScrollToTop';
 import ProfilePage from './components/Dashboard/Matches/components/ProfilePage.jsx';
 
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsOfService from './pages/TermOfService.jsx';
+import DeleteSocialInstruction from './pages/DeleteSocialInstruction.jsx';
+
 // Protected Route Wrapper for Onboarding routes
 const OnboardingRoute = () => {
   const { token } = useSelector((state) => state.user);
@@ -70,6 +74,9 @@ function App() {
           <Route path="/verify-profile" element={<VerifyProfile />} />
           <Route path="/family-details" element={<FamilyDetailsForm />} />
           <Route path="/partner-preferences" element={<PartnerPreferences />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
         </Route>
 
         {/* Dashboard Routes (with HeaderDashboard) */}

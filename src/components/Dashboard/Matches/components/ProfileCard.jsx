@@ -13,15 +13,7 @@ import { Link } from "react-router-dom";
 import ActionMenu from "./ActionMenu";
 import { blockUser, unblockUser, reportUser } from "../../../../features/user/userApi";
 
-const ProfileCard = ({
-  profile,
-  handleConnectClick,
-  activeIndex,
-  setActiveIndex,
-  chatBoxOpen,
-  dnaMatches = false,
-  user = {},
-  onProfileUpdate
+const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex, chatBoxOpen, dnaMatches = false, user = {}, onProfileUpdate
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showAstroModal, setShowAstroModal] = useState(false);
