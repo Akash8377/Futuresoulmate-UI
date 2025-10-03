@@ -91,7 +91,7 @@ const Profile = ({onChangeTab}) => {
       <div className="border p-4 bg-white mt-3">
         <div className="row g-4">
           <div className="col-md-4 col-lg-3">
-            <div className="upload-box text-center d-flex flex-column justify-content-center align-items-center rounded">
+            <div className="upload-box text-center d-flex flex-column justify-content-center align-items-center rounded mb-2">
               {userInfo?.profile_image ? (<label
                 htmlFor="fileUpload"
                 className="d-flex flex-column justify-content-center align-items-center overflow-hidden"

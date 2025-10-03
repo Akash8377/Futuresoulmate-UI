@@ -28,7 +28,13 @@ img {
   font-size: 15px;
   letter-spacing: -0.3px;
 }
-
+.btn-filled:hover,
+.btn-filled:focus,
+.btn-filled:active {
+  background-color: var(--color-secondary) !important; /* Darker shade for click */
+  color: #fff !important;
+  box-shadow: none !important;
+}
 .btn-filled:hover {
   background: var(--color-primary);
   color: #fff;
@@ -114,13 +120,78 @@ section.search-city {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 121px 89px;
+  padding: 121px 50px;
+}
+.heading-condition
+ {
+    background: #fef8f1;
+    margin-top: 30px;
+    padding: 10px 0px;
+}
+.heading-condition h1
+ {
+    font-size: 35px;
+    color: var(--color-primary);
+}
+.policy-term-page ol li a {
+    color: var(--color-secondary);
+    text-decoration: none !important;
 }
 
+.policy-term-page .card
+ {
+    border: none !important;
+    padding: 0px !important;
+    margin-bottom: 0px !important;
+}
+ul.list-group {
+    margin-left: 25px;
+}
+
+.backbutton .card
+ {
+    border: navajowhite !important;
+    box-shadow: none !important;
+    padding: 0px 0px !important;
+    margin-bottom: 0px !important;
+}
+.policy-term-page .shadow-sm
+ {
+    box-shadow: 0 .125rem .25rem rgb(0 0 0 / 0%) !important;
+}
+
+
+.policy-term-page .breadcrumb-item+.breadcrumb-item::before{
+color: var(--color-secondary) !important;
+}
+.privacy-part {
+    background: #f7f7f7;
+    padding: 20px;
+    border-radius: 4px;
+    color: #000;
+    text-align: left;
+}
+.policy-term-page .small1 {
+    font-size: 14px;
+}
+.policy-term-page .list-group li i {
+    position: absolute;
+    left: -6px;
+    top: 10px;
+    color: var(--color-secondary);
+}
+
+.policy-term-page .list-group li {
+    position: relative;
+}
+.heading-condition ol li.active
+ {
+    color: var(--color-secondary);
+}
 .search-city .content p {
   font-size: 43px;
   letter-spacing: -0.3px;
-  line-height: 45px;
+  line-height: 50px;
   color: #fff;
   margin-bottom: 0px;
 }

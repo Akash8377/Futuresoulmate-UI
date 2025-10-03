@@ -1,28 +1,48 @@
 import React from 'react';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
+import { Link } from 'react-router-dom';
 
 const PrivacyPolicy = () => {
   return (
     <>
     <Header/>
+    <div className='policy-term-page'>
+    <div className='heading-condition'>
+        <div className='container'>
+       <h1 className="display-4 fw-bold mb-3 text-center">Privacy Policy</h1>
+        {/* <h2 className="text-center">Privacy Policy</h2> */}
+<nav aria-label="breadcrumb">
+  <ol className="breadcrumb justify-content-center">
+    <li className="breadcrumb-item">
+      <Link to="/">Home</Link>
+    </li>
+    <li className="breadcrumb-item active" aria-current="page">
+      Privacy Policy
+    </li>
+  </ol>
+</nav>
+    </div>
+      </div>  
+    
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-lg-10 col-xl-8">
+        <div className="col-lg-12 col-xl-12">
           {/* Header */}
-          <div className="text-center mb-5">
-            <h1 className="display-4 fw-bold text-primary mb-3">Future Soulmate</h1>
-            <h2 className="h3 text-muted">Privacy Policy</h2>
-            <div className="alert alert-info">
-              <i className="bi bi-shield-check me-2"></i>
+          <div className=" mb-2">
+           
+            <div className="privacy-part">
+    
               Your privacy is our priority. We are committed to protecting your personal information.
             </div>
           </div>
 
           {/* Introduction */}
+          
+
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">1. Introduction</h3>
+              <h3 className="h4 text-primary1 mb-3">1. Introduction</h3>
               <p>
                 At Future Soulmate, we understand that privacy is important when looking for your perfect match. 
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your information when 
@@ -38,9 +58,10 @@ const PrivacyPolicy = () => {
           {/* Information We Collect */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">2. Information We Collect</h3>
-              
-              <h5 className="h6 text-muted mt-3">Personal Information</h5>
+              <h3 className="h4 text-primary1 mb-3">2. Information We Collect</h3>
+              <div className='row'>
+                <div class="col-md-8">
+   <h5 className="h6 text-muted mt-3">Personal Information</h5>
               <div className="row mb-3">
                 <div className="col-md-6">
                   <ul>
@@ -59,17 +80,24 @@ const PrivacyPolicy = () => {
                   </ul>
                 </div>
               </div>
-
-              <h5 className="h6 text-muted mt-3">Automatically Collected Information</h5>
+                </div>
+                <div class="col-md-4">
+                    <h5 className="h6 text-muted mt-3">Automatically Collected Information</h5>
               <ul>
                 <li>Device information and IP address</li>
                 <li>Browser type and operating system</li>
                 <li>Usage patterns and interaction data</li>
                 <li>Cookies and tracking technologies</li>
               </ul>
+                </div>
+              </div>
+              
+           
+
+            
 
               <h5 className="h6 text-muted mt-3">Sensitive Information</h5>
-              <div className="alert alert-warning">
+              <div className="" style={{ background: "#fff3e5",color:"black", padding:"10px" }}>
                 <strong>Note:</strong> We may collect sensitive information such as religious beliefs, 
                 political opinions, or health information only when you voluntarily provide it for 
                 compatibility matching purposes. You have full control over what sensitive information you share.
@@ -80,51 +108,51 @@ const PrivacyPolicy = () => {
           {/* How We Use Your Information */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">3. How We Use Your Information</h3>
+              <h3 className="h4 text-primary1 mb-3">3. How We Use Your Information</h3>
               <div className="row">
                 <div className="col-md-6">
                   <div className="d-flex mb-3">
-                    <i className="bi bi-heart-fill text-primary me-3 fs-5"></i>
+                    <i className="bi bi-heart-fill text-primary1 me-3 fs-5"></i>
                     <div>
                       <strong>Matchmaking</strong>
-                      <p className="mb-0 small">To find compatible partners based on your preferences</p>
+                      <p className="mb-0 small1">To find compatible partners based on your preferences</p>
                     </div>
                   </div>
                   <div className="d-flex mb-3">
-                    <i className="bi bi-chat-dots-fill text-primary me-3 fs-5"></i>
+                    <i className="bi bi-chat-dots-fill text-primary1 me-3 fs-5"></i>
                     <div>
                       <strong>Communication</strong>
-                      <p className="mb-0 small">To facilitate messaging between matches</p>
+                      <p className="mb-0 small1">To facilitate messaging between matches</p>
                     </div>
                   </div>
                   <div className="d-flex">
-                    <i className="bi bi-shield-fill text-primary me-3 fs-5"></i>
+                    <i className="bi bi-shield-fill text-primary1 me-3 fs-5"></i>
                     <div>
                       <strong>Security</strong>
-                      <p className="mb-0 small">To protect against fraud and abuse</p>
+                      <p className="mb-0 small1">To protect against fraud and abuse</p>
                     </div>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="d-flex mb-3">
-                    <i className="bi bi-graph-up text-primary me-3 fs-5"></i>
+                    <i className="bi bi-graph-up text-primary1 me-3 fs-5"></i>
                     <div>
                       <strong>Improvement</strong>
-                      <p className="mb-0 small">To enhance our matching algorithms</p>
+                      <p className="mb-0 small1">To enhance our matching algorithms</p>
                     </div>
                   </div>
                   <div className="d-flex mb-3">
-                    <i className="bi bi-bell-fill text-primary me-3 fs-5"></i>
+                    <i className="bi bi-bell-fill text-primary1 me-3 fs-5"></i>
                     <div>
                       <strong>Notifications</strong>
-                      <p className="mb-0 small">To send relevant updates and matches</p>
+                      <p className="mb-0 small1">To send relevant updates and matches</p>
                     </div>
                   </div>
                   <div className="d-flex">
-                    <i className="bi bi-credit-card text-primary me-3 fs-5"></i>
+                    <i className="bi bi-credit-card text-primary1 me-3 fs-5"></i>
                     <div>
                       <strong>Billing</strong>
-                      <p className="mb-0 small">To process subscription payments</p>
+                      <p className="mb-0 small1">To process subscription payments</p>
                     </div>
                   </div>
                 </div>
@@ -135,7 +163,7 @@ const PrivacyPolicy = () => {
           {/* Information Sharing */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">4. Information Sharing</h3>
+              <h3 className="h4 text-primary1 mb-3">4. Information Sharing</h3>
               <p>We may share your information in the following circumstances:</p>
               
               <div className="table-responsive">
@@ -167,7 +195,7 @@ const PrivacyPolicy = () => {
                 </table>
               </div>
 
-              <div className="alert alert-success">
+              <div className="alert " style={{ background: "#fff3e5",color:"black" }}>
                 <strong>We do NOT sell your personal information to third parties for marketing purposes.</strong>
               </div>
             </div>
@@ -176,7 +204,7 @@ const PrivacyPolicy = () => {
           {/* Data Security */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">5. Data Security</h3>
+              <h3 className="h4 text-primary1 mb-3">5. Data Security</h3>
               <p>
                 We implement appropriate technical and organizational security measures to protect your 
                 personal information, including:
@@ -186,21 +214,21 @@ const PrivacyPolicy = () => {
                   <div className="border rounded p-3">
                     <i className="bi bi-lock-fill text-success fs-1"></i>
                     <h6 className="mt-2">Encryption</h6>
-                    <p className="small mb-0">All data is encrypted in transit and at rest</p>
+                    <p className="small1 mb-0">All data is encrypted in transit and at rest</p>
                   </div>
                 </div>
                 <div className="col-md-4 mb-3">
                   <div className="border rounded p-3">
                     <i className="bi bi-shield-check text-success fs-1"></i>
                     <h6 className="mt-2">Access Controls</h6>
-                    <p className="small mb-0">Strict access limitations to personal data</p>
+                    <p className="small1 mb-0">Strict access limitations to personal data</p>
                   </div>
                 </div>
                 <div className="col-md-4 mb-3">
                   <div className="border rounded p-3">
                     <i className="bi bi-eye-slash text-success fs-1"></i>
                     <h6 className="mt-2">Anonymization</h6>
-                    <p className="small mb-0">Data anonymized for analytics purposes</p>
+                    <p className="small1 mb-0">Data anonymized for analytics purposes</p>
                   </div>
                 </div>
               </div>
@@ -210,7 +238,7 @@ const PrivacyPolicy = () => {
           {/* Your Rights */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">6. Your Rights</h3>
+              <h3 className="h4 text-primary1 mb-3">6. Your Rights</h3>
               <p>You have the following rights regarding your personal data:</p>
               <div className="row">
                 <div className="col-md-6">
@@ -243,7 +271,7 @@ const PrivacyPolicy = () => {
               <div className="mt-3">
                 <p>
                   To exercise these rights, please contact us at{' '}
-                  <a href="mailto:privacy@futuresoulmate.com">privacy@futuresoulmate.com</a>
+                  <a href="mailto:info@futuresoulmate.com" style={{ color: "#df8525" }}>info@futuresoulmate.com</a>
                 </p>
               </div>
             </div>
@@ -252,7 +280,7 @@ const PrivacyPolicy = () => {
           {/* Data Retention */}
           <div className="card shadow-sm mb-4">
             <div className="card-body">
-              <h3 className="h4 text-primary mb-3">7. Data Retention</h3>
+              <h3 className="h4 text-primary1 mb-3">7. Data Retention</h3>
               <p>We retain your personal data only as long as necessary for:</p>
               <ul>
                 <li>Providing our services to you</li>
@@ -268,7 +296,7 @@ const PrivacyPolicy = () => {
           </div>
 
           {/* Updates */}
-          <div className="alert alert-info mt-4">
+          <div className="privacy-part mt-4">
             <h5 className="alert-heading">Policy Updates</h5>
             <p className="mb-0">
               We may update this Privacy Policy from time to time. We will notify you of any changes by 
@@ -277,6 +305,7 @@ const PrivacyPolicy = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
     <Footer/>
     </>

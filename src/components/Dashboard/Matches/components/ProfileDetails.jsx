@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const ProfileDetails = ({ currentProfile }) => {
   const userInfo = useSelector(state=>state.user.userInfo)
@@ -55,7 +55,7 @@ const ProfileDetails = ({ currentProfile }) => {
           <p>
             <strong>Contact Number:</strong> +1 {userInfo.plan_status === "active" ?currentProfile.phone:formatPhone(currentProfile.phone)} 
             <i className="bi bi-lock-fill lock-icon"></i>
-            {userInfo.plan_status === "active" ? "" :(<p><span className="upgrade-text">Upgrade Now</span> to view details</p>)} 
+            {userInfo.plan_status === "active" ? "" :(<p><Link to="/upgrade-profile" className="upgrade-text">Upgrade Now</Link> to view details</p>)} 
           </p>
           <p><strong>Email ID:</strong> {userInfo.plan_status === "active" ?currentProfile.email:formatEmail(currentProfile.email)}</p>
         </div>

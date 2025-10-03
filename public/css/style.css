@@ -4210,7 +4210,7 @@ background-color: #eaf8ff;
 .boost-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  /* gap: 8px; */
   align-items: center;
 }
 

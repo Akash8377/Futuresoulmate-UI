@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { boostProfile } from "../../features/user/userApi";
 import { useDispatch, useSelector } from "react-redux";
 import config from "../../config";
+import { toast } from "./Toast";
 
 export default function BoostButton() {
   const { userInfo, token } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [boosting, setBoosting] = useState(
     userInfo?.boosted_until && new Date(userInfo.boosted_until) > new Date()
@@ -41,7 +44,6 @@ export default function BoostButton() {
         },
       });
       const data = await response.json();
-      console.log("boost status: ", data);
       
       if (data.success) {
         // Calculate boosts_left if it's null
@@ -53,7 +55,7 @@ export default function BoostButton() {
           boosts_used: boostsUsed,
           boosts_left: boostsLeft,
           max_boosts: maxBoosts,
-          plan_name: data.subscription?.plan_name || 'No active plan',
+          plan_name: data.subscription?.plan_name || null,
           loading: false
         });
 
@@ -73,6 +75,13 @@ export default function BoostButton() {
   };
 
   const handleBoost = async () => {
+    // If user has no subscription, navigate to upgrade page
+    if (!boostData.plan_name) {
+      toast.info("Please upgrade your plan to use the boost feature.");
+      navigate("/upgrade-profile");
+      return;
+    }
+
     try {
       const res = await boostProfile(token, userInfo, dispatch);
       console.log("Boost response:", res);
@@ -99,7 +108,7 @@ export default function BoostButton() {
         });
 
         // Update userInfo in Redux
-        dispatch({
+        dispatch({  
           type: "user/updateBoostTime",
           payload: res.boosted_until,
         });
@@ -152,24 +161,25 @@ export default function BoostButton() {
 
   return (
     <div className="boost-container">
-      <div className="boost-info">
-        <span>
-          Boost Details: <strong>{boostData.boosts_used}/{boostData.max_boosts}</strong> 
-          {/* Left: <strong>{boostData.boosts_left}</strong> */}
-        </span>
-      </div>
+      {boostData.plan_name !== null ? (
+        <div className="boost-info">
+          <span>
+            Boost Details: <strong>{boostData.boosts_used}/{boostData.max_boosts}</strong> 
+          </span>
+        </div>
+      ) : null}
       
       <button
         className="boost-btn"
         onClick={handleBoost}
-        disabled={isBoostDisabled}
+        // disabled={isBoostDisabled}
         title={
           boosting
             ? `Boost active until ${new Date(
                 userInfo?.boosted_until
               ).toLocaleString()}`
             : boostData.boosts_left <= 0
-            ? "No boosts left for your current plan"
+            ? "Boost not available, Upgrade now!"
             : "Boost your profile to get more visibility!"
         }
       >
@@ -186,6 +196,7 @@ export default function BoostButton() {
 // import { useState, useEffect } from "react";
 // import { boostProfile } from "../../features/user/userApi";
 // import { useDispatch, useSelector } from "react-redux";
+// import config from "../../config";
 
 // export default function BoostButton() {
 //   const { userInfo, token } = useSelector((state) => state.user);
@@ -203,10 +214,64 @@ export default function BoostButton() {
 //     return diff > 0 ? diff : 0;
 //   });
 
+//   const [boostData, setBoostData] = useState({
+//     boosts_used: 0,
+//     boosts_left: 0,
+//     max_boosts: 0,
+//     plan_name: null,
+//     loading: true
+//   });
+
+//   // Fetch boost status on component mount
+//   useEffect(() => {
+//     fetchBoostStatus();
+//   }, []);
+
+//   const fetchBoostStatus = async () => {
+//     try {
+//       setBoostData(prev => ({ ...prev, loading: true }));
+//       const response = await fetch(`${config.baseURL}/api/profile/boost/status`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+//       const data = await response.json();
+//       // console.log("boost status: ", data);
+      
+//       if (data.success) {
+//         // Calculate boosts_left if it's null
+//         const boostsUsed = data.subscription?.boosts_used || 0;
+//         const maxBoosts = data.max_boosts || 0;
+//         const boostsLeft = data.boosts_left !== null ? data.boosts_left : Math.max(0, maxBoosts - boostsUsed);
+        
+//         setBoostData({
+//           boosts_used: boostsUsed,
+//           boosts_left: boostsLeft,
+//           max_boosts: maxBoosts,
+//           plan_name: data.subscription?.plan_name || null,
+//           loading: false
+//         });
+
+//         // Also update boosting state based on current boost status
+//         if (data.boosted_until && new Date(data.boosted_until) > new Date()) {
+//           setBoosting(true);
+//           const diff = Math.floor(
+//             (new Date(data.boosted_until).getTime() - Date.now()) / 1000
+//           );
+//           setTimeLeft(diff > 0 ? diff : 0);
+//         }
+//       }
+//     } catch (error) {
+//       console.error('Error fetching boost status:', error);
+//       setBoostData(prev => ({ ...prev, loading: false }));
+//     }
+//   };
+
 //   const handleBoost = async () => {
 //     try {
 //       const res = await boostProfile(token, userInfo, dispatch);
-//         console.log("Boost response:", res);
+//       console.log("Boost response:", res);
+      
 //       if (res?.boosted_until) {
 //         const endTime = new Date(res.boosted_until).getTime();
 //         const now = Date.now();
@@ -215,12 +280,29 @@ export default function BoostButton() {
 //         setTimeLeft(seconds);
 //         setBoosting(true);
 
-//         // ✅ also update userInfo in Redux so reload not needed
-//         dispatch({
+//         // Update boost data with response data
+//         const boostsUsed = res.boost_used || (boostData.boosts_used + 1);
+//         const maxBoosts = res.max_boosts || boostData.max_boosts;
+//         const boostsLeft = res.boosts_left !== undefined ? res.boosts_left : Math.max(0, maxBoosts - boostsUsed);
+
+//         setBoostData({
+//           boosts_used: boostsUsed,
+//           boosts_left: boostsLeft,
+//           max_boosts: maxBoosts,
+//           plan_name: res.plan_name || boostData.plan_name,
+//           loading: false
+//         });
+
+//         // Update userInfo in Redux
+//         dispatch({  
 //           type: "user/updateBoostTime",
 //           payload: res.boosted_until,
 //         });
 //       }
+      
+//       // Refresh boost status after successful boost
+//       await fetchBoostStatus();
+      
 //     } catch (err) {
 //       console.error("Boost error:", err);
 //     }
@@ -235,7 +317,7 @@ export default function BoostButton() {
 //         if (prev <= 1) {
 //           clearInterval(timer);
 //           setBoosting(false);
-//           return 0; // ✅ keep 0 instead of null
+//           return 0;
 //         }
 //         return prev - 1;
 //       });
@@ -251,22 +333,43 @@ export default function BoostButton() {
 //     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 //   };
 
+//   const isBoostDisabled = boosting || boostData.boosts_left <= 0 || boostData.loading;
+
+//   if (boostData.loading) {
+//     return (
+//       <div className="boost-container">
+//         <button className="boost-btn" disabled>
+//           Loading...
+//         </button>
+//       </div>
+//     );
+//   }
+
 //   return (
-//     <button
-//       className="boost-btn"
-//       onClick={handleBoost}
-//       disabled={boosting}
-//       title={
-//         boosting
-//           ? `Boost active until ${new Date(
-//               userInfo?.boosted_until
-//             ).toLocaleString()}`
-//           : "Boost your profile to get more visibility!"
-//       }
-//     >
-//       {boosting && timeLeft > 0
-//         ? `⏳ ${formatTime(timeLeft)}`
-//         : "🚀 Boost Profile"}
-//     </button>
+//     <div className="boost-container">
+//       {boostData.plan_name !== null ?(<div className="boost-info">
+//         <span>
+//           Boost Details: <strong>{boostData.boosts_used}/{boostData.max_boosts}</strong> 
+//         </span>
+//       </div>):null}
+//       <button
+//         className="boost-btn"
+//         onClick={handleBoost}
+//         disabled={isBoostDisabled}
+//         title={
+//           boosting
+//             ? `Boost active until ${new Date(
+//                 userInfo?.boosted_until
+//               ).toLocaleString()}`
+//             : boostData.boosts_left <= 0
+//             ? "Boost not available, Upgrade now!"
+//             : "Boost your profile to get more visibility!"
+//         }
+//       >
+//         {boosting && timeLeft > 0
+//           ? `⏳ ${formatTime(timeLeft)}`
+//           : `🚀 Boost Profile`}
+//       </button>
+//     </div>
 //   );
 // }

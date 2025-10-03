@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 function DetailedAllRequest({ receiverData, fetchReceiverData }) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 2; // Show 2 requests per page
-  console.log("receiverData", receiverData);
+  // console.log("receiverData", receiverData);
 
   // Calculate total pages
   const totalPages = Math.ceil(receiverData.length / itemsPerPage);

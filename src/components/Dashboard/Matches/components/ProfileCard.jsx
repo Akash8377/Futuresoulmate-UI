@@ -12,6 +12,7 @@ import AstroModal from "./AstroModal";
 import { Link } from "react-router-dom";
 import ActionMenu from "./ActionMenu";
 import { blockUser, unblockUser, reportUser } from "../../../../features/user/userApi";
+import { toast } from "../../../Common/Toast";
 
 const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex, chatBoxOpen, dnaMatches = false, user = {}, onProfileUpdate
 }) => {
@@ -32,13 +33,13 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
 
   // Handle profile click navigation
   const handleProfileClick = () => {
-    navigate(`/profile/${profile.profileId || profile.user_id}`, {
-      state: {
-        profile: profile, // Send complete profile data
-        currentUser: user, // Send current user data if needed
-        source: dnaMatches ? "dna-matches" : "regular-matches" // Optional: track where it came from
-      }
-    });
+      navigate(`/profile/${profile.profileId || profile.user_id}`, {
+        state: {
+          profile: profile, // Send complete profile data
+          currentUser: user, // Send current user data if needed
+          source: dnaMatches ? "dna-matches" : "regular-matches" // Optional: track where it came from
+        }
+      });
   };
 
   // Parse gallery images and include profile image as first item
@@ -182,8 +183,8 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                       style={{ width: "20px", height: "20px" }}
                     />
                   )}
-                  {profile.linkedin_connected ? (<i className="fa fa-linkedin-square ms-1 me-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
-                  {profile.facebook_connected ? (<i className="fa fa-facebook-square me-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
+                  {profile.linkedin_connected ? (<i className="fa fa-linkedin-square ms-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
+                  {profile.facebook_connected ? (<i className="fa fa-facebook-square ms-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
                 </span>
                 <div className="d-flex align-items-center">
                   {dnaMatches && (
@@ -296,8 +297,15 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
               <ContactOptions profile={profile} chatBoxOpen={chatBoxOpen}/>
             ) : (
               <ConnectBox
-                handleConnectClick={() => handleConnectClick(profile.user_id, profile.profileId)}
-              />
+                handleConnectClick={() => {
+                  if (!user.plan_name || user.plan_name === null) {
+                    toast.info("Please upgrade your plan to use the connect feature.");
+                    navigate("/upgrade-profile");
+                  } else {
+                    handleConnectClick(profile.user_id, profile.profileId);
+                  }
+                }}
+              />  
             )}
           </div>
         </div>

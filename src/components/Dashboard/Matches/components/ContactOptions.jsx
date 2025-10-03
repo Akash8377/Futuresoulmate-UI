@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const ContactOptions = ({profile, chatBoxOpen}) => {
   const phone = profile.phone || profile.receiver_phone
@@ -19,9 +20,9 @@ const ContactOptions = ({profile, chatBoxOpen}) => {
 
   return(
   <div className="text-center">
-    {userInfo.plan_status === "active"?"":(<p className="upgrade-text mb-2">
-      <span className="text-primary">Upgrade</span> to<br />
-      Contact her directly
+    {userInfo.plan_status === "active" ? "" :(<p className="upgrade-text mb-2">
+      <Link to="/upgrade-profile" className="text-primary">Upgrade</Link> to<br />
+      Contact directly
     </p>)}
     <button className="btn btn-outline-info contact-btn mb-2 w-100" onClick={handleCall}>
       <i className="fa fa-phone me-1" aria-hidden="true" ></i> Call

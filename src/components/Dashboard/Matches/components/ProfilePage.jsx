@@ -27,6 +27,7 @@ const ProfilePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.userInfo);
+  console.log("user Info", user)
   const [showChatBox, setShowChatBox] = useState(false)
   const chatBoxOpen = () =>{
     setShowChatBox(true)
