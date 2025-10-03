@@ -13,6 +13,7 @@ import AstroModal from "./components/AstroModal";
 import { Link } from "react-router-dom";
 import ActionMenu from "./components/ActionMenu"; // Import ActionMenu
 import { blockUser, unblockUser, reportUser } from "../../../features/user/userApi"; // Import API functions
+import { useNavigate } from "react-router-dom";
 
 const TodaysMatches = ({chatBoxOpen}) => {
   const [profiles, setProfiles] = useState([]);
@@ -23,6 +24,7 @@ const TodaysMatches = ({chatBoxOpen}) => {
   const searchFor = user?.looking_for === "Bride" ? "Groom" : "Bride";
   const [showAstroModal, setShowAstroModal] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false); // Add blocked state
+  const navigate = useNavigate()
 
   const fetchProfiles = async () => {
     try {
@@ -329,7 +331,17 @@ const TodaysMatches = ({chatBoxOpen}) => {
                   ) : currentProfile.connectionRequest ? (
                     <ContactOptions profile={currentProfile} chatBoxOpen={chatBoxOpen}/>
                   ) : (
-                    <ConnectBox handleConnectClick={() => handleConnect(currentProfile.user_id, currentProfile.profileId)} />
+                    // <ConnectBox handleConnectClick={() => handleConnect(currentProfile.user_id, currentProfile.profileId)} />
+                    <ConnectBox
+                                    handleConnectClick={() => {
+                                      if (!user.plan_name || user.plan_name === null) {
+                                        toast.info("Please upgrade your plan to use the connect feature.");
+                                        navigate("/upgrade-profile");
+                                      } else {
+                                        handleConnect(currentProfile.user_id, currentProfile.profileId);
+                                      }
+                                    }}
+                                  /> 
                   )}
                 </div>
               </div>
