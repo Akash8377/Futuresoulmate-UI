@@ -31,6 +31,8 @@ import ProfilePage from './components/Dashboard/Matches/components/ProfilePage.j
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfService from './pages/TermOfService.jsx';
 import DeleteSocialInstruction from './pages/DeleteSocialInstruction.jsx';
+import SocialAuthSuccess from './components/Dashboard/dashboard/dashtabcomponents/SocialAuthSuccess.jsx';
+import SocialAuthError from './components/Dashboard/dashboard/dashtabcomponents/SocialAuthError.jsx';
 
 // Protected Route Wrapper for Onboarding routes
 const OnboardingRoute = () => {
@@ -66,6 +68,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forget-password" element={<ForgotPasswordOTP />} />
+        <Route path="/social-auth-callback" element={<SocialAuthSuccess />} />
+        <Route path="/social-auth-error" element={<SocialAuthError />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         {/* Protected Routes */}
         {/* Onboarding Routes (with HeaderOnboarding) */}
         <Route element={<OnboardingRoute />}>
@@ -74,9 +81,6 @@ function App() {
           <Route path="/verify-profile" element={<VerifyProfile />} />
           <Route path="/family-details" element={<FamilyDetailsForm />} />
           <Route path="/partner-preferences" element={<PartnerPreferences />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
         </Route>
 
         {/* Dashboard Routes (with HeaderDashboard) */}

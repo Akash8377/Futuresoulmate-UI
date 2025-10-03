@@ -13,7 +13,7 @@ const Footer = () => {
         <div className="footer-links">
           <Link to="#">About us</Link> |<Link to="#">Contact us</Link> |
           <Link to="#">Careers</Link> |<Link to="#">Awards &amp; Recognition</Link> |
-          <Link to="#">Terms &amp; Conditions</Link> |<Link to="#">Privacy Policy</Link>{" "}
+          <Link to="/terms-of-service">Terms &amp; Conditions</Link> |<Link to="/privacy-policy">Privacy Policy</Link>{" "}
           |<Link to="#">Disclaimer</Link>
         </div>
       </div>

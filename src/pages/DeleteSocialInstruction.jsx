@@ -1,7 +1,11 @@
 import React from 'react';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
 
 const DeleteSocialInstruction = () => {
   return (
+    <>
+    <Header/>
     <div className="container py-5">
       <div className="row justify-content-center">
         <div className="col-lg-10 col-xl-8">
@@ -292,6 +296,8 @@ const DeleteSocialInstruction = () => {
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

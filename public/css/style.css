@@ -1314,7 +1314,7 @@ span#uploadTrigger i {
 }
 
 .privacy-part1 .edit-link {
-  color: #007bff;
+  color: #0977af;
   text-decoration: none;
   font-weight: 500;
   margin-left: 5px;
@@ -1911,7 +1911,7 @@ span#uploadTrigger i {
 }
 
 .timeline .upgrade-text {
-  color: #007bff;
+  color: #0977af;
   font-weight: 500;
   cursor: pointer;
 }
@@ -4205,4 +4205,44 @@ background-color: #eaf8ff;
 
 .profile-page{
   padding: 50px 100px
+}
+
+.boost-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.boost-info {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.boost-info strong {
+  color: #333;
+}
+
+.boost-btn {
+  padding: 8px 16px;
+  background: #0977af;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.boost-btn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.boost-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #6c757d;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -86,32 +86,6 @@ const ProfilePage = () => {
   }, [profile, user]);
   
   const calculateAge = (dob) => Math.abs(new Date(Date.now() - new Date(dob).getTime()).getUTCFullYear() - 1970);
-  
-  const matchingRatio = useMemo(() => {
-    if (!profile?.partner_preference || !user) return 0;
-    
-    try {
-      const pref = JSON.parse(profile.partner_preference);
-      const criteria = [
-        { 
-          check: () => {
-            const [min, max] = pref.basic?.ageRange?.split("–").map(Number) || [];
-            const age = calculateAge(user.dob);
-            return min && max && age >= min && age <= max;
-          }
-        },
-        { check: () => pref.basic?.maritalStatus === user.marital_status },
-        { check: () => pref.community?.religion === user.religion },
-        { check: () => pref.community?.motherTongue === user.mother_tongue },
-        { check: () => pref.location?.country?.includes(user.country) },
-        { check: () => pref.education?.qualification === user.qualification }
-      ];
-      return Math.round((criteria.filter(c => c.check()).length / criteria.length) * 100);
-    } catch (error) {
-      console.error("Error calculating matching ratio", error);
-      return 0;
-    }
-  }, [profile, user]);
 
   const handleConnect = async (id, profileId) => {
     try {
@@ -226,19 +200,49 @@ const ProfilePage = () => {
             
             {/* Verified Profile Section */}
             <div className="verified-profile mt-3 p-3 bg-light rounded">
-              <h4 className="h6">
-                <i className="fa fa-certificate text-warning me-2" aria-hidden="true"></i> 
-                Verified Profile
-              </h4>
+              {(profile.facebook_connected === 1 || profile.linkedin_connected === 1) && (
+                <h4 className="h6">
+                  <i className="fa fa-certificate text-warning me-2" aria-hidden="true"></i> 
+                  Verified Profile
+                </h4>
+              )}
               <div className="sub-partverified">
                 <ul className="list-unstyled mb-0 small">
+                  {/* LinkedIn Verification Status */}
+                  <li className="mb-1">
+                    {profile.linkedin_connected === 1 ? (
+                      <>
+                        <i className="fa fa-check text-success me-2" aria-hidden="true"></i>
+                        <i className="fa fa-linkedin-square me-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>
+                        LinkedIn Verified
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa fa-times text-danger me-2" aria-hidden="true"></i>
+                        <i className="fa fa-linkedin-square text-muted me-1" style={{fontSize:"20px"}}  aria-hidden="true"></i>
+                        LinkedIn Not Connected
+                      </>
+                    )}
+                  </li>
+                  {/* Facebook Verification Status */}
+                  <li className="mb-1">
+                    {profile.facebook_connected === 1 ? (
+                      <>
+                        <i className="fa fa-check text-success me-2" aria-hidden="true"></i>
+                        <i className="fa fa-facebook-square me-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>
+                        Facebook Verified
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa fa-times text-danger me-2" aria-hidden="true"></i>
+                        <i className="fa fa-facebook-square text-muted me-1" style={{fontSize:"20px"}} aria-hidden="true"></i>
+                        Facebook Not Connected
+                      </>
+                    )}
+                  </li>
                   <li className="mb-1">
                     <i className="fa fa-check text-success me-2" aria-hidden="true"></i>
                     Name verified against <Link to="#" className="text-decoration-none">Govt ID</Link>
-                  </li>
-                  <li className="mb-0">
-                    <i className="fa fa-times text-danger me-2" aria-hidden="true"></i>
-                    Mobile Number Is Not Verified
                   </li>
                 </ul>
               </div>
@@ -288,7 +292,7 @@ const ProfilePage = () => {
                       
                       <span className="text-muted">
                         <i className="fa fa-users me-1"></i> 
-                        You & {user?.looking_for === "Bride" ? "Bride" : "Groom"}
+                        You & {user?.looking_for === "Bride" ? "Her" : "Him"}
                       </span>
                       
                       <span 
@@ -400,13 +404,12 @@ const ProfilePage = () => {
                 {activeTab === "detailed" && (
                   <ProfileDetails 
                     currentProfile={profile} 
-                    matchingRatio={matchingRatio} 
                   />
                 )}
                 {activeTab === "partner" && (
                   <PartnerPreferences 
                     currentProfile={profile} 
-                    matchingRatio={matchingRatio} 
+                    user={user} 
                   />
                 )}
               </div>

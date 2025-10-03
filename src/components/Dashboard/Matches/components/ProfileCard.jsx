@@ -182,6 +182,8 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                       style={{ width: "20px", height: "20px" }}
                     />
                   )}
+                  {profile.linkedin_connected ? (<i className="fa fa-linkedin-square ms-1 me-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
+                  {profile.facebook_connected ? (<i className="fa fa-facebook-square me-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
                 </span>
                 <div className="d-flex align-items-center">
                   {dnaMatches && (
@@ -221,7 +223,7 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                 )}
                 <span className="text-muted">
                   <i className="fa fa-users me-1" aria-hidden="true"></i> You &
-                  Her
+                  {profile.looking_for === "Bride"?" Him":" Her"}
                 </span>
                 <span 
                   className="text-warning cursor-pointer"

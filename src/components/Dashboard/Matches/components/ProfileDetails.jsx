@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
-const ProfileDetails = ({ currentProfile, matchingRatio }) => {
+const ProfileDetails = ({ currentProfile }) => {
   const userInfo = useSelector(state=>state.user.userInfo)
   const family_details = typeof currentProfile?.family_details ==='object'?currentProfile?.family_details:JSON.parse(currentProfile?.family_details)
   // console.log("Profiledetail User Info",userInfo)
@@ -38,7 +38,7 @@ const ProfileDetails = ({ currentProfile, matchingRatio }) => {
         <h5 className="section-title">About {currentProfile.first_name}</h5>
         <div className="card-box">
           <div className="d-flex justify-content-between mb-2">
-            <span><strong>ID:</strong> SH{currentProfile.id?.toString().padStart(8, '0')}</span>
+            <span><strong>ID:</strong> {currentProfile.profileId}</span>
             <span className="badge bg-secondary">
               {currentProfile.person === 'myself' ? 'Self Managed' : 'Parent Managed'}
             </span>
