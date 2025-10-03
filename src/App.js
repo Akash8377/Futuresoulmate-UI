@@ -70,9 +70,9 @@ function App() {
         <Route path="/forget-password" element={<ForgotPasswordOTP />} />
         <Route path="/social-auth-callback" element={<SocialAuthSuccess />} />
         <Route path="/social-auth-error" element={<SocialAuthError />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         {/* Protected Routes */}
         {/* Onboarding Routes (with HeaderOnboarding) */}
         <Route element={<OnboardingRoute />}>

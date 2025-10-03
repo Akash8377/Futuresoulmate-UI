@@ -147,7 +147,7 @@ export default function BoostButton() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const isBoostDisabled = boosting || boostData.boosts_left <= 0 || boostData.loading;
+  const isBoostDisabled = boosting || boostData.loading;
 
   if (boostData.loading) {
     return (
@@ -172,7 +172,7 @@ export default function BoostButton() {
       <button
         className="boost-btn"
         onClick={handleBoost}
-        // disabled={isBoostDisabled}
+        disabled={isBoostDisabled}
         title={
           boosting
             ? `Boost active until ${new Date(
