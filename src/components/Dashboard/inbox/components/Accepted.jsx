@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { timeAgo,formatLastSeen } from "../../../../utils/timeAgo";
 import { Link } from "react-router-dom";
 import ContactOptions from "../../Matches/components/ContactOptions"
-function Accepted({chatBoxOpen,activeKey}) {
+function Accepted({chatBoxOpen, activeKey}) {
   const [receivers, setReceivers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedFilter, setSelectedFilter] = useState("allRequest");

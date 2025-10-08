@@ -6,7 +6,7 @@ import config from "../../../../config";
 import axios from "axios";
 import { toast } from "../../../Common/Toast";
 import { useConnection } from "./ConnectionContext";
-
+import { useNavigate } from "react-router-dom";
 
 const MatchCard = ({ data, showAll, handleConnect }) => {
   const { connections } = useConnection();
@@ -46,13 +46,14 @@ const MatchCard = ({ data, showAll, handleConnect }) => {
 };
 
 const MatchesSection = () => {
-   const user = useSelector((state) => state.user.userInfo)
-
+    const user = useSelector((state) => state.user.userInfo)
+    const token = useSelector((state) => state.user.token)
+    const navigate = useNavigate()
     const searchFor = user?.looking_for === "Bride" ? "Groom" : "Bride";
     const { data, isLoading, isError } = useGetUsersByLookingForQuery({
-  id: user.id,
-  looking_for: searchFor
-});
+      id: user.id,
+      looking_for: searchFor
+    });
     const [premiumMatches, setPremiumMatches] = useState([]);
     const [newMatches, setNewMatches] = useState([]);
     const [showPremiumAll, setShowPremiumAll] = useState(false);
@@ -75,30 +76,77 @@ const MatchesSection = () => {
       }
     }, [data]);
 
-        const handleConnect = async (id, profileId) => {
-          setPremiumMatches(prev => prev.map(p => 
-            p.id === id ? { ...p, connectionRequest: 1 } : p
-          ));
-          setNewMatches(prev => prev.map(p => 
-            p.id === id ? { ...p, connectionRequest: 1 } : p
-          ));
-          updateConnection(id, 1);
-          try {
-            await axios.post(`${config.baseURL}/api/notifications/send`, {
-              receiver_user_id: id,
-              receiver_profile_id: profileId,
-              sender_user_id: user?.user_id,
-              sender_profile_id: user?.profileId,
-              type: "connect",
-              message: `${user?.first_name} wants to connect with you`,
-            });
-            toast.success("Request sent successfully");
-          } catch (error) {
-            updateConnection(id, 0);
-            console.error("Error sending notification", error);
-          }
-        };
+    const handleConnect = async (id, profileId, userName) => {
+  if (!user.plan_name || user.plan_name === null) {
+    toast.info("Please upgrade your plan to use the connect feature.");
+    navigate("/upgrade-profile");
+    return;
+  }
 
+  // Update UI immediately
+  setPremiumMatches(prev => prev.map(p => 
+    p.id === id ? { ...p, connectionRequest: 1 } : p
+  ));
+  setNewMatches(prev => prev.map(p => 
+    p.id === id ? { ...p, connectionRequest: 1 } : p
+  ));
+  updateConnection(id, 1);
+
+  try {
+    // First, use the Shortlist service
+    const serviceResponse = await fetch(`${config.baseURL}/api/profile/service/use`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ serviceName: 'Shortlist' })
+    });
+
+    const serviceResult = await serviceResponse.json();
+    
+    if (!serviceResult.success) {
+      throw new Error(serviceResult.message || 'Failed to use connection service');
+    }
+
+    // Then send the connection notification
+    await axios.post(`${config.baseURL}/api/notifications/send`, {
+      receiver_user_id: id,
+      receiver_profile_id: profileId,
+      sender_user_id: user?.user_id,
+      sender_profile_id: user?.profileId,
+      type: "connect",
+      message: `${user?.first_name} wants to connect with you`,
+    });
+
+    // Show remaining connects in toast
+    const remainingConnects = serviceResult.uses_left || serviceResult.services_left?.Shortlist;
+    const message = remainingConnects !== undefined 
+      ? `Connection request sent successfully! ${remainingConnects} connects remaining.`
+      : `Connection request sent successfully! 0 connects remaining.`;
+
+    toast.success(message);
+
+  } catch (error) {
+    // Revert UI on error
+    setPremiumMatches(prev => prev.map(p => 
+      p.id === id ? { ...p, connectionRequest: 0 } : p
+    ));
+    setNewMatches(prev => prev.map(p => 
+      p.id === id ? { ...p, connectionRequest: 0 } : p
+    ));
+    updateConnection(id, 0);
+    if (error.message) {
+      if(error.message === "No Shortlist uses left for your Premium plan"){
+        toast.info(error.message);
+        navigate("/upgrade-profile");
+      }else  
+        toast.error(error.message);
+    } else {
+      toast.error("Failed to send connection request");
+    }
+  }
+};
 
   if (isLoading) return <p>Loading matches...</p>;
   if (isError) return <p>Error loading matches.</p>;

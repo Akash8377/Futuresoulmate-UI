@@ -7,12 +7,12 @@ import Requested from './Requested';
 import Deleted from './Deleted';
 import ChatBox from './ChatBox';
 
-
-
 function MainTabs() {
   const [activeKey, setActiveKey] = useState('');
-   const [showChatBox, setShowChatBox] = useState(false)
-   const chatBoxOpen = () =>{
+  const [showChatBox, setShowChatBox] = useState(false)
+  const [selectedProfile, setSelectedProfile] = useState(null)
+  const chatBoxOpen = (profileId) =>{
+    setSelectedProfile(profileId)
     setShowChatBox(true)
  }
 
@@ -73,7 +73,7 @@ function MainTabs() {
           </div>
         ))}
       </div>
-      <ChatBox showChatBox={showChatBox} setShowChatBox={()=>setShowChatBox(false)}/>
+      <ChatBox showChatBox={showChatBox} selectedProfile={selectedProfile} setShowChatBox={()=>setShowChatBox(false)}/>
     </div>
   );
 }

@@ -34,6 +34,8 @@ import DeleteSocialInstruction from './pages/DeleteSocialInstruction.jsx';
 import SocialAuthSuccess from './components/Dashboard/dashboard/dashtabcomponents/SocialAuthSuccess.jsx';
 import SocialAuthError from './components/Dashboard/dashboard/dashtabcomponents/SocialAuthError.jsx';
 
+import { ServiceProvider } from './context/ServiceContext.js';
+
 // Protected Route Wrapper for Onboarding routes
 const OnboardingRoute = () => {
   const { token } = useSelector((state) => state.user);
@@ -60,50 +62,52 @@ const DashboardRoute = () => {
 
 function App() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Toast />
-      <ScrollToTop />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forget-password" element={<ForgotPasswordOTP />} />
-        <Route path="/social-auth-callback" element={<SocialAuthSuccess />} />
-        <Route path="/social-auth-error" element={<SocialAuthError />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
-        <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        {/* Protected Routes */}
-        {/* Onboarding Routes (with HeaderOnboarding) */}
-        <Route element={<OnboardingRoute />}>
-          <Route path="/profile-upload" element={<ProfileUpload />} />
-          <Route path="/hobbies" element={<HobbiesInterests />} />
-          <Route path="/verify-profile" element={<VerifyProfile />} />
-          <Route path="/family-details" element={<FamilyDetailsForm />} />
-          <Route path="/partner-preferences" element={<PartnerPreferences />} />
-        </Route>
+    <ServiceProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Toast />
+        <ScrollToTop />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forget-password" element={<ForgotPasswordOTP />} />
+          <Route path="/social-auth-callback" element={<SocialAuthSuccess />} />
+          <Route path="/social-auth-error" element={<SocialAuthError />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/delete-social-account" element={<DeleteSocialInstruction />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          {/* Protected Routes */}
+          {/* Onboarding Routes (with HeaderOnboarding) */}
+          <Route element={<OnboardingRoute />}>
+            <Route path="/profile-upload" element={<ProfileUpload />} />
+            <Route path="/hobbies" element={<HobbiesInterests />} />
+            <Route path="/verify-profile" element={<VerifyProfile />} />
+            <Route path="/family-details" element={<FamilyDetailsForm />} />
+            <Route path="/partner-preferences" element={<PartnerPreferences />} />
+          </Route>
 
-        {/* Dashboard Routes (with HeaderDashboard) */}
-        <Route element={<DashboardRoute />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/message-inbox" element={<MessageInbox />} />
-          <Route path="/matches" element={<Matches />} />
-          <Route path="/search-profile" element={<Search />} />
-          <Route path="/search-results" element={<SearchResultsPage />} />
-          <Route path="/inbox" element={<Inbox />} />
-          <Route path="/gentics-biological-attraction" element={<GeneticBiological />} />
-          <Route path="/gentics-psychological-compatibility" element={<GeneticPhyscological />} />
-          <Route path="/gentics-birth-defect-risk" element={<GeneticBirthDefect />} />
-          <Route path="/identity-enrichment" element={<IdentityEnrichment />} />
-          <Route path="/upgrade-profile" element={<UpgradeProfile />} />
-          <Route path="/payment/success" element={<PaymentSuccess />} />
-          <Route path="/payment/cancel" element={<PaymentCancel />} />
-          <Route path="/profile/:profileId" element={<ProfilePage />} />
-        </Route>
-        {/* Catch-all redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Suspense>
+          {/* Dashboard Routes (with HeaderDashboard) */}
+          <Route element={<DashboardRoute />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/message-inbox" element={<MessageInbox />} />
+            <Route path="/matches" element={<Matches />} />
+            <Route path="/search-profile" element={<Search />} />
+            <Route path="/search-results" element={<SearchResultsPage />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/gentics-biological-attraction" element={<GeneticBiological />} />
+            <Route path="/gentics-psychological-compatibility" element={<GeneticPhyscological />} />
+            <Route path="/gentics-birth-defect-risk" element={<GeneticBirthDefect />} />
+            <Route path="/identity-enrichment" element={<IdentityEnrichment />} />
+            <Route path="/upgrade-profile" element={<UpgradeProfile />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/cancel" element={<PaymentCancel />} />
+            <Route path="/profile/:profileId" element={<ProfilePage />} />
+          </Route>
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </ServiceProvider>
   );
 }
 

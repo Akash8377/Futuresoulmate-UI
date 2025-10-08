@@ -293,7 +293,7 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
             </div>
           </div>
           <div className="col-md-2 d-flex align-items-center justify-content-center connect-now p-2">
-            {profile.connectionRequest ? (
+            {/* {profile.connectionRequest ? (
               <ContactOptions profile={profile} chatBoxOpen={chatBoxOpen}/>
             ) : (
               <ConnectBox
@@ -306,7 +306,16 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                   }
                 }}
               />  
-            )}
+            )} */}
+            {profile.connectionRequest ? (
+                <ContactOptions profile={profile} chatBoxOpen={chatBoxOpen}/>
+              ) : (
+                <ConnectBox 
+                  id={profile.user_id} 
+                  profileId={profile.profileId}
+                  onConnectionSent={handleConnectClick}
+                />  
+              )}
           </div>
         </div>
       </div>

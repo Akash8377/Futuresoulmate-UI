@@ -6,14 +6,7 @@ const biologicalGeneGroups = {
   "Digestive & Metabolic Traits": ["ADH1B", "ALDH2", "FTO", "LEPR", "PPARG"],
   "Immune System & Scent-Based Attraction": ["HLA"],
   "Musculoskeletal & Physical Performance": ["ACE", "ACTN3"],
-  "Pigmentation & Sensory Appearance": [
-    "ASIP",
-    "EDAR",
-    "HERC2/OCA2",
-    "MC1R",
-    "SLC24A4",
-    "TYR",
-  ],
+  "Pigmentation & Sensory Appearance": [ "ASIP", "EDAR", "HERC2/OCA2", "MC1R", "SLC24A4", "TYR" ],
   "Taste & Sensory Response": ["TAS2R38"],
 };
 

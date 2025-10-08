@@ -70,25 +70,31 @@ const TodaysMatches = ({chatBoxOpen}) => {
     setIsBlocked(false); // Reset blocked status when changing profiles
   };
 
-  const handleConnect = async (id, profileId) => {
-    setProfiles(prev => prev.map(p => 
-      p.user_id === id ? { ...p, connectionRequest: true } : p
-    ));
-    try {
-      await axios.post(`${config.baseURL}/api/notifications/send`, {
-        receiver_user_id: id,
-        receiver_profile_id: profileId,
-        sender_user_id: user?.user_id,
-        sender_profile_id: user?.profileId,
-        type: "connect",
-        message: `${user?.first_name} wants to connect with you`,
-      });
-      toast.success("Request sent successfully");
-    } catch (error) {
-      console.error("Error sending notification", error);
-    }
+  // const handleConnect = async (id, profileId) => {
+  //   setProfiles(prev => prev.map(p => 
+  //     p.user_id === id ? { ...p, connectionRequest: true } : p
+  //   ));
+  //   try {
+  //     await axios.post(`${config.baseURL}/api/notifications/send`, {
+  //       receiver_user_id: id,
+  //       receiver_profile_id: profileId,
+  //       sender_user_id: user?.user_id,
+  //       sender_profile_id: user?.profileId,
+  //       type: "connect",
+  //       message: `${user?.first_name} wants to connect with you`,
+  //     });
+  //     toast.success("Request sent successfully");
+  //   } catch (error) {
+  //     console.error("Error sending notification", error);
+  //   }
+  // };
+  const handleConnect = (id) => {
+    setProfiles((prev) =>
+      prev.map((profile) =>
+        profile.user_id === id ? { ...profile, connectionRequest: true } : profile
+      )
+    );
   };
-
   // Block/Report handlers
   const handleBlock = async (blockedUserId) => {
     try {
@@ -271,8 +277,8 @@ const TodaysMatches = ({chatBoxOpen}) => {
                   <div className="p-3">
                     <h5 className="mb-1 d-flex justify-content-between align-items-center">
                       <span>
-                        {currentProfile.first_name} {currentProfile.last_name?.charAt(0)}.
-                        <img src="images/verified-badge.png" className="me-1" alt="Verified" />
+                        {currentProfile.first_name} {currentProfile.last_name}
+                        <img src="images/verified-badge.png" className="me-1 ms-1" alt="Verified" />
                       </span>
                       {/* Show blocked badge if user is blocked */}
                       {isBlocked && (
@@ -287,7 +293,7 @@ const TodaysMatches = ({chatBoxOpen}) => {
                           ? "Online now" 
                           : <><i className="fa fa-clock-o me-1"></i>{`Last seen ${formatLastSeen(currentProfile.online_status)}`}</>}
                       </span>
-                      <span className="text-muted"><i className="fa fa-users"></i> You &amp; Her</span>
+                      <span className="text-muted"><i className="fa fa-users"></i> You &amp; {currentProfile.looking_for === "Bride"?" Him":" Her"}</span>
                       <span 
                         className="text-warning cursor-pointer"
                         onClick={() => setShowAstroModal(true)}
@@ -331,17 +337,21 @@ const TodaysMatches = ({chatBoxOpen}) => {
                   ) : currentProfile.connectionRequest ? (
                     <ContactOptions profile={currentProfile} chatBoxOpen={chatBoxOpen}/>
                   ) : (
-                    // <ConnectBox handleConnectClick={() => handleConnect(currentProfile.user_id, currentProfile.profileId)} />
-                    <ConnectBox
-                                    handleConnectClick={() => {
-                                      if (!user.plan_name || user.plan_name === null) {
-                                        toast.info("Please upgrade your plan to use the connect feature.");
-                                        navigate("/upgrade-profile");
-                                      } else {
-                                        handleConnect(currentProfile.user_id, currentProfile.profileId);
-                                      }
-                                    }}
-                                  /> 
+                    // <ConnectBox
+                    //   handleConnectClick={() => {
+                    //     if (!user.plan_name || user.plan_name === null) {
+                    //       toast.info("Please upgrade your plan to use the connect feature.");
+                    //       navigate("/upgrade-profile");
+                    //     } else {
+                    //       handleConnect(currentProfile.user_id, currentProfile.profileId);
+                    //     }
+                    //   }}
+                    // /> 
+                    <ConnectBox 
+                      id={currentProfile.user_id} 
+                      profileId={currentProfile.profileId}
+                      onConnectionSent={handleConnect}
+                    />  
                   )}
                 </div>
               </div>

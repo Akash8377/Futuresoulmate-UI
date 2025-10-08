@@ -209,7 +209,7 @@ const Header = ({ unreadNotificationCount }) => {
               </button>
               {showProfile && (
                 <ul className="dropdown-menu dropdown-menu-end show">
-                  <li><NavLink className="dropdown-item" to="/dashboard" state={{ activtab: "profile" }}>Profile</NavLink></li>
+                  <li><NavLink className="dropdown-item" to="/dashboard" state={{ activtab: "profile" }}>{user.first_name+" "+user.last_name||"Profile"}</NavLink></li>
                   <li><NavLink className="dropdown-item" to="/dashboard" state={{ activtab: "settings" }}>Settings</NavLink></li>
                   <li><hr className="dropdown-divider" /></li>
                   <li><button className="dropdown-item" onClick={handleLogout}>Logout</button></li>

@@ -30,7 +30,7 @@ const ContactOptions = ({profile, chatBoxOpen}) => {
     <button className="btn btn-outline-success contact-btn mb-2 w-100" onClick={handleWhatsApp}>
       <i className="fa fa-whatsapp me-1" aria-hidden="true"  ></i> WhatsApp
     </button>
-    <button className="btn btn-outline-primary contact-btn w-100" onClick={()=>chatBoxOpen()}>
+    <button className="btn btn-outline-primary contact-btn w-100" onClick={()=>chatBoxOpen(profile.user_id ? profile.user_id : typeof(profile.receiver_profile_id)==="string"?profile.sender_profile_id:profile.receiver_profile_id)}>
       <i className="fa fa-commenting-o me-1" aria-hidden="true"></i> Shaadi Chat
     </button>
   </div>

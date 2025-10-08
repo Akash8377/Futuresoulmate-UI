@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { boostProfile } from "../../features/user/userApi";
 import { useDispatch, useSelector } from "react-redux";
 import config from "../../config";
 import { toast } from "./Toast";
@@ -10,115 +9,158 @@ export default function BoostButton() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [boosting, setBoosting] = useState(
-    userInfo?.boosted_until && new Date(userInfo.boosted_until) > new Date()
-  );
+  const [boosting, setBoosting] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [currentBoostUntil, setCurrentBoostUntil] = useState(null);
 
-  const [timeLeft, setTimeLeft] = useState(() => {
-    if (!userInfo?.boosted_until) return 0;
-    const diff = Math.floor(
-      (new Date(userInfo.boosted_until).getTime() - Date.now()) / 1000
-    );
-    return diff > 0 ? diff : 0;
-  });
-
-  const [boostData, setBoostData] = useState({
-    boosts_used: 0,
-    boosts_left: 0,
-    max_boosts: 0,
+  const [serviceData, setServiceData] = useState({
+    used: 0,
+    uses_left: 0,
+    max_uses: 0,
     plan_name: null,
-    loading: true
+    loading: true,
+    service_found: false
   });
 
-  // Fetch boost status on component mount
+  // Initialize boost state from userInfo and service data
   useEffect(() => {
-    fetchBoostStatus();
+    if (userInfo?.boosted_until) {
+      const boostTime = new Date(userInfo.boosted_until);
+      const now = new Date();
+      
+      if (boostTime > now) {
+        setBoosting(true);
+        setCurrentBoostUntil(userInfo.boosted_until);
+        const diff = Math.floor((boostTime.getTime() - now.getTime()) / 1000);
+        setTimeLeft(diff > 0 ? diff : 0);
+      } else {
+        setBoosting(false);
+        setCurrentBoostUntil(null);
+        setTimeLeft(0);
+      }
+    }
+  }, [userInfo]);
+
+  // Fetch service status on component mount
+  useEffect(() => {
+    fetchServiceStatus();
   }, []);
 
-  const fetchBoostStatus = async () => {
+  const fetchServiceStatus = async () => {
     try {
-      setBoostData(prev => ({ ...prev, loading: true }));
-      const response = await fetch(`${config.baseURL}/api/profile/boost/status`, {
+      setServiceData(prev => ({ ...prev, loading: true }));
+      
+      const response = await fetch(`${config.baseURL}/api/profile/service/status?service_name=Boosts`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      
       const data = await response.json();
+      console.log("Boost service data:", data);
       
       if (data.success) {
-        // Calculate boosts_left if it's null
-        const boostsUsed = data.subscription?.boosts_used || 0;
-        const maxBoosts = data.max_boosts || 0;
-        const boostsLeft = data.boosts_left !== null ? data.boosts_left : Math.max(0, maxBoosts - boostsUsed);
+        const serviceInfo = data.services?.Boosts || data.services;
         
-        setBoostData({
-          boosts_used: boostsUsed,
-          boosts_left: boostsLeft,
-          max_boosts: maxBoosts,
-          plan_name: data.subscription?.plan_name || null,
-          loading: false
-        });
+        if (serviceInfo) {
+          setServiceData({
+            used: serviceInfo.used || 0,
+            uses_left: serviceInfo.uses_left || 0,
+            max_uses: serviceInfo.max_uses || 0,
+            plan_name: data.plan_name,
+            loading: false,
+            service_found: true
+          });
 
-        // Also update boosting state based on current boost status
-        if (data.boosted_until && new Date(data.boosted_until) > new Date()) {
-          setBoosting(true);
-          const diff = Math.floor(
-            (new Date(data.boosted_until).getTime() - Date.now()) / 1000
-          );
-          setTimeLeft(diff > 0 ? diff : 0);
+          // Update boost state from API response (most current data)
+          if (data.user?.boosted_until && new Date(data.user.boosted_until) > new Date()) {
+            setBoosting(true);
+            setCurrentBoostUntil(data.user.boosted_until);
+            const diff = Math.floor(
+              (new Date(data.user.boosted_until).getTime() - Date.now()) / 1000
+            );
+            setTimeLeft(diff > 0 ? diff : 0);
+          } else {
+            setBoosting(false);
+            setCurrentBoostUntil(null);
+            setTimeLeft(0);
+          }
+        } else {
+          setServiceData({
+            used: 0,
+            uses_left: 0,
+            max_uses: 0,
+            plan_name: data.plan_name,
+            loading: false,
+            service_found: false
+          });
         }
       }
     } catch (error) {
-      console.error('Error fetching boost status:', error);
-      setBoostData(prev => ({ ...prev, loading: false }));
+      console.error('Error fetching service status:', error);
+      setServiceData(prev => ({ ...prev, loading: false }));
     }
   };
 
   const handleBoost = async () => {
-    // If user has no subscription, navigate to upgrade page
-    if (!boostData.plan_name) {
+    if (!serviceData.plan_name || !serviceData.service_found) {
       toast.info("Please upgrade your plan to use the boost feature.");
       navigate("/upgrade-profile");
       return;
     }
 
+    if (serviceData.uses_left <= 0) {
+      toast.info("No boosts available in your current plan.");
+      return;
+    }
+
     try {
-      const res = await boostProfile(token, userInfo, dispatch);
-      console.log("Boost response:", res);
+      const response = await fetch(`${config.baseURL}/api/profile/service/use`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ serviceName: 'Boosts' })
+      });
+
+      const data = await response.json();
+      console.log("Boost response:", data);
       
-      if (res?.boosted_until) {
-        const endTime = new Date(res.boosted_until).getTime();
-        const now = Date.now();
-        const seconds = Math.max(0, Math.floor((endTime - now) / 1000));
+      if (data.success) {
+        // Use the boosted_until from the API response
+        if (data.boosted_until) {
+          const endTime = new Date(data.boosted_until);
+          const now = new Date();
+          const seconds = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
 
-        setTimeLeft(seconds);
-        setBoosting(true);
+          setTimeLeft(seconds);
+          setBoosting(true);
+          setCurrentBoostUntil(data.boosted_until);
 
-        // Update boost data with response data
-        const boostsUsed = res.boost_used || (boostData.boosts_used + 1);
-        const maxBoosts = res.max_boosts || boostData.max_boosts;
-        const boostsLeft = res.boosts_left !== undefined ? res.boosts_left : Math.max(0, maxBoosts - boostsUsed);
+          // Update userInfo in Redux with the new boost time
+          dispatch({  
+            type: "user/updateBoostTime",
+            payload: data.boosted_until,
+          });
+        }
 
-        setBoostData({
-          boosts_used: boostsUsed,
-          boosts_left: boostsLeft,
-          max_boosts: maxBoosts,
-          plan_name: res.plan_name || boostData.plan_name,
+        // Update service data
+        setServiceData(prev => ({
+          ...prev,
+          used: data.service_used || (prev.used + 1),
+          uses_left: data.uses_left || Math.max(0, prev.max_uses - (prev.used + 1)),
           loading: false
-        });
+        }));
 
-        // Update userInfo in Redux
-        dispatch({  
-          type: "user/updateBoostTime",
-          payload: res.boosted_until,
-        });
+        toast.success(data.message || "Profile boosted successfully! 🚀");
+      } else {
+        toast.error(data.message || "Failed to boost profile");
       }
-      
-      // Refresh boost status after successful boost
-      await fetchBoostStatus();
       
     } catch (err) {
       console.error("Boost error:", err);
+      toast.error("Failed to boost profile");
     }
   };
 
@@ -131,6 +173,7 @@ export default function BoostButton() {
         if (prev <= 1) {
           clearInterval(timer);
           setBoosting(false);
+          setCurrentBoostUntil(null);
           return 0;
         }
         return prev - 1;
@@ -147,9 +190,16 @@ export default function BoostButton() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const isBoostDisabled = boosting || boostData.loading;
+  // Format date for display
+  const formatBoostEndTime = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString(); // This will format according to user's locale
+  };
 
-  if (boostData.loading) {
+  const isBoostDisabled = boosting || serviceData.loading || serviceData.uses_left <= 0 || !serviceData.service_found;
+
+  if (serviceData.loading) {
     return (
       <div className="boost-container">
         <button className="boost-btn" disabled>
@@ -161,10 +211,17 @@ export default function BoostButton() {
 
   return (
     <div className="boost-container">
-      {boostData.plan_name !== null ? (
+      {serviceData.plan_name && serviceData.service_found ? (
         <div className="boost-info">
           <span>
-            Boost Details: <strong>{boostData.boosts_used}/{boostData.max_boosts}</strong> 
+            Total Boosts: <strong>{serviceData.used}/{serviceData.max_uses}</strong> 
+            {/* {serviceData.uses_left > 0 && ` (${serviceData.uses_left} left)`} */}
+          </span>
+        </div>
+      ) : serviceData.plan_name && !serviceData.service_found ? (
+        <div className="boost-info">
+          <span style={{color: 'orange'}}>
+            Boost not available in your plan
           </span>
         </div>
       ) : null}
@@ -172,14 +229,15 @@ export default function BoostButton() {
       <button
         className="boost-btn"
         onClick={handleBoost}
-        disabled={isBoostDisabled}
+        // disabled={isBoostDisabled}
+        // style={{cursor: isBoostDisabled ? "not-allowed" : "pointer"}}
         title={
-          boosting
-            ? `Boost active until ${new Date(
-                userInfo?.boosted_until
-              ).toLocaleString()}`
-            : boostData.boosts_left <= 0
-            ? "Boost not available, Upgrade now!"
+          boosting && currentBoostUntil
+            ? `Boost active until ${formatBoostEndTime(currentBoostUntil)}`
+            : !serviceData.service_found
+            ? "Boost service not available in your plan"
+            : serviceData.uses_left <= 0
+            ? "No boosts available, Upgrade now!"
             : "Boost your profile to get more visibility!"
         }
       >
@@ -194,13 +252,15 @@ export default function BoostButton() {
 
 
 // import { useState, useEffect } from "react";
-// import { boostProfile } from "../../features/user/userApi";
+// import { useNavigate } from "react-router-dom";
 // import { useDispatch, useSelector } from "react-redux";
 // import config from "../../config";
+// import { toast } from "./Toast";
 
 // export default function BoostButton() {
 //   const { userInfo, token } = useSelector((state) => state.user);
 //   const dispatch = useDispatch();
+//   const navigate = useNavigate();
 
 //   const [boosting, setBoosting] = useState(
 //     userInfo?.boosted_until && new Date(userInfo.boosted_until) > new Date()
@@ -214,99 +274,137 @@ export default function BoostButton() {
 //     return diff > 0 ? diff : 0;
 //   });
 
-//   const [boostData, setBoostData] = useState({
-//     boosts_used: 0,
-//     boosts_left: 0,
-//     max_boosts: 0,
+//   const [serviceData, setServiceData] = useState({
+//     used: 0,
+//     uses_left: 0,
+//     max_uses: 0,
 //     plan_name: null,
-//     loading: true
+//     loading: true,
+//     service_found: false
 //   });
 
-//   // Fetch boost status on component mount
+//   // Fetch service status on component mount
 //   useEffect(() => {
-//     fetchBoostStatus();
+//     fetchServiceStatus();
 //   }, []);
 
-//   const fetchBoostStatus = async () => {
+//   const fetchServiceStatus = async () => {
 //     try {
-//       setBoostData(prev => ({ ...prev, loading: true }));
-//       const response = await fetch(`${config.baseURL}/api/profile/boost/status`, {
+//       setServiceData(prev => ({ ...prev, loading: true }));
+      
+//       // Use the exact service name from your response - "Boosts"
+//       const response = await fetch(`${config.baseURL}/api/profile/service/status?service_name=Boosts`, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
 //       });
+      
 //       const data = await response.json();
-//       // console.log("boost status: ", data);
+//       console.log("Boost service data:", data); // Debug log
       
 //       if (data.success) {
-//         // Calculate boosts_left if it's null
-//         const boostsUsed = data.subscription?.boosts_used || 0;
-//         const maxBoosts = data.max_boosts || 0;
-//         const boostsLeft = data.boosts_left !== null ? data.boosts_left : Math.max(0, maxBoosts - boostsUsed);
+//         // Check if we found the Boost service
+//         const serviceInfo = data.services?.Boosts || data.services;
+//         console.log("Service info:", serviceInfo); // Debug log
         
-//         setBoostData({
-//           boosts_used: boostsUsed,
-//           boosts_left: boostsLeft,
-//           max_boosts: maxBoosts,
-//           plan_name: data.subscription?.plan_name || null,
-//           loading: false
-//         });
+//         if (serviceInfo) {
+//           setServiceData({
+//             used: serviceInfo.used || 0,
+//             uses_left: serviceInfo.uses_left || 0,
+//             max_uses: serviceInfo.max_uses || 0,
+//             plan_name: data.plan_name,
+//             loading: false,
+//             service_found: true
+//           });
 
-//         // Also update boosting state based on current boost status
-//         if (data.boosted_until && new Date(data.boosted_until) > new Date()) {
-//           setBoosting(true);
-//           const diff = Math.floor(
-//             (new Date(data.boosted_until).getTime() - Date.now()) / 1000
-//           );
-//           setTimeLeft(diff > 0 ? diff : 0);
+//           // Update boosting state based on current boost status
+//           if (data.user?.boosted_until && new Date(data.user.boosted_until) > new Date()) {
+//             setBoosting(true);
+//             const diff = Math.floor(
+//               (new Date(data.user.boosted_until).getTime() - Date.now()) / 1000
+//             );
+//             setTimeLeft(diff > 0 ? diff : 0);
+//           }
+//         } else {
+//           // Boost service not found in plan
+//           setServiceData({
+//             used: 0,
+//             uses_left: 0,
+//             max_uses: 0,
+//             plan_name: data.plan_name,
+//             loading: false,
+//             service_found: false
+//           });
 //         }
 //       }
 //     } catch (error) {
-//       console.error('Error fetching boost status:', error);
-//       setBoostData(prev => ({ ...prev, loading: false }));
+//       console.error('Error fetching service status:', error);
+//       setServiceData(prev => ({ ...prev, loading: false }));
 //     }
 //   };
 
-//   const handleBoost = async () => {
-//     try {
-//       const res = await boostProfile(token, userInfo, dispatch);
-//       console.log("Boost response:", res);
-      
-//       if (res?.boosted_until) {
-//         const endTime = new Date(res.boosted_until).getTime();
+// const handleBoost = async () => {
+//   // If user has no subscription or boost service not available
+//   if (!serviceData.plan_name || !serviceData.service_found) {
+//     toast.info("Please upgrade your plan to use the boost feature.");
+//     navigate("/upgrade-profile");
+//     return;
+//   }
+
+//   // If no uses left
+//   if (serviceData.uses_left <= 0) {
+//     toast.info("No boosts available in your current plan.");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch(`${config.baseURL}/api/profile/service/use`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ serviceName: 'Boosts' }) // Use exact service name
+//     });
+
+//     const data = await response.json();
+//     console.log("Boost response:", data); // Debug log
+    
+//     if (data.success) {
+//       // Check if boosted_until is returned and valid
+//       if (data.boosted_until && new Date(data.boosted_until) > new Date()) {
+//         const endTime = new Date(data.boosted_until).getTime();
 //         const now = Date.now();
 //         const seconds = Math.max(0, Math.floor((endTime - now) / 1000));
 
 //         setTimeLeft(seconds);
 //         setBoosting(true);
 
-//         // Update boost data with response data
-//         const boostsUsed = res.boost_used || (boostData.boosts_used + 1);
-//         const maxBoosts = res.max_boosts || boostData.max_boosts;
-//         const boostsLeft = res.boosts_left !== undefined ? res.boosts_left : Math.max(0, maxBoosts - boostsUsed);
-
-//         setBoostData({
-//           boosts_used: boostsUsed,
-//           boosts_left: boostsLeft,
-//           max_boosts: maxBoosts,
-//           plan_name: res.plan_name || boostData.plan_name,
-//           loading: false
-//         });
-
 //         // Update userInfo in Redux
 //         dispatch({  
 //           type: "user/updateBoostTime",
-//           payload: res.boosted_until,
+//           payload: data.boosted_until,
 //         });
 //       }
-      
-//       // Refresh boost status after successful boost
-//       await fetchBoostStatus();
-      
-//     } catch (err) {
-//       console.error("Boost error:", err);
+
+//       // Update service data with response data
+//       setServiceData(prev => ({
+//         ...prev,
+//         used: data.service_used || (prev.used + 1),
+//         uses_left: data.uses_left || Math.max(0, prev.max_uses - (prev.used + 1)),
+//         loading: false
+//       }));
+
+//       toast.success(data.message || "Profile boosted successfully! 🚀");
+//     } else {
+//       toast.error(data.message || "Failed to boost profile");
 //     }
-//   };
+    
+//   } catch (err) {
+//     console.error("Boost error:", err);
+//     toast.error("Failed to boost profile");
+//   }
+// };
 
 //   // Countdown effect
 //   useEffect(() => {
@@ -333,9 +431,9 @@ export default function BoostButton() {
 //     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 //   };
 
-//   const isBoostDisabled = boosting || boostData.boosts_left <= 0 || boostData.loading;
+//   const isBoostDisabled = boosting || serviceData.loading || serviceData.uses_left <= 0 || !serviceData.service_found;
 
-//   if (boostData.loading) {
+//   if (serviceData.loading) {
 //     return (
 //       <div className="boost-container">
 //         <button className="boost-btn" disabled>
@@ -347,22 +445,32 @@ export default function BoostButton() {
 
 //   return (
 //     <div className="boost-container">
-//       {boostData.plan_name !== null ?(<div className="boost-info">
-//         <span>
-//           Boost Details: <strong>{boostData.boosts_used}/{boostData.max_boosts}</strong> 
-//         </span>
-//       </div>):null}
+//       {serviceData.plan_name && serviceData.service_found ? (
+//         <div className="boost-info">
+//           <span>
+//             Boost: <strong>{serviceData.used}/{serviceData.max_uses}</strong> 
+//             {serviceData.uses_left > 0 && ` (${serviceData.uses_left} left)`}
+//           </span>
+//         </div>
+//       ) : serviceData.plan_name && !serviceData.service_found ? (
+//         <div className="boost-info">
+//           <span style={{color: 'orange'}}>
+//             Boost not available in your plan
+//           </span>
+//         </div>
+//       ) : null}
+      
 //       <button
 //         className="boost-btn"
 //         onClick={handleBoost}
 //         disabled={isBoostDisabled}
 //         title={
 //           boosting
-//             ? `Boost active until ${new Date(
-//                 userInfo?.boosted_until
-//               ).toLocaleString()}`
-//             : boostData.boosts_left <= 0
-//             ? "Boost not available, Upgrade now!"
+//             ? `Boost active until ${new Date(userInfo?.boosted_until).toLocaleString()}`
+//             : !serviceData.service_found
+//             ? "Boost service not available in your plan"
+//             : serviceData.uses_left <= 0
+//             ? "No boosts available, Upgrade now!"
 //             : "Boost your profile to get more visibility!"
 //         }
 //       >

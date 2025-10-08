@@ -27,7 +27,7 @@ const ProfilePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.userInfo);
-  console.log("user Info", user)
+  // console.log("user Info", user)
   const [showChatBox, setShowChatBox] = useState(false)
   const chatBoxOpen = () =>{
     setShowChatBox(true)
@@ -88,27 +88,31 @@ const ProfilePage = () => {
   
   const calculateAge = (dob) => Math.abs(new Date(Date.now() - new Date(dob).getTime()).getUTCFullYear() - 1970);
 
-  const handleConnect = async (id, profileId) => {
-    try {
-      await axios.post(`${config.baseURL}/api/notifications/send`, {
-        receiver_user_id: id,
-        receiver_profile_id: profileId,
-        sender_user_id: user?.user_id,
-        sender_profile_id: user?.profileId,
-        type: "connect",
-        message: `${user?.first_name} wants to connect with you`,
-      });
-      toast.success("Connection request sent successfully");
+  // const handleConnect = async (id, profileId) => {
+  //   try {
+  //     await axios.post(`${config.baseURL}/api/notifications/send`, {
+  //       receiver_user_id: id,
+  //       receiver_profile_id: profileId,
+  //       sender_user_id: user?.user_id,
+  //       sender_profile_id: user?.profileId,
+  //       type: "connect",
+  //       message: `${user?.first_name} wants to connect with you`,
+  //     });
+  //     toast.success("Connection request sent successfully");
       
-      // Update local state to show contact options
-      setProfile(prev => ({ ...prev, connectionRequest: true }));
-    } catch (error) {
-      console.error("Error sending connection request", error);
-      toast.error("Failed to send connection request");
-    }
-  };
+  //     // Update local state to show contact options
+  //     setProfile(prev => ({ ...prev, connectionRequest: true }));
+  //   } catch (error) {
+  //     console.error("Error sending connection request", error);
+  //     toast.error("Failed to send connection request");
+  //   }
+  // };
 
   // Combine profile image with gallery images
+  const handleConnect = (id) => {
+    setProfile(prev => ({ ...prev, connectionRequest: true }));
+  };
+  
   const getProfileImages = () => {
     if (!profile) return [];
     
@@ -359,9 +363,21 @@ const ProfilePage = () => {
                   {profile.connectionRequest ? (
                     <ContactOptions profile={profile} chatBoxOpen={chatBoxOpen}/>
                   ) : (
+                    // <ConnectBox 
+                    //   handleConnectClick={() => {
+                    //     if (!user.plan_name || user.plan_name === null) {
+                    //       toast.info("Please upgrade your plan to use the connect feature.");
+                    //       navigate("/upgrade-profile");
+                    //     } else {
+                    //       handleConnect(profile.user_id, profile.profileId);
+                    //     }
+                    //   }}
+                    // />
                     <ConnectBox 
-                      handleConnectClick={() => handleConnect(profile.user_id, profile.profileId)}
-                    />
+                      id={profile.user_id} 
+                      profileId={profile.profileId}
+                      onConnectionSent={handleConnect}
+                    /> 
                   )}
                 </div>
               </div>

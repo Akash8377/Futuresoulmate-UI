@@ -36,7 +36,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
           },
         }
       );
-      console.log("Users using DNA data: ",response.data.users)
+      // console.log("Users using DNA data: ",response.data.users)
       setProfiles(response.data.users || []);
       setCurrentPage(1); // Reset to page 1 on new filter
     } catch (error) {
@@ -92,25 +92,33 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
     if (searchFor) fetchFilteredProfiles();
   }, [filters, searchFor, key, refreshTrigger]);
 
-  const handleConnectClick = async (id, profileId) => {
+  // const handleConnectClick = async (id, profileId) => {
+  //   setProfiles((prev) =>
+  //     prev.map((profile) =>
+  //       profile.user_id === id ? { ...profile, connectionRequest: true } : profile
+  //     )
+  //   );
+  //   try {
+  //     await axios.post(`${config.baseURL}/api/notifications/send`, {
+  //       receiver_user_id: id,
+  //       receiver_profile_id:profileId,
+  //       sender_user_id: user?.user_id,
+  //       sender_profile_id: user?.profileId,
+  //       type: "connect",
+  //       message: `${user?.first_name} wants to connect with you`,
+  //     });
+  //     toast.success("Request sent successfully")
+  //   } catch (error) {
+  //     console.error("Error sending notification", error);
+  //   }
+  // };
+
+  const handleConnectClick = (id) => {
     setProfiles((prev) =>
       prev.map((profile) =>
         profile.user_id === id ? { ...profile, connectionRequest: true } : profile
       )
     );
-    try {
-      await axios.post(`${config.baseURL}/api/notifications/send`, {
-        receiver_user_id: id,
-        receiver_profile_id:profileId,
-        sender_user_id: user?.user_id,
-        sender_profile_id: user?.profileId,
-        type: "connect",
-        message: `${user?.first_name} wants to connect with you`,
-      });
-      toast.success("Request sent successfully")
-    } catch (error) {
-      console.error("Error sending notification", error);
-    }
   };
 
   // Pagination logic

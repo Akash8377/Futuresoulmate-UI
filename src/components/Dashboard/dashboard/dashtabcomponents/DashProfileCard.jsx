@@ -82,11 +82,11 @@ const SocialVerificationBadge = () => (
 );
 
 const AccountTypeSection = ({ userInfo }) => (
-  <div className="section d-flex justify-content-between align-items-center">
-    <div className='d-flex gap-3'>
+  <div className="section">
+    <div className='d-flex justify-content-between align-items-center '>
       <div className="small text-muted mb-1">Account Type:</div>
       <div className="fw-semibold" style={{ fontSize: '14px', color: 'var(--color-secondary)' }}>
-        {userInfo.plan_status === "active" ? userInfo.plan_name : "Free Membership"}
+        {userInfo.plan_status === "active" ? userInfo.plan_name : "Free"}
       </div>
     </div>
   </div>

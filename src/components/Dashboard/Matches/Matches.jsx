@@ -51,8 +51,10 @@ const Matches = () => {
     }
  },[location.state?.activtab])
  const [showChatBox, setShowChatBox] = useState(false)
- const chatBoxOpen = () =>{
-    setShowChatBox(true)
+ const [selectedProfile, setSelectedProfile] = useState(null)
+ const chatBoxOpen = (profileId) =>{
+  setSelectedProfile(profileId)
+  setShowChatBox(true)
  }
 
   return (
@@ -75,7 +77,7 @@ const Matches = () => {
           {ActiveComponent && <ActiveComponent chatBoxOpen={chatBoxOpen}/>}
         </div>
       </div>
-      <ChatBox showChatBox={showChatBox} setShowChatBox={()=>setShowChatBox(false)}/>
+      <ChatBox showChatBox={showChatBox} selectedProfile={selectedProfile} setShowChatBox={()=>setShowChatBox(false)}/>
     </div>
   );
 };

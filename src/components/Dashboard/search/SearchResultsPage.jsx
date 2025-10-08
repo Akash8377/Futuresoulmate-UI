@@ -7,8 +7,9 @@ import Pagination from '../Matches/components/Pagination';
 import axios from 'axios';
 import config from '../../../config';
 import { toast } from "../../Common/Toast";
+import ChatBox from '../inbox/components/ChatBox';
 
-const SearchResultsPage = ({chatBoxOpen}) => {
+const SearchResultsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState([]);
@@ -18,7 +19,8 @@ const SearchResultsPage = ({chatBoxOpen}) => {
   const [isInitialMount, setIsInitialMount] = useState(true);
   const profilesPerPage = 7;
   const [activeCarouselIndex, setActiveCarouselIndex] = useState(0);
-
+  const [showChatBox, setShowChatBox] = useState(false)
+  const [selectedProfile, setSelectedProfile] = useState(null)
   const user = useSelector((state) => state.user.userInfo);
   const token = useSelector((state) => state.user.token);
   const lookingFor = user?.looking_for;
@@ -74,26 +76,38 @@ const SearchResultsPage = ({chatBoxOpen}) => {
     }
   };
 
-  const handleConnectClick = async (id, profileId) => {
+  // const handleConnectClick = async (id, profileId) => {
+  //   setProfiles((prev) =>
+  //     prev.map((profile) =>
+  //       profile.user_id === id ? { ...profile, connectionRequest: true } : profile
+  //     )
+  //   );
+  //   try {
+  //     await axios.post(`${config.baseURL}/api/notifications/send`, {
+  //       receiver_user_id: id,
+  //       receiver_profile_id:profileId,
+  //       sender_user_id: user?.user_id,
+  //       sender_profile_id: user?.profileId,
+  //       type: "connect",
+  //       message: `${user?.first_name} wants to connect with you`,
+  //     });
+  //     toast.success("Request sent successfully")
+  //   } catch (error) {
+  //     console.error("Error sending notification", error);
+  //   }
+  // };
+  const handleConnectClick = (id) => {
     setProfiles((prev) =>
       prev.map((profile) =>
         profile.user_id === id ? { ...profile, connectionRequest: true } : profile
       )
     );
-    try {
-      await axios.post(`${config.baseURL}/api/notifications/send`, {
-        receiver_user_id: id,
-        receiver_profile_id:profileId,
-        sender_user_id: user?.user_id,
-        sender_profile_id: user?.profileId,
-        type: "connect",
-        message: `${user?.first_name} wants to connect with you`,
-      });
-      toast.success("Request sent successfully")
-    } catch (error) {
-      console.error("Error sending notification", error);
-    }
   };
+  const chatBoxOpen = (profileId) =>{
+    console.log("profileId", profileId)
+    setSelectedProfile(profileId)
+    setShowChatBox(true)
+  }
 
   // Pagination logic
   const indexOfLastProfile = currentPage * profilesPerPage;
@@ -147,6 +161,7 @@ const SearchResultsPage = ({chatBoxOpen}) => {
           </div>
         </div>
       </div>
+      <ChatBox showChatBox={showChatBox} selectedProfile={selectedProfile} setShowChatBox={()=>setShowChatBox(false)}/>
     </>
   );
 };

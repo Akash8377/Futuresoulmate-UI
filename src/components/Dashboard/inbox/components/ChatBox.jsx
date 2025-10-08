@@ -4,14 +4,17 @@ import axios from 'axios';
 import config from '../../../../config';
 import { connectSocket, getSocket } from '../../../../utils/socket';
 import { calculateAge } from '../../../../utils/helpers';
+import { toast } from '../../../Common/Toast';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-const ChatBox = ({showChatBox = null, setShowChatBox }) => {
+const ChatBox = ({showChatBox = null, selectedProfile=null, setShowChatBox }) => {
   const user = useSelector((state) => state.user.userInfo);
   const token = useSelector((state) => state.user.token);
   const currentUserId = user?.id ? String(user.id) : null;
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
-
+  const navigate =  useNavigate();
   const [allUsers, setAllUsers] = useState([]);
   const [alertItems, setAlertItems] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
@@ -71,7 +74,11 @@ useEffect(() => {
 }, [user?.id]);
 
 useEffect(() => {
-  if (showChatBox) {
+  if (showChatBox && selectedProfile) {
+    console.log("selectedProfile", selectedProfile)
+    const selected = allUsers.find((user)=>user.user_id === selectedProfile)
+    setSelectedUser(selected);
+    setShowChatbox(true);
     setIsMinimized(false);
   }
 }, [showChatBox]);
@@ -102,10 +109,10 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    if (user?.id && searchFor) {
+    if (user?.id && searchFor && activeTab === 'tab-active') {
       fetchFilteredProfiles();
     }
-  }, [user?.id, searchFor]);
+  }, [user?.id, searchFor, activeTab]);
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
@@ -310,51 +317,51 @@ useEffect(() => {
       }
     };
   }, [selectedUser, currentUserId]);
-
-
     // Helper function to generate consistent conversation IDs
   const getConversationId = (userId1, userId2) => {
     const id1 = parseInt(userId1);
     const id2 = parseInt(userId2);
     return `${Math.min(id1, id2)}-${Math.max(id1, id2)}`;
   };
-
-  const sendMessage = async () => {
-  if (!inputMessage.trim() || !selectedUser || !currentUserId) return;
-
-  try {
-    const response = await axios.post(`${config.baseURL}/api/messages/send`, {
-      sender_id: Number(currentUserId),
-      receiver_id: selectedUser.id,
-      content: inputMessage.trim()
-    });
-
-    const newMessage = response.data.message;
-    
-    // Update chatUsers state
-    setChatUsers(prevUsers => {
-      return prevUsers.map(user => {
-        if (user.id === selectedUser.id) {
-          return {
-            ...user,
-            lastMessage: {
-              content: newMessage.content,
-              sent_at: newMessage.sent_at,
-              is_sender: true
-            }
-          };
-        }
-        return user;
-      });
-    });
-    
-    setInputMessage('');
-  } catch (error) {
-    console.error("Error sending message", error);
-  }
-};
-
   const currentMessages = selectedUser ? conversations[selectedUser.id] || [] : [];
+  const sendMessage = async () => {
+    if ((!user.plan_name || user.plan_name === null) && currentMessages <= 0) {
+      toast.info("Please upgrade your plan to use the messaging feature.");
+      navigate("/upgrade-profile");
+    } else {
+      if (!inputMessage.trim() || !selectedUser || !currentUserId) return;
+      try {
+        const response = await axios.post(`${config.baseURL}/api/messages/send`, {
+          sender_id: Number(currentUserId),
+          receiver_id: selectedUser.id,
+          content: inputMessage.trim()
+        });
+  
+        const newMessage = response.data.message;
+        
+        // Update chatUsers state
+        setChatUsers(prevUsers => {
+          return prevUsers.map(user => {
+            if (user.id === selectedUser.id) {
+              return {
+                ...user,
+                lastMessage: {
+                  content: newMessage.content,
+                  sent_at: newMessage.sent_at,
+                  is_sender: true
+                }
+              };
+            }
+            return user;
+          });
+        });
+        
+        setInputMessage('');
+      } catch (error) {
+        console.error("Error sending message", error);
+      }
+    }
+  };
 
   return (
     <div className="col-md-3">
@@ -372,54 +379,54 @@ useEffect(() => {
           </div>
         </div>
         {!isMinimized && (
-			<div className="tab-container">
+			    <div className="tab-container">
             <input type="radio" name="tab" id="tab-active" checked={activeTab === 'tab-active'} onChange={() => handleTabChange('tab-active')} />
             <input type="radio" name="tab" id="tab-chats" checked={activeTab === 'tab-chats'} onChange={() => handleTabChange('tab-chats')} />
             <input type="radio" name="tab" id="tab-alerts" checked={activeTab === 'tab-alerts'} onChange={() => handleTabChange('tab-alerts')} />
 
             <div className="tab-content content">
-<div id="alerts" className="chat-box-tab" style={{ display: activeTab === 'tab-alerts' ? 'block' : 'none' }}>
-  <div className="p-2 fw-bold border-bottom">Alerts ({combinedAlerts.length})</div>
-  
-  {combinedAlerts.length > 0 ? (
-    combinedAlerts.map((alert, index) => (
-      <div className="online-box" key={`${alert.type}-${alert.id}`}>
-        <div className="user-item">
-          <img 
-            src={alert.profile_image ? 
-              `${config.baseURL}/uploads/profiles/${alert.profile_image}` : 
-              "images/default-profile.png"
-            } 
-            alt={alert.first_name} 
-            className="user-img" 
-          />
-          <div className="user-info">
-            <div>
-              <strong>{alert.first_name} {alert.last_name}</strong> {" "}
-              {alert.type === 'connection_request' 
-                ? 'wants to connect with you' 
-                : 'visited your profile'
-              }
-               <div className="text-muted small">
-                   {new Date(alert.date).toLocaleDateString()} at {' '}
-                   {new Date(alert.date).toLocaleTimeString()}
-                 </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    ))
-  ) : (
-    <div className="text-center p-3 text-muted">
-      No alerts at the moment
-    </div>
-  )}
-</div>
-
-             {chatUsers.map((item, index) => (
+              {/* Alerts Tab */}
+              <div id="alerts" className="chat-box-tab" style={{ display: activeTab === 'tab-alerts' ? 'block' : 'none' }}>
+                <div className="p-2 fw-bold border-bottom">Alerts ({combinedAlerts.length})</div>
+                {combinedAlerts.length > 0 ? (
+                  combinedAlerts.map((alert, index) => (
+                    <div className="online-box" key={`${alert.type}-${alert.id}`}>
+                      <div className="user-item">
+                        <img 
+                          src={alert.profile_image ? 
+                            `${config.baseURL}/uploads/profiles/${alert.profile_image}` : 
+                            "images/default-profile.png"
+                          } 
+                          alt={alert.first_name} 
+                          className="user-img" 
+                        />
+                        <div className="user-info">
+                          <div>
+                            <strong>{alert.first_name} {alert.last_name}</strong> {" "}
+                            {alert.type === 'connection_request' 
+                              ? 'wants to connect with you' 
+                              : 'visited your profile'
+                            }
+                            <div className="text-muted small">
+                                {new Date(alert.date).toLocaleDateString()} at {' '}
+                                {new Date(alert.date).toLocaleTimeString()}
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center p-3 text-muted">
+                    No alerts at the moment
+                  </div>
+                )}
+              </div>
+              {/* Chats Tab */}
+              {chatUsers.map((item, index) => (
                 <div id="chats" className="chat-box-tab" style={{ display: activeTab === 'tab-chats' ? 'block' : 'none' }} key={index}>
                   <div className="online-box">
-                    <div className={`chat-item ${item.online === false ? "offline" : ""}`} key={index}>
+                    <div className={`cursor-pointer chat-item ${item.online === false ? "offline" : ""}`} key={index} onClick={() => openChatbox(item)}>
                       <div 
                         className="chat-info" 
                       >
@@ -457,7 +464,7 @@ useEffect(() => {
                   </div>
                 </div>
               ))}
-
+              {/* Active Tab */}
               <div id="active" className="chat-box-tab" style={{ display: activeTab === 'tab-active' ? 'block' : 'none' }}>
                 <div className="online-box">
                   <div className="user-list-chat-box">
@@ -477,70 +484,72 @@ useEffect(() => {
                     ))}
                   </div>
                 </div>
-
-                {showChatbox && (
-              <div className="chatbox" id="chatbox">
-                <div className="chat-header d-flex justify-content-between align-items-center">
-                  <span>{`${selectedUser?.first_name} ${selectedUser?.last_name}`  || 'Chat'}</span>
-                  <span className='d-flex align-items-center gap-2'>
-                    {selectedUser.online ? "Online" : "Offline"} 
-                    <div className={selectedUser.online ? "online-dot" : "offline-dot"}></div>
-                  </span>
-                  <button className="btn-close btn-close-white" onClick={closeChatbox}></button>
-                </div>
-                <div className="chat-body">
-                  <div className="chat-messages">
-                    {currentMessages.map((msg, idx) => (
-                      <div key={msg.id || idx} className={`${String(msg.sender_id) === currentUserId ? 'sent' : 'received'}`}>
-                        <div className="chat-msg">
-                          {msg.content}
-                          <div className="text-end text-muted" style={{ fontSize: "11px" }}>
-                            {new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+              {showChatbox && (
+                <div className="chatbox" id="chatbox">
+                  <div className="chat-header d-flex justify-content-between align-items-center">
+                    <span>{`${selectedUser?.first_name} ${selectedUser?.last_name}`  || 'Chat'}</span>
+                    <span className='d-flex align-items-center gap-2'>
+                      {selectedUser.online ? "Online" : "Offline"} 
+                      <div className={selectedUser.online ? "online-dot" : "offline-dot"}></div>
+                    </span>
+                    <button className="btn-close btn-close-white" onClick={closeChatbox}></button>
+                  </div>
+                  <div className="chat-body">
+                    {(!user.plan_name || user.plan_name === null) && currentMessages <= 0 ?(<div className='w-100 d-flex flex-column justify-content-center align-items-center' style={{height:"325px"}}><span>Upgrade to use chat feature</span>
+                    <Link to="/upgrade-profile" style={{color:"var(--color-secondary)"}}>Upgrade</Link>
+                    </div>):(<div className="chat-messages">
+                      {currentMessages.map((msg, idx) => (
+                        <div key={msg.id || idx} className={`${String(msg.sender_id) === currentUserId ? 'sent' : 'received'}`}>
+                          <div className="chat-msg">
+                            {msg.content}
+                            <div className="text-end text-muted" style={{ fontSize: "11px" }}>
+                              {new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                    <div ref={messagesEndRef} />
+                      ))}
+                      <div ref={messagesEndRef} />
+                    </div>)}
+                    
+                  </div>
+                  <div className="chat-footer d-flex">
+                    <input
+                      type="text"
+                      className="form-control me-2"
+                      placeholder="Type a message"
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                    />
+                    <button className="btn" onClick={sendMessage}>➤</button>
                   </div>
                 </div>
-                <div className="chat-footer d-flex">
-                  <input
-                    type="text"
-                    className="form-control me-2"
-                    placeholder="Type a message"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                  />
-                  <button className="btn" onClick={sendMessage}>➤</button>
-                </div>
-              </div>
-            )}
+              )}
 
-                {showHoverBox && (
-                  <div id="himanshi-hover-box" className="hover-box">
-                    <div className="chat-hover" id="chatHover">
-                      <div className="profile-card">
-                        <div className="profile-left">
-                          <img src={hoverItem.profile_image ? `${config.baseURL}/uploads/profiles/${hoverItem.profile_image}` : "images/womenpic.jpg"} alt={hoverItem.name} className="hover-box-profile-img" />
-                        </div>
-                        <div className="profile-right">
-                          <h5 className="name">{hoverItem?.first_name} {hoverItem?.last_name}</h5>
-                          <table className="profile-details">
-                            <tbody>
-                              <tr><td>Age / Height</td><td>: {calculateAge(hoverItem?.birth_year,hoverItem?.birth_month,hoverItem?.birth_day)}, {hoverItem?.height}</td></tr>
-                              <tr><td>Religion/Community</td><td>: {hoverItem?.religion}, {hoverItem?.community}</td></tr>
-                              <tr><td>Language</td><td>: {hoverItem?.mother_tongue}</td></tr>
-                              <tr><td>Profession</td><td>: {hoverItem?.profession}</td></tr>
-                              <tr><td>Location</td><td>: {hoverItem?.city}, {hoverItem?.country}</td></tr>
-                            </tbody>
-                          </table>
-                        </div>
+              {showHoverBox && (
+                <div id="himanshi-hover-box" className="hover-box">
+                  <div className="chat-hover" id="chatHover">
+                    <div className="profile-card">
+                      <div className="profile-left">
+                        <img src={hoverItem.profile_image ? `${config.baseURL}/uploads/profiles/${hoverItem.profile_image}` : "images/womenpic.jpg"} alt={hoverItem.name} className="hover-box-profile-img" />
+                      </div>
+                      <div className="profile-right">
+                        <h5 className="name">{hoverItem?.first_name} {hoverItem?.last_name}</h5>
+                        <table className="profile-details">
+                          <tbody>
+                            <tr><td>Age / Height</td><td>: {calculateAge(hoverItem?.birth_year,hoverItem?.birth_month,hoverItem?.birth_day)}, {hoverItem?.height}</td></tr>
+                            <tr><td>Religion/Community</td><td>: {hoverItem?.religion}, {hoverItem?.community}</td></tr>
+                            <tr><td>Language</td><td>: {hoverItem?.mother_tongue}</td></tr>
+                            <tr><td>Profession</td><td>: {hoverItem?.profession}</td></tr>
+                            <tr><td>Location</td><td>: {hoverItem?.city}, {hoverItem?.country}</td></tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             <div className="tabs">

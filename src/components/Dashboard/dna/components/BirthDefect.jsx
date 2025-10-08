@@ -185,7 +185,7 @@ const BirthDefect = () => {
 
             // Check if both have the gene and it's a risk variant (value = 1)
             if (currentValue !== undefined && otherValue !== undefined &&
-                currentValue === 1 && otherValue === 1) {
+                currentValue === 0 && otherValue === 0) {
                 sharedGenes.push(gene);
             }
         });
@@ -193,151 +193,81 @@ const BirthDefect = () => {
         setSharedRiskGenes(sharedGenes);
     };
 
-    // const calculateScores = (currentUser, otherUser) => {
-    //     const scores = [];
+    const calculateScores = (currentUser, otherUser) => {
+        const scores = [];
 
-    //     for (const group in geneticGroups) {
-    //         const genes = geneticGroups[group];
-    //         let totalPossibleGenes = 0;
-    //         let compatibleGenes = 0;
-    //         let riskGenes = 0;
+        for (const group in geneticGroups) {
+            const genes = geneticGroups[group];
+            let totalPossibleGenes = 0;
+            let compatibleGenes = 0;
+            let riskGenes = 0;
 
-    //         genes.forEach(gene => {
-    //             const currentValue = getGeneValue(currentUser, gene);
-    //             const otherValue = getGeneValue(otherUser, gene);
+            genes.forEach(gene => {
+                const currentValue = getGeneValue(currentUser, gene);
+                const otherValue = getGeneValue(otherUser, gene);
 
-    //             // Only count genes that exist in both users
-    //             if (currentValue !== undefined && otherValue !== undefined) {
-    //                 totalPossibleGenes++;
+                // Only count genes that exist in both users
+                if (currentValue !== undefined && otherValue !== undefined) {
+                    totalPossibleGenes++;
 
-    //                 // For Biological Attraction, we want to calculate based on matching
-    //                 if (group === "Biological Attraction") {
-    //                     if (currentValue === otherValue) {
-    //                         compatibleGenes++;
-    //                     } else {
-    //                         riskGenes++;
-    //                     }
-    //                 }
-    //                 // For other categories, we consider 0 as compatible
-    //                 else {
-    //                     if (currentValue === 0 && otherValue === 0) {
-    //                         compatibleGenes++;
-    //                     } else {
-    //                         riskGenes++;
-    //                     }
-    //                 }
-    //             }
-    //         });
-
-    //         const compatibilityPercentage = totalPossibleGenes > 0
-    //             ? Math.round((compatibleGenes / totalPossibleGenes) * 100)
-    //             : 0;
-
-    //         // For Birth Defect Risk, if there are any shared risk genes, set risk level to Moderate
-    //         let riskLevel;
-    //         if (group === "Birth Defect Risk" && sharedRiskGenes.length > 0) {
-    //             riskLevel = "⚠️ Moderate";
-    //         } else {
-    //             // For other cases, use the original calculation
-    //             riskLevel = compatibilityPercentage >= 75 ? "✅ Low" :
-    //                 compatibilityPercentage >= 50 ? "⚠️ Moderate" : "🔴 High";
-    //         }
-
-    //         // Format notes based on risk genes count
-    //         let notes;
-    //         if (totalPossibleGenes === 0) {
-    //             notes = "No shared genetic data";
-    //         } else if (riskGenes === 0) {
-    //             notes = "No major shared risk";
-    //         } else {
-    //             notes = `${riskGenes} risk gene(s) in ${group}`;
-    //         }
-
-    //         scores.push({
-    //             category: group,
-    //             percentage: `${compatibilityPercentage}%`,
-    //             riskLevel,
-    //             notes
-    //         });
-    //     }
-
-    //     setGroupScores(scores);
-    // };
-const calculateScores = (currentUser, otherUser) => {
-    const scores = [];
-
-    for (const group in geneticGroups) {
-        const genes = geneticGroups[group];
-        let totalPossibleGenes = 0;
-        let compatibleGenes = 0;
-        let riskGenes = 0;
-
-        genes.forEach(gene => {
-            const currentValue = getGeneValue(currentUser, gene);
-            const otherValue = getGeneValue(otherUser, gene);
-
-            // Only count genes that exist in both users
-            if (currentValue !== undefined && otherValue !== undefined) {
-                totalPossibleGenes++;
-
-                // For all categories except Biological Attraction, we consider 1 as compatible
-                if (group === "Biological Attraction") {
-                    if (currentValue === otherValue) {
-                        compatibleGenes++;
+                    // For all categories except Biological Attraction, we consider 1 as compatible
+                    if (group === "Biological Attraction") {
+                        if (currentValue === otherValue) {
+                            compatibleGenes++;
+                        } else {
+                            riskGenes++;
+                        }
                     } else {
-                        riskGenes++;
-                    }
-                } else {
-                    if (currentValue === 1 && otherValue === 1) {
-                        compatibleGenes++;
-                    } else {
-                        riskGenes++;
+                        if (currentValue === 0 && otherValue === 0) {
+                            compatibleGenes++;
+                        } else {
+                            riskGenes++;
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        const compatibilityPercentage = totalPossibleGenes > 0
-            ? Math.round((compatibleGenes / totalPossibleGenes) * 100)
-            : 0;
+            const compatibilityPercentage = totalPossibleGenes > 0
+                ? Math.round((compatibleGenes / totalPossibleGenes) * 100)
+                : 0;
 
-        let riskLevel;
-        if (group === "Birth Defect Risk" && sharedRiskGenes.length > 0) {
-            // For Birth Defect Risk, override the risk level based on shared risk genes
-            const riskPercentage = (sharedRiskGenes.length / geneticGroups["Birth Defect Risk"].length) * 100;
-            
-            if (riskPercentage > 50) {
-                riskLevel = "🔴 High";
-            } else if (riskPercentage > 25) {
-                riskLevel = "⚠️ Moderate";
+            let riskLevel;
+            if (group === "Birth Defect Risk" && sharedRiskGenes.length > 0) {
+                // For Birth Defect Risk, override the risk level based on shared risk genes
+                const riskPercentage = (sharedRiskGenes.length / geneticGroups["Birth Defect Risk"].length) * 100;
+                
+                if (riskPercentage > 50) {
+                    riskLevel = "🔴 High";
+                } else if (riskPercentage > 25) {
+                    riskLevel = "⚠️ Moderate";
+                } else {
+                    riskLevel = "✅ Low";
+                }
             } else {
-                riskLevel = "✅ Low";
+                // For other cases, use the original calculation
+                riskLevel = compatibilityPercentage >= 75 ? "✅ Low" :
+                    compatibilityPercentage >= 50 ? "⚠️ Moderate" : "🔴 High";
             }
-        } else {
-            // For other cases, use the original calculation
-            riskLevel = compatibilityPercentage >= 75 ? "✅ Low" :
-                compatibilityPercentage >= 50 ? "⚠️ Moderate" : "🔴 High";
+
+            let notes;
+            if (totalPossibleGenes === 0) {
+                notes = "No shared genetic data";
+            } else if (riskGenes === 0) {
+                notes = "No major shared risk";
+            } else {
+                notes = `${riskGenes} risk gene(s) in ${group}`;
+            }
+
+            scores.push({
+                category: group,
+                percentage: `${compatibilityPercentage}%`,
+                riskLevel,
+                notes
+            });
         }
 
-        let notes;
-        if (totalPossibleGenes === 0) {
-            notes = "No shared genetic data";
-        } else if (riskGenes === 0) {
-            notes = "No major shared risk";
-        } else {
-            notes = `${riskGenes} risk gene(s) in ${group}`;
-        }
-
-        scores.push({
-            category: group,
-            percentage: `${compatibilityPercentage}%`,
-            riskLevel,
-            notes
-        });
-    }
-
-    setGroupScores(scores);
-};
+        setGroupScores(scores);
+    };
     const getGeneValue = (data, gene) => {
         for (let group in data) {
             if (data[group] && gene in data[group]) {
