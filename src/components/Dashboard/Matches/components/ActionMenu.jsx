@@ -119,7 +119,7 @@ const ActionMenu = ({ profile, user, onBlock, onUnblock, onReport, isBlocked }) 
             Cancel
           </Button>
           <Button variant="secondary" onClick={submitReport}>
-            Submit Report
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>

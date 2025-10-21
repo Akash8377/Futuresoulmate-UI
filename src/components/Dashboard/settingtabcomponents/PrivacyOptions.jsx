@@ -7,7 +7,7 @@ import axios from 'axios';
 import config from '../../../config';
 import { toast } from 'react-toastify';
 
-const PrivacyOptions = ({ userInfo, token }) => {
+const PrivacyOptions = ({ onChangeTab,userInfo, token }) => {
   const [isMainAccordionOpen, setIsMainAccordionOpen] = useState(false);
   const [sections, setSections] = useState({
     displayName: false,
@@ -174,6 +174,7 @@ const PrivacyOptions = ({ userInfo, token }) => {
                 settings={privacySettings} 
                 onSettingChange={handleSettingChange} 
                 userInfo={userInfo}
+                onChangeTab={onChangeTab}
               />
             </PrivacySection>
 

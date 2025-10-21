@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ActivitySummary = ({ notifications, onEditClick, userInfo }) => {
+const ActivitySummary = ({ notifications, onEditClick, userInfo, recentVisitors }) => {
   const [pending, setPending] = useState([]);
   const [accepted, setAccepted] = useState([]);
 
@@ -25,7 +25,7 @@ const ActivitySummary = ({ notifications, onEditClick, userInfo }) => {
         data={[
           { value: pending?.length || 0, label: 'Pending Invitations' },
           { value: accepted?.length || 0, label: 'Accepted Invitations' },
-          { value: 0, label: 'Recent Visitors', badge: 'NEW' }
+          { value: recentVisitors?.length , label: 'Recent Visitors', badge: 'NEW' }
         ]}
       />
 

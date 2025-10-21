@@ -99,6 +99,7 @@ function Received({activeKey}) {
             <Tabs defaultActiveKey="detailed" id="profile-tabs" className="nav nav-tabs inbox-tab">
               <Tab eventKey="detailed" title="Detailed All Request">
                 <DetailedAllRequest
+                  user={user}
                   receiverData={filteredReceiverData}
                   fetchReceiverData={fetchReceiverData}
                 />
@@ -107,6 +108,7 @@ function Received({activeKey}) {
               {/* {filteredReceiverPreferences.length > 0 && ( */}
                 <Tab eventKey="partner" title="Detailed Filtered Out">
                   <DetailedFilteredOut
+                    user={user}
                     filteredOut={filteredReceiverPreferences}
                     prefErrorMessage={prefErrorMessage}
                   />

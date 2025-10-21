@@ -103,6 +103,7 @@ const SearchResultsPage = () => {
       )
     );
   };
+  
   const chatBoxOpen = (profileId) =>{
     console.log("profileId", profileId)
     setSelectedProfile(profileId)

@@ -126,7 +126,6 @@ const TodaysMatches = ({chatBoxOpen}) => {
   const handleReport = async (reportedUserId, reason) => {
     try {
       await reportUser(user.user_id, reportedUserId, reason);
-      toast.success("User reported successfully");
     } catch (error) {
       console.error('Error reporting user:', error);
       toast.error("Error reporting user");

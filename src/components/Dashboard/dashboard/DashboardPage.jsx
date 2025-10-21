@@ -82,6 +82,8 @@ const DashboardPage = () => {
             <MoreTab onChangeTab={setTab} />
           ): activeTab === "photos" ? (
             <PhotosTab onChangeTab={setTab} />
+          ): activeTab === "settings" ? (
+            <SettingsTab onChangeTab={setTab} />
           ):(
             ActiveComponent && <ActiveComponent />
           )}

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setUser } from "./userSlice";
 import config from "../../config"; // adjust path if needed
-import { toast } from "../../components/Common/Toast";
+import { Toast, toast } from "../../components/Common/Toast";
 
 // export const boostProfile = async (token, userInfo, dispatch) => {
 //   try {
@@ -121,6 +121,9 @@ export const reportUser = async (reporterId, reportedUserId, reason) => {
       },
       body: JSON.stringify({ reporterId, reportedUserId, reason })
     });
+    if (response.ok) {
+      toast.success("User reported successfully");
+    }
     return await response.json();
   } catch (error) {
     console.error('Error reporting user:', error);

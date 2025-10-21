@@ -1,6 +1,6 @@
 import React from 'react';
 import { MARITAL_STATUS, HEIGHTS, COUNTRIES, DIET, BLOODGROUP } from "../../../constants/formData";
-import { calculateAge } from '../../../utils/helpers';
+import { calculateAge, camelCaseToNormalText } from '../../../utils/helpers';
 
 const BasicInfoSection = ({ isEditing, getValue, onDataChange, editingFields }) => {
   return (
@@ -8,12 +8,35 @@ const BasicInfoSection = ({ isEditing, getValue, onDataChange, editingFields }) 
       <div className="col-md-6 pe-md-4">
         <table className="table table-borderless table-sm mini-data mb-0">
           <tbody>
-            <tr>
+            {/* <tr>
               <td>Age:</td>
               <td>{calculateAge(
                 getValue('birth_year'), 
                 getValue('birth_month'), 
                 getValue('birth_day')
+              )}</td>
+            </tr> */}
+            <tr>
+              <td>Name:</td>
+              <td className=''>{isEditing && editingFields === "basic" ? (
+                  <div className='d-inline-flex gap-1 w-75'>
+                  <input 
+                    type="text" 
+                    value={getValue('first_name') || ''} 
+                    onChange={(e) => onDataChange('first_name', e.target.value)}
+                    className="form-control form-control-sm "
+                    placeholder="First Name"
+                  />
+                  <input 
+                    type="text" 
+                    value={getValue('last_name') || ''} 
+                    onChange={(e) => onDataChange('last_name', e.target.value)}
+                    className="form-control form-control-sm "
+                    placeholder="Last Name"
+                  />
+                </div>
+              ) : (
+                `${getValue('first_name')} ${getValue('last_name')}`
               )}</td>
             </tr>
             <tr>
@@ -97,6 +120,22 @@ const BasicInfoSection = ({ isEditing, getValue, onDataChange, editingFields }) 
                 getValue('country') || ''
               )}</td>
             </tr>
+             <tr>
+              <td>Looking For:</td>
+              <td>{isEditing && editingFields === "basic" ? (
+                <select 
+                  value={getValue('looking_for') || ''} 
+                  onChange={(e) => onDataChange('looking_for', e.target.value)}
+                  className="form-select form-select-sm d-inline-block w-75"
+                >
+                  <option value="">Select</option>
+                  <option key={"Bride"} value="Bride">Bride</option>
+                  <option key={"Groom"} value="Groom">Groom</option>
+                </select>
+              ) : (
+                camelCaseToNormalText(getValue('looking_for'))
+              )}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -104,6 +143,22 @@ const BasicInfoSection = ({ isEditing, getValue, onDataChange, editingFields }) 
       <div className="col-md-6 border-start ps-md-4 mt-4 mt-md-0">
         <table className="table table-borderless table-sm mini-data mb-0">
           <tbody>
+            <tr>
+              <td>Gender:</td>
+              <td>{isEditing && editingFields === "basic" ? (
+                <select 
+                  value={getValue('gender') || ''} 
+                  onChange={(e) => onDataChange('gender', e.target.value)}
+                  className="form-select form-select-sm d-inline-block w-75"
+                >
+                  <option value="">Select</option>
+                  <option key={"male"} value="male">Male</option>
+                  <option key={"female"} value="female">Female</option>
+                </select>
+              ) : (
+                camelCaseToNormalText(getValue('gender'))
+              )}</td>
+            </tr>
             <tr>
               <td>Diet:</td>
               <td>{isEditing && editingFields === "basic" ? (

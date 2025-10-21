@@ -245,15 +245,15 @@ const RefineSearchSidebar = ({ initialFilters = {}, onFilterChange, searchType }
         value: religion.value
       }))
     },
-    { 
-      filterKey: "qualification",
-      title: "Qualification",
-      showMore: true, 
-      options: QUALIFICATIONS?.map(religion => ({
-        label: religion.label,
-        value: religion.value
-      }))
-    },
+    // { 
+    //   filterKey: "qualification",
+    //   title: "Qualification",
+    //   showMore: true, 
+    //   options: QUALIFICATIONS?.map(religion => ({
+    //     label: religion.label,
+    //     value: religion.value
+    //   }))
+    // },
     { 
       filterKey: "workingWith",
       title: "Working With",
@@ -336,12 +336,12 @@ const HeightRangeFilter = () => {
 
 const IncomeRangeFilter = () => {
   const incomeOptions = [
-   { label: "All", value: "all" },
+  { label: "All", value: "all" },
   { label: "Upto $25,000", value: "0-25000" },
   { label: "$25,000-$50,000", value: "25000-50000" },
   { label: "$50,000-$100,000", value: "50000-100000" },
   { label: "$100,000-$200,000", value: "100000-200000" },
-  { label: "Above $200,000", value: "200000" },
+  { label: "Above $200,000", value: "200000+" },
   ];
 
   return (

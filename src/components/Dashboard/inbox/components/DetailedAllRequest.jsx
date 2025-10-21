@@ -3,9 +3,10 @@ import config from "../../../../config";
 import { timeAgo, formatLastSeen } from "../../../../utils/timeAgo";
 import { Link } from "react-router-dom";
 
-function DetailedAllRequest({ receiverData, fetchReceiverData }) {
+function DetailedAllRequest({ user, receiverData, fetchReceiverData }) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 2; // Show 2 requests per page
+  console.log("user", user);
   // console.log("receiverData", receiverData);
 
   // Calculate total pages
@@ -162,8 +163,7 @@ function DetailedAllRequest({ receiverData, fetchReceiverData }) {
                 {currentReceiver.sender_qualification} <br />
                 {currentReceiver.sender_profession}
               </div>
-
-              <div className="message-box mt-3">
+              {user?.plan_name === "Premium" && user?.plan_status === "active" ?null:(<div className="message-box mt-3">
                 <div className="meesgae-envlope">
                   <i className="fa fa-envelope" aria-hidden="true"></i>
                 </div>
@@ -175,15 +175,15 @@ function DetailedAllRequest({ receiverData, fetchReceiverData }) {
                 has sent you a message. In the interest of our Premium Members, we
                 allow only Premium users to read messages.
                 <br />
-                <a
-                  href="#"
+                <Link
+                  to="/upgrade-profile"
                   className="text-decoration-none"
                   style={{ color: "#d61962" }}
                 >
                   Upgrade Now{" "}
                   <i className="fa fa-angle-right" aria-hidden="true"></i>
-                </a>
-              </div>
+                </Link>
+              </div>)}
             </div>
 
             <div className="col-md-2 text-center connect-now">

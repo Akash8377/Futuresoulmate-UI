@@ -3,7 +3,7 @@ import config from "../../../../config";
 import { timeAgo, formatLastSeen } from "../../../../utils/timeAgo";
 import { Link } from "react-router-dom";
 
-function DetailedFilteredOut({ filteredOut, fetchPreferenceData }) {
+function DetailedFilteredOut({ user, filteredOut, fetchPreferenceData }) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 2; // Show 2 requests per page
 
@@ -161,27 +161,27 @@ const handleReject = async (notificationId) => {
                 {currentReceiver.sender_profession}
               </div>
 
-              <div className="message-box mt-3">
-                <div className="meesgae-envlope">
-                  <i className="fa fa-envelope" aria-hidden="true"></i>
-                </div>
-                <strong>
-                  <i className="fa fa-lock" aria-hidden="true"></i>{" "}
-                  {currentReceiver.sender_first_name}{" "}
-                  {currentReceiver.sender_last_name}
-                </strong>{" "}
-                has sent you a message. In the interest of our Premium Members, we
-                allow only Premium users to read messages.
-                <br />
-                <a
-                  href="#"
-                  className="text-decoration-none"
-                  style={{ color: "#d61962" }}
-                >
-                  Upgrade Now{" "}
-                  <i className="fa fa-angle-right" aria-hidden="true"></i>
-                </a>
-              </div>
+              {user?.plan_name === "Premium" && user?.plan_status === "active" ?null:(<div className="message-box mt-3">
+                  <div className="meesgae-envlope">
+                    <i className="fa fa-envelope" aria-hidden="true"></i>
+                  </div>
+                  <strong>
+                    <i className="fa fa-lock" aria-hidden="true"></i>{" "}
+                    {currentReceiver.sender_first_name}{" "}
+                    {currentReceiver.sender_last_name}
+                  </strong>{" "}
+                  has sent you a message. In the interest of our Premium Members, we
+                  allow only Premium users to read messages.
+                  <br />
+                  <Link
+                    to="/upgrade-profile"
+                    className="text-decoration-none"
+                    style={{ color: "#d61962" }}
+                  >
+                    Upgrade Now{" "}
+                    <i className="fa fa-angle-right" aria-hidden="true"></i>
+                  </Link>
+                </div>)}
             </div>
 
             <div className="col-md-2 text-center connect-now">

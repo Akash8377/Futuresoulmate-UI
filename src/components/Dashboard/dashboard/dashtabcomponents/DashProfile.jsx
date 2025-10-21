@@ -6,7 +6,7 @@ import axios from 'axios';
 import ActivitySummary from './ActivitySummary';
 import DashProfileCard from './DashProfileCard'
 
-const DashProfile = ({ onEditClick, notifications }) => {
+const DashProfile = ({ onEditClick, notifications, recentVisitors }) => {
   const { userInfo, token } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const [completion, setCompletion] = useState(0);
@@ -95,6 +95,7 @@ const DashProfile = ({ onEditClick, notifications }) => {
         <div className="col-lg-6">
           <ActivitySummary 
             notifications={notifications}
+            recentVisitors={recentVisitors}
             onEditClick={onEditClick}
             userInfo={userInfo}
           />

@@ -1,7 +1,7 @@
 import React from 'react';
 import FormFooter from './FormFooter';
 
-const DisplayNameSection = ({ settings, onSettingChange, userInfo }) => {
+const DisplayNameSection = ({onChangeTab, settings, onSettingChange, userInfo }) => {
   const fullName = `${userInfo?.first_name || ''} ${userInfo?.last_name || ''}`.trim();
   
   return (
@@ -9,7 +9,7 @@ const DisplayNameSection = ({ settings, onSettingChange, userInfo }) => {
       <div className="mb-3">
         <strong>Full Name</strong>
         <span className="ms-2">{fullName}</span>
-        <a href="#" className="edit-link">Edit</a>
+        <a href="#" onClick={()=>onChangeTab("profile")} className="edit-link">Edit</a>
       </div>
 
       <div className="mb-3">

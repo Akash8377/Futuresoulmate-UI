@@ -13,6 +13,7 @@ const DashboardTab = ({onChangeTab}) => {
   const user = useSelector((state) => state.user.userInfo);
   const currentUserId = user?.id;
   const [notifications, setNotifications] = useState([]);
+  const [recentVisitors, setRecentVisiors] = useState([]);
   const fetchNotifications = async () => {
     try {
       const response = await axios.get(
@@ -20,6 +21,7 @@ const DashboardTab = ({onChangeTab}) => {
       );
       if (response.data.success) {
         setNotifications(response.data.notifications);
+        setRecentVisiors(response.data.recentVisitors);
       }
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
@@ -34,7 +36,7 @@ const DashboardTab = ({onChangeTab}) => {
     <div className="tab-pane fade show active p-4" id="dash" role="tabpanel" aria-labelledby="dash-tab">
       <div className="container-xl py-4">
         {/* Row 1 */}
-        <DashProfile onEditClick={() =>onChangeTab("profile")} notifications={notifications}/>
+        <DashProfile onEditClick={() =>onChangeTab("profile")} notifications={notifications} recentVisitors={recentVisitors}/>
         <Advertise notifications={notifications}/>
         <ConnectionProvider>
           <RecentVisitors/>

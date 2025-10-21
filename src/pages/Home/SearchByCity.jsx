@@ -31,25 +31,25 @@ const SearchByCity = () => {
     { 
       value: "man_bride", 
       label: "I am a Man seeking a Woman",
-      gender: "man",
+      gender: "male",
       lookingFor: "Bride"
     },
     { 
       value: "woman_groom", 
       label: "I am a Woman seeking a Man",
-      gender: "woman",
+      gender: "female",
       lookingFor: "Groom"
     },
     { 
       value: "man_groom", 
       label: "I am a Man seeking a Man",
-      gender: "man",
+      gender: "male",
       lookingFor: "Groom"
     },
     { 
       value: "woman_bride", 
       label: "I am a Woman seeking a Woman",
-      gender: "woman",
+      gender: "female",
       lookingFor: "Bride"
     },
   ];
