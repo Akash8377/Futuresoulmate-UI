@@ -24,8 +24,8 @@ const ProfileImageWithProgress = ({ userInfo, completion, token, dispatch }) => 
     if (!file) return;
 
     // File validation
-    if (file.size > 15 * 1024 * 1024) {
-      toast.error('File size should be less than 15MB');
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('File size should be less than 2MB');
       return;
     }
 

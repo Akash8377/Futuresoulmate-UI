@@ -271,7 +271,7 @@ const PrivacyPolicy = () => {
               <div className="mt-3">
                 <p>
                   To exercise these rights, please contact us at{' '}
-                  <a href="mailto:info@futuresoulmate.com" style={{ color: "#df8525" }}>info@futuresoulmate.com</a>
+                  <a href="mailto:info@futuresoulmates.com" style={{ color: "#df8525" }}>info@futuresoulmates.com</a>
                 </p>
               </div>
             </div>

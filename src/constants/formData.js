@@ -997,7 +997,7 @@ export const QUALIFICATIONS = [
   { value: 'Other', label: 'Other' }
 ]
 export const STATE = {
-    "United States": [
+    "USA": [
     { value: "California", label: "California" },
     { value: "Texas", label: "Texas" },
     { value: "New Jersey", label: "New Jersey" },
@@ -1073,7 +1073,7 @@ export const STATE = {
     { value: "Queensland", label: "Queensland" },
     { value: "South Australia", label: "South Australia" }
   ],
-  "United Kingdom": [
+  "UK": [
     { value: "England", label: "England" },
     { value: "Scotland", label: "Scotland" },
     { value: "Wales", label: "Wales" },

@@ -53,8 +53,10 @@ export const ServiceProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchServiceStatus();
-  }, []);
+    if (token){
+      fetchServiceStatus();
+    }
+  }, [token]);
 
   return (
     <ServiceContext.Provider value={{ serviceData, updateServiceUsage, refetchServiceStatus: fetchServiceStatus }}>

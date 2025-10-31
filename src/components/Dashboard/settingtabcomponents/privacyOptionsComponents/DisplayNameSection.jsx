@@ -39,7 +39,7 @@ const DisplayNameSection = ({onChangeTab, settings, onSettingChange, userInfo })
           />
           <label className="form-check-label" htmlFor="hideFirst">
             Hide my first name <small>({userInfo?.first_name?.charAt(0) || ''} {userInfo?.last_name})</small>
-            <a href="#" className="edit-link">More</a>
+            {/* <a href="#" className="edit-link">More</a> */}
           </label>
         </div>
       </div>

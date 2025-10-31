@@ -1,18 +1,17 @@
 import React from 'react';
-import useChoicesInitializer from './ChoicesInitializer';
+import Select from 'react-select';
 import useSearchFormHandlers from './SearchFormHandlers';
 import { MARITAL_STATUS, RELIGIONS, CULTURES, LANGUAGES, COUNTRIES, STATE, PROFESSIONS, DIET, PROFILEMANAGEDBY, QUALIFICATIONS, OCCUPATIONS } from "../../../constants/formData";
 
 const AdvancedSearchForm = () => {
   const stateList = Object.values(STATE).flat();
   const professionList = Object.values(PROFESSIONS).flat();
-  useChoicesInitializer(true);
   
   const {
     formData,
     loading,
-    searchResults,
     handleChange,
+    handleSelectChange,
     handleMultiSelectChange,
     handleDietChange,
     handleProfileManagedByChange,
@@ -20,34 +19,76 @@ const AdvancedSearchForm = () => {
     resetForm
   } = useSearchFormHandlers();
 
+  // Get states based on selected country for advanced form
+  const getStatesForCountry = (country) => {
+    if (!country || !country.value) return [];
+    return STATE[country.value] || [];
+  };
+
+  const currentStates = getStatesForCountry(formData.advanceCountry);
+
   const renderRangeSelects = (label, fromName, toName, options) => (
-    <div className="row mb-3 mt-3 align-items-end">
+    <div className="row mb-3 mt-3 align-items-start">
       <div className="col-md-3"><label>{label}</label></div>
       <div className="col-auto">
         <select className="form-select" name={fromName} value={formData[fromName]} onChange={handleChange}>
-          {options.map(opt => <option key={opt}>{opt}</option>)}
+          {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
       </div>
-      <div className="col-auto"><label>to</label></div>
+      <div className="col-auto"><label className='mt-2'>to</label></div>
       <div className="col-auto">
         <select className="form-select" name={toName} value={formData[toName]} onChange={handleChange}>
-          {options.map(opt => <option key={opt}>{opt}</option>)}
+          {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
       </div>
     </div>
   );
 
-const renderSelect = (label, name, options) => (
-  <div className="row mb-3">
-    <div className="col-md-3"><label htmlFor={name}>{label}</label></div>
-    <div className="col-md-9">
-      <select className="form-select" id={name} name={name} value={formData[name]} onChange={handleChange}>
-        <option key={""} value={""}>{`Select ${name.replace('advance', '').replace(/([A-Z])/g, ' $1').trim()}`}</option>
-        {options.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
-      </select>
+  const renderSelect = (label, name, options) => (
+    <div className="row mb-3">
+      <div className="col-md-3"><label htmlFor={name}>{label}</label></div>
+      <div className="col-md-9">
+        <Select
+          id={name}
+          name={name}
+          value={formData[name]}
+          onChange={(selectedOption) => handleSelectChange(name, selectedOption)}
+          options={options}
+          isClearable
+          isSearchable
+          placeholder={`Select ${label.replace('advance', '').replace(/([A-Z])/g, ' $1').trim()}`}
+          className="react-select-container"
+          classNamePrefix="react-select"
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+
+  const renderStateSelect = () => (
+    <div className="row mb-3">
+      <div className="col-md-3"><label htmlFor="advanceState">State Living In</label></div>
+      <div className="col-md-9">
+        <Select
+          id="advanceState"
+          name="advanceState"
+          value={formData.advanceState}
+          onChange={(selectedOption) => handleSelectChange('advanceState', selectedOption)}
+          options={currentStates}
+          isClearable
+          isSearchable
+          isDisabled={!formData.advanceCountry}
+          placeholder={!formData.advanceCountry ? "Select Country First" : "Select State"}
+          className="react-select-container"
+          classNamePrefix="react-select"
+        />
+        {!formData.advanceCountry && (
+          <div className="form-text text-muted">
+            Please select a country first to choose a state
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   const renderCheckboxGroup = (label, name, items, handler) => (
     <div className="row mb-3">
@@ -87,66 +128,51 @@ const renderSelect = (label, name, options) => (
     </div>
   );
 
+  // Add this function to your AdvancedSearchForm component
+const renderMultiSelect = (label, name, options) => (
+  <div className="row mb-3">
+    <div className="col-md-3"><label htmlFor={name}>{label}</label></div>
+    <div className="col-md-9">
+      <Select
+        id={name}
+        name={name}
+        value={formData[name]}
+        onChange={(selectedOptions) => handleMultiSelectChange(name, selectedOptions)}
+        options={options}
+        isClearable
+        isSearchable
+        isMulti
+        placeholder={`Select ${label.replace('advance', '').replace(/([A-Z])/g, ' $1').trim()}`}
+        className="react-select-container"
+        classNamePrefix="react-select"
+      />
+    </div>
+  </div>
+);
+
   return (
     <div className="search-form-part">
       <form onSubmit={(e) => handleSubmit(e, true)}>
-        {renderRangeSelects("Age", "advanceAgeFrom", "advanceAgeTo", Array.from({length: 51}, (_, i) => 20 + i))}
+        {renderRangeSelects("Age", "advanceAgeFrom", "advanceAgeTo", Array.from({length: 51}, (_, i) => (20 + i).toString()))}
         {renderRangeSelects("Height", "advanceHeightFrom", "advanceHeightTo",
-        ["5ft 0in", "5ft 1in", "5ft 2in", "5ft 3in","5ft 4in", "5ft 5in", "5ft 6in", "5ft 7in","5ft 8in", "5ft 9in", "5ft 10in", "5ft 11in","6ft 0in", "6ft 1in", "6ft 2in","6ft 3in", "6ft 4in", "6ft 5in"],
-        ["5ft 0in", "5ft 1in", "5ft 2in", "5ft 3in","5ft 4in", "5ft 5in", "5ft 6in", "5ft 7in","5ft 8in", "5ft 9in", "5ft 10in", "5ft 11in","6ft 0in", "6ft 1in", "6ft 2in","6ft 3in", "6ft 4in", "6ft 5in"]
+          ["5ft 0in", "5ft 1in", "5ft 2in", "5ft 3in","5ft 4in", "5ft 5in", "5ft 6in", "5ft 7in","5ft 8in", "5ft 9in", "5ft 10in", "5ft 11in","6ft 0in", "6ft 1in", "6ft 2in","6ft 3in", "6ft 4in", "6ft 5in"]
         )}
         {renderSelect("Marital Status", "advanceMaritalStatus", MARITAL_STATUS)}
         {renderSelect("Religion", "advanceReligion", RELIGIONS)}
-        
-        {/* Language - Original Implementation */}
-        <div className="row mb-3">
-          <div className="col-md-3">
-            <label htmlFor="advanceMotherTongue">Language</label>
-          </div>
-          <div className="col-md-9">
-            <select 
-              id="advanceMotherTongue" 
-              className="form-select" 
-              multiple
-              onChange={(e) => handleMultiSelectChange('advanceMotherTongue','advanceMotherTongue')}
-              placeholder="Select Language"
-              value={formData['advanceMotherTongue']}
-            >
-              {LANGUAGES.map((item) => (
-                <option key={item.value} value={item.value}>{item.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
+        {renderSelect("Language", "advanceMotherTongue", LANGUAGES)}
         {renderSelect("Community", "advanceCommunity", CULTURES)}
+
 
         <div className="accordion" id="accordionExample">
           {renderAccordionItem("One", "Location & Grew up in Details", <>
             {renderSelect("Country Living In", "advanceCountry", COUNTRIES)}
-            {renderSelect("State Living In", "advanceState", stateList)}
-            {renderSelect("Residency Status", "advanceResidencyStatus", [
-              {value: "Doesn't Matter", label: "Doesn't Matter"},
-              {value: "Citizen", label: "Citizen"},
-              {value: "Permanent Resident", label: "Permanent Resident"},
-              {value: "Work Visa", label: "Work Visa"}
-            ])}
             {renderSelect("Country Grew Up In", "advanceCountryGrew", COUNTRIES)}
           </>)}
 
-          {renderAccordionItem("Two", "Education & Profession Details", <>
-            {renderSelect("Qualification", "advanceQualification", QUALIFICATIONS)}
-            {renderSelect("Education Area", "advanceEducationArea", [
-              {value: "Doesn't Matter", label: "Doesn't Matter"},
-              {value: "Engineering", label: "Engineering"},
-              {value: "Medicine", label: "Medicine"},
-              {value: "Arts", label: "Arts"},
-              {value: "Science", label: "Science"}
-            ])}
+          {renderAccordionItem("Two", "Profession Details", <>
             {renderSelect("Working With", "advanceWorkingWith", OCCUPATIONS)}
             {renderSelect("Profession Area", "advanceProfessionArea", professionList)}
-
-            <div className="row mb-3">
+            {/* <div className="row mb-3">
               <div className="col-md-3"><label>Annual Income</label></div>
               <div className="col-md-9">
                 <div className="d-flex">
@@ -166,7 +192,7 @@ const renderSelect = (label, name, options) => (
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
           </>)}
 
           {renderAccordionItem("Three", "Lifestyle & Appearance", <>
@@ -197,7 +223,7 @@ const renderSelect = (label, name, options) => (
           </>)}
         </div>
 
-        <div className="row mt-3 mb-3">
+        {/* <div className="row mt-3 mb-3">
           <div className="col-md-3"><label>Chat Status</label></div>
           <div className="col-md-9">
             <div className="form-check mt-2">
@@ -214,14 +240,14 @@ const renderSelect = (label, name, options) => (
               </label>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="row mb-3">
-          <div className="col-md-3"><label>Photo Settings</label></div>
+        <div className="row mb-3 mt-3">
+          <div className="col-md-3"><label>Privacy Settings</label></div>
           <div className="col-md-9 d-flex gap-2">
             {[
               {id: "advanceVisibleToAll", label: "Visible to all"},
-              {id: "advanceProtectedPhoto", label: "Protected Photo"}
+              {id: "advanceProtectedPhoto", label: "Protected"}
             ].map(item => (
               <div className="form-check mt-2" key={item.id}>
                 <input
@@ -263,8 +289,17 @@ const renderSelect = (label, name, options) => (
         </div>
 
         <div className="search-btn-options">
-          <button type="submit" className='me-3'>Search <i className="fa fa-caret-right" aria-hidden="true"></i></button>
-          <a href="#" onClick={(e) => { e.preventDefault(); resetForm(true); }}>Reset</a>
+          <button type="submit" className='me-3' disabled={loading}>
+            {loading ? 'Searching...' : 'Search'} <i className="fa fa-caret-right" aria-hidden="true"></i>
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-link p-0"
+            onClick={() => resetForm(true)}
+            style={{textDecoration: 'none', color:'black', border: 'none', background: 'none'}}
+          >
+            Reset
+          </button>
         </div>
       </form>
     </div>

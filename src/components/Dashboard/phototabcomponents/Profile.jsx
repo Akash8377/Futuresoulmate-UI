@@ -165,7 +165,7 @@ const Profile = ({onChangeTab}) => {
                       <a href="#" onClick={()=> scrollToPercent(22)}>Edit Personal Profile</a>
                     </div>
                     <div className="col-6 col-md-4">
-                      <a href="#">View Profile Stats</a>
+                      <a href="#" onClick={()=>onChangeTab("dash")}>View Profile Stats</a>
                     </div>
                     <div className="col-6 col-md-4">
                       <a href="#" onClick={()=>onChangeTab("settings")}>Set Contact Filters</a>
