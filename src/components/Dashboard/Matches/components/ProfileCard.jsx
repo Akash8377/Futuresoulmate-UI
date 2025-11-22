@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Carousel } from "react-bootstrap";
+import { Carousel, Badge, Accordion, ProgressBar, Alert, Modal, Button, Table } from "react-bootstrap";
 import ConnectBox from "./ConnectBox";
 import ContactOptions from "./ContactOptions";
 import verifiedBadge from "../../../assets/verified-badge.png";
@@ -7,19 +7,31 @@ import requestedPhoto from "../../../assets/request-photo.jpg";
 import config from "../../../../config";
 import { calculateAge } from "../../../../utils/helpers";
 import { formatLastSeen } from "../../../../utils/timeAgo";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import AstroModal from "./AstroModal";
-import { Link } from "react-router-dom";
 import ActionMenu from "./ActionMenu";
 import { blockUser, unblockUser, reportUser } from "../../../../features/user/userApi";
 import { toast } from "../../../Common/Toast";
+import axios from "axios";
 
-const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex, chatBoxOpen, dnaMatches = false, user = {}, onProfileUpdate
+const ProfileCard = ({ 
+  profile, 
+  handleConnectClick, 
+  activeIndex, 
+  setActiveIndex, 
+  chatBoxOpen, 
+  dnaMatches = false, 
+  user = {}, 
+  onProfileUpdate 
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showAstroModal, setShowAstroModal] = useState(false);
-  const navigate = useNavigate(); // Initialize navigate
+  const [showDNAModal, setShowDNAModal] = useState(false);
+  const [compatibilityReport, setCompatibilityReport] = useState(null);
+  const [loadingCompatibility, setLoadingCompatibility] = useState(false);
+  const navigate = useNavigate();
   const [isBlocked, setIsBlocked] = useState(false);
+
   const getShortDescription = (text) => {
     const words = text?.split(" ");
     if (!words || words.length <= 40) return text;
@@ -33,13 +45,357 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
 
   // Handle profile click navigation
   const handleProfileClick = () => {
-      navigate(`/profile/${profile.profileId || profile.user_id}`, {
-        state: {
-          profile: profile, // Send complete profile data
-          currentUser: user, // Send current user data if needed
-          source: dnaMatches ? "dna-matches" : "regular-matches" // Optional: track where it came from
+    navigate(`/profile/${profile.profileId || profile.user_id}`, {
+      state: {
+        profile: profile,
+        currentUser: user,
+        source: dnaMatches ? "dna-matches" : "regular-matches"
+      }
+    });
+  };
+
+  // Fetch DNA compatibility report
+  const fetchDNACompatibility = async () => {
+    if (!profile.user_id || !user.user_id) return;
+    
+    setLoadingCompatibility(true);
+    try {
+      const token = localStorage.getItem('token') || user.token;
+      const response = await axios.get(
+        `${config.baseURL}/api/genetic-markers/compatibility/${profile.user_id}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
         }
-      });
+      );
+      
+      if (response.data.success) {
+        setCompatibilityReport(response.data.report);
+        setShowDNAModal(true);
+      } else {
+        toast.error('Failed to load compatibility report');
+      }
+    } catch (error) {
+      console.error('Error fetching DNA compatibility:', error);
+      if (error.response?.status === 404) {
+        toast.info('Genetic data not available for compatibility calculation');
+      } else {
+        toast.error('Failed to load DNA compatibility report');
+      }
+    } finally {
+      setLoadingCompatibility(false);
+    }
+  };
+
+  // Get compatibility score from profile data
+  const getCompatibilityScore = () => {
+    if (profile.dna_compatibility_score) {
+      return profile.dna_compatibility_score;
+    }
+    if (profile.genetic_compatibility?.overall_score) {
+      return profile.genetic_compatibility.overall_score;
+    }
+    if (profile.compatibilityScore) {
+      return profile.compatibilityScore;
+    }
+    return 0;
+  };
+
+  const getScoreVariant = (score) => {
+    if (score >= 70) return 'success';
+    if (score >= 50) return 'warning';
+    return 'danger';
+  };
+
+  const getScoreText = (score) => {
+    if (score >= 70) return 'Excellent Match';
+    if (score >= 50) return 'Moderate Match';
+    return 'Poor Match';
+  };
+
+  const renderDNACompatibilityBadge = () => {
+    if (!dnaMatches) return null;
+
+    const score = getCompatibilityScore();
+    
+    return (
+      <Badge 
+        bg={getScoreVariant(score)} 
+        className="ms-2 dna-compatibility-badge"
+        style={{ 
+          fontSize: '0.75rem', 
+          padding: '0.25rem 0.5rem', 
+          cursor: 'pointer' 
+        }}
+        onClick={fetchDNACompatibility}
+        title={`DNA Compatibility: ${score}% - Click for details`}
+      >
+        🧬 {score}%
+      </Badge>
+    );
+  };
+
+  const renderDNACompatibilityModal = () => {
+    if (!compatibilityReport) return null;
+
+    const { 
+      overall_score, 
+      compatibility_level, 
+      category_scores = {}, 
+      category_details = {},
+      risk_flags = [], 
+      recommendations = [],
+      carrier_overlap = [],
+      risk_overlap = [],
+      interpretation,
+      couple_info = {}
+    } = compatibilityReport;
+
+    return (
+      <Modal show={showDNAModal} onHide={() => setShowDNAModal(false)} size="xl" centered>
+        <Modal.Header closeButton className="bg-light">
+          <Modal.Title>
+            🧬 FutureSoulmates Genetic Compatibility Report
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          
+          {/* Header with Risk Level */}
+          <div className={`text-center mb-4 p-4 border rounded ${
+            overall_score < 50 ? 'bg-danger text-white' : 
+            overall_score < 70 ? 'bg-warning' : 'bg-success text-white'
+          }`}>
+            <h2 className="mb-3">
+              {overall_score < 50 ? '❌ "High Risk Pairing"' : 
+               overall_score < 70 ? '⚠️ "Moderate Risk Pairing"' : 
+               '✅ "Excellent Match"'}
+            </h2>
+            <h1 className="display-4 fw-bold mb-2">{overall_score}/100</h1>
+            <h4 className="mb-3">{compatibility_level} Compatibility</h4>
+            <ProgressBar 
+              variant={getScoreVariant(overall_score)}
+              now={overall_score} 
+              style={{ height: '20px' }}
+              className="mb-3"
+            />
+            <p className="lead mb-0" style={{ whiteSpace: 'pre-line' }}>{couple_info.summary}</p>
+          </div>
+
+          {/* Highlights */}
+          {couple_info.highlights && couple_info.highlights.length > 0 && (
+            <div className="mb-4">
+              <h5 className="mb-3">📊 Highlights</h5>
+              {couple_info.highlights.map((highlight, index) => (
+                <Alert key={index} variant="info" className="small">
+                  {highlight}
+                </Alert>
+              ))}
+            </div>
+          )}
+
+          {/* Risk Flags */}
+          {risk_flags.length > 0 && (
+            <div className="mb-4">
+              <h5 className="mb-3">⚠️ Risk Assessment</h5>
+              {risk_flags.map((flag, index) => (
+                <Alert key={index} variant={flag.type === 'high_risk' ? 'danger' : 'warning'} className="small">
+                  <div className="d-flex align-items-start">
+                    <span className="me-2 fs-5">
+                      {flag.type === 'high_risk' ? '🚨' : '⚠️'}
+                    </span>
+                    <div>
+                      <strong>{flag.message}</strong>
+                      {flag.genes && (
+                        <div className="mt-1">
+                          <small>
+                            <strong>Genes:</strong> {flag.genes.join(', ')}
+                          </small>
+                        </div>
+                      )}
+                      {flag.impact && (
+                        <div className="mt-1">
+                          <small>
+                            <strong>Impact:</strong> {flag.impact}
+                          </small>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Alert>
+              ))}
+            </div>
+          )}
+
+          {/* Compatibility Breakdown */}
+          <div className="mb-4">
+            <h5 className="mb-3">🧩 Compatibility Breakdown</h5>
+            <Table striped bordered hover size="sm">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Genes Tested</th>
+                  <th>Your Genotype</th>
+                  <th>Partner Genotype</th>
+                  <th>Compatibility</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(category_details).map(([category, details]) => (
+                  <tr key={category}>
+                    <td className="text-capitalize fw-medium">
+                      {getCategoryIcon(category)} {category.replace(/_/g, ' ')}
+                    </td>
+                    <td>{details.genes_tested}</td>
+                    <td>
+                      {details.genes?.slice(0, 2).map(g => g.user_genotype).join(', ')}
+                      {details.genes?.length > 2 && '...'}
+                    </td>
+                    <td>
+                      {details.genes?.slice(0, 2).map(g => g.partner_genotype).join(', ')}
+                      {details.genes?.length > 2 && '...'}
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center">
+                        <span className={`badge bg-${getScoreVariant(details.score)} me-2`}>
+                          {details.score}%
+                        </span>
+                        <ProgressBar 
+                          variant={getScoreVariant(details.score)}
+                          now={details.score} 
+                          style={{ width: '60px', height: '6px' }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+
+          {/* Carrier Overlap */}
+          {carrier_overlap.length > 0 && (
+            <div className="mb-4">
+              <h5 className="mb-3">🧬 Shared Carrier Status</h5>
+              <Alert variant="danger" className="small">
+                <strong>🚨 High Reproductive Risk Detected</strong>
+                <Table striped bordered size="sm" className="mt-2">
+                  <thead>
+                    <tr>
+                      <th>Gene</th>
+                      <th>Condition</th>
+                      <th>Your Genotype</th>
+                      <th>Partner Genotype</th>
+                      <th>Offspring Risk</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {carrier_overlap.map((carrier, index) => (
+                      <tr key={index}>
+                        <td><strong>{carrier.gene}</strong></td>
+                        <td>{carrier.condition}</td>
+                        <td>{carrier.user_genotype}</td>
+                        <td>{carrier.partner_genotype}</td>
+                        <td className="text-danger fw-bold">{carrier.risk}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Alert>
+            </div>
+          )}
+
+          {/* Interpretation */}
+          {interpretation && (
+            <div className="mb-4 p-3 border rounded bg-light">
+              <h5 className="mb-3">🧩 Interpretation</h5>
+              <p className="mb-0">{interpretation}</p>
+            </div>
+          )}
+
+          {/* Recommendations */}
+          {recommendations.length > 0 && (
+            <div className="mb-4">
+              <h5 className="mb-3">💡 Recommendations</h5>
+              <div className="p-3 border rounded bg-light">
+                <ul className="mb-0">
+                  {recommendations.map((rec, index) => (
+                    <li key={index} className="mb-2">
+                      {rec}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Disclaimer */}
+          <div className="p-3 border rounded bg-light">
+            <small className="text-muted">
+              <strong>Disclaimer:</strong> This genetic compatibility analysis is for informational purposes only. 
+              It should not be used as a substitute for professional medical advice, diagnosis, or treatment. 
+              Always consult qualified healthcare professionals and genetic counselors for medical guidance.
+              The analysis is based on the provided genetic data and current scientific understanding.
+            </small>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDNAModal(false)}>
+            Close
+          </Button>
+          {(risk_flags.some(f => f.type === 'high_risk') || carrier_overlap.length > 0) && (
+            <Button variant="danger">
+              📞 Speak with Genetic Counselor
+            </Button>
+          )}
+          <Button variant="primary">
+            📋 Save Report
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const getCategoryIcon = (category) => {
+    const icons = {
+      emotional_chemistry: '💖',
+      personality_match: '🧠',
+      health_harmony: '❤️',
+      lifestyle_balance: '⚡',
+      immune_attraction: '🛡️',
+      polygenic_health: '🧬',
+      reproductive_health: '👶',
+      birth_defect_risk: '⚠️'
+    };
+    return icons[category] || '📊';
+  };
+
+  const handleBlock = async (blockedUserId) => {
+    try {
+      await blockUser(user.user_id, blockedUserId);
+      setIsBlocked(true);
+      onProfileUpdate();
+    } catch (error) {
+      console.error('Error blocking user:', error);
+    }
+  };
+
+  const handleUnblock = async (blockedUserId) => {
+    try {
+      await unblockUser(user.user_id, blockedUserId);
+      setIsBlocked(false);
+      onProfileUpdate();
+    } catch (error) {
+      console.error('Error unblocking user:', error);
+    }
+  };
+
+  const handleReport = async (reportedUserId, reason) => {
+    try {
+      await reportUser(user.user_id, reportedUserId, reason);
+    } catch (error) {
+      console.error('Error reporting user:', error);
+    }
   };
 
   // Parse gallery images and include profile image as first item
@@ -58,41 +414,11 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
     ];
   }
 
-  const handleBlock = async (blockedUserId) => {
-    try {
-      console.log("User", user)
-      await blockUser(user.user_id, blockedUserId);
-      setIsBlocked(true);
-      onProfileUpdate(); // Call the callback to trigger refetch
-    } catch (error) {
-      console.error('Error blocking user:', error);
-    }
-  };
-
-  const handleUnblock = async (blockedUserId) => {
-    try {
-      await unblockUser(user.user_id, blockedUserId);
-      setIsBlocked(false);
-      onProfileUpdate(); // Call the callback to trigger refetch
-    } catch (error) {
-      console.error('Error unblocking user:', error);
-    }
-  };
-
-  const handleReport = async (reportedUserId, reason) => {
-    try {
-      await reportUser(user.user_id, reportedUserId, reason);
-      // Optional: Show success message
-    } catch (error) {
-      console.error('Error reporting user:', error);
-    }
-  };
-
   return (
     <>
       <div className="profile-part">
         <div className="row g-0">
-          <div className="col-md-4 position-relative cursor-pointer"  onClick={handleProfileClick}>
+          <div className="col-md-4 position-relative cursor-pointer" onClick={handleProfileClick}>
             {allImages.length > 0 ? (
               <>
                 <Carousel
@@ -187,16 +513,25 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                   {profile.facebook_connected ? (<i className="fa fa-facebook-square ms-1" style={{fontSize:"20px", color:"#0977af"}} aria-hidden="true"></i>):null}
                 </span>
                 <div className="d-flex align-items-center">
-                  {dnaMatches && (
-                    <span className={`hla-score ${
-                      profile.hla_compatibility === "Excellent" ? "text-success" :
-                      profile.hla_compatibility === "Good" ? "text-warning" :
-                      "text-danger"
-                    }`} title={`${profile.hla_compatibility}`}>
-                      {`HLA ${profile.hla_percentage}%`}
+                  {/* DNA Compatibility Badge */}
+                  {renderDNACompatibilityBadge()}
+                  
+                  {/* HLA Score (if exists) */}
+                  {dnaMatches && profile.hla_compatibility && (
+                    <span 
+                      className={`hla-score ms-2 badge ${
+                        profile.hla_compatibility === "Excellent" ? "bg-success" :
+                        profile.hla_compatibility === "Good" ? "bg-warning" :
+                        "bg-danger"
+                      }`} 
+                      title={`HLA Compatibility: ${profile.hla_compatibility}`}
+                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                    >
+                      HLA {profile.hla_percentage}%
                     </span>
                   )}
-                  {/* Add Action Menu */}
+                  
+                  {/* Action Menu */}
                   <ActionMenu 
                     profile={profile}
                     user={user}
@@ -260,7 +595,19 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                   </div>
                 </div>
               </div>
-              {!dnaMatches ? (
+              
+              {/* Loading State for DNA Compatibility */}
+              {loadingCompatibility && (
+                <div className="text-center py-3">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading compatibility...</span>
+                  </div>
+                  <p className="small text-muted mt-2">Analyzing genetic compatibility...</p>
+                </div>
+              )}
+              
+              {/* Regular Profile Description */}
+              {!dnaMatches && (
                 <p className="mb-0 text-dark fs-6">
                   {showFullDescription || profile.profile_description?.split(" ").length <= 40
                     ? profile.profile_description
@@ -271,51 +618,19 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
                     </a>
                   )}
                 </p>
-              ) : (
-                <div className="personality-data">
-                  <Link to="/gentics-biological-attraction" state={{ userProfile: user, selectedProfile: profile }} data-discover="true">
-                    <div className="pill personality-pill">
-                      <span className="color-primary text-uppercase">GENETICS : Biological Attraction</span>
-                    </div>
-                  </Link>
-                  <Link to="/gentics-psychological-compatibility" state={{ userProfile: user, selectedProfile: profile }} data-discover="true">
-                    <div className="pill personality-pill">
-                      <span className="color-primary text-uppercase">GENETICS : Psychological Compatibility</span>
-                    </div>
-                  </Link>
-                  <Link to="/gentics-birth-defect-risk" state={{ userProfile: user, selectedProfile: profile }} data-discover="true">
-                    <div className="pill personality-pill">
-                      <span className="color-primary text-uppercase">GENETICS : Birth Defects &amp; Health Risks</span>
-                    </div>
-                  </Link>
-                </div>
               )}
             </div>
           </div>
           <div className="col-md-2 d-flex align-items-center justify-content-center connect-now p-2">
-            {/* {profile.connectionRequest ? (
+            {profile.connectionRequest ? (
               <ContactOptions profile={profile} chatBoxOpen={chatBoxOpen}/>
             ) : (
-              <ConnectBox
-                handleConnectClick={() => {
-                  if (!user.plan_name || user.plan_name === null) {
-                    toast.info("Please upgrade your plan to use the connect feature.");
-                    navigate("/upgrade-profile");
-                  } else {
-                    handleConnectClick(profile.user_id, profile.profileId);
-                  }
-                }}
+              <ConnectBox 
+                id={profile.user_id} 
+                profileId={profile.profileId}
+                onConnectionSent={handleConnectClick}
               />  
-            )} */}
-            {profile.connectionRequest ? (
-                <ContactOptions profile={profile} chatBoxOpen={chatBoxOpen}/>
-              ) : (
-                <ConnectBox 
-                  id={profile.user_id} 
-                  profileId={profile.profileId}
-                  onConnectionSent={handleConnectClick}
-                />  
-              )}
+            )}
           </div>
         </div>
       </div>
@@ -328,6 +643,9 @@ const ProfileCard = ({ profile, handleConnectClick, activeIndex, setActiveIndex,
         handleConnectClick={handleConnectClick}
         chatBoxOpen={chatBoxOpen}
       />
+      
+      {/* DNA Compatibility Modal */}
+      {renderDNACompatibilityModal()}
     </>
   );
 };

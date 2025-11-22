@@ -7,7 +7,6 @@ import axios from "axios";
 import config from "../../../config";
 import { toast } from "../../Common/Toast";
 import { setUser } from "../../../features/user/userSlice";
-import { use } from "react";
 
 const DNAMatches = ({chatBoxOpen, key=null}) => {
   const [activeCarouselIndex, setActiveCarouselIndex] = useState(0);
@@ -15,103 +14,113 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const [filters, setFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [dnaMatches, setDnaMatches] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasGeneticData, setHasGeneticData] = useState(false);
   const profilesPerPage = 5;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.userInfo);
   const token = useSelector((state) => state.user.token);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-//   console.log("user info:", user)
+
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
 
-  const fetchFilteredProfiles = async () => {
+  const fetchDNAMatches = async () => {
+    if (!user?.user_id) return;
+    
+    setLoading(true);
     try {
       const response = await axios.get(
-        `${config.baseURL}/api/dna/get-matches-by-genetic-markers`,
+        `${config.baseURL}/api/genetic-markers/get-matches-by-genetic-markers`,
         {
           params: {
             user_id: user.user_id,
             looking_for: searchFor,
             ...filters,
           },
-        }
-      );
-      // console.log("Users using DNA data: ",response.data.users)
-      setProfiles(response.data.users || []);
-      setCurrentPage(1); // Reset to page 1 on new filter
-    } catch (error) {
-      console.error("Error fetching profiles", error);
-    }
-  };
-
-    useEffect(() => {
-      // Fetch existing genetic marker data
-  const fetchGeneticMarkers = async () => {
-    try {
-  
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
-  
-      const response = await axios.get(
-        `${config.baseURL}/api/dna/get-genetic-markers`,
-        {
           headers: {
-            "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
           },
         }
       );
-  
-      const data = response.data;
-      // console.log("Fetched Data:", data);
-  
-      if (data.grouped_genetic_markers) {
-        // console.log("flattenedData ",data.grouped_genetic_markers)
-        const updatedUserInfo = {...user, grouped_genetic_markers:{...data.grouped_genetic_markers}}
-        dispatch(setUser({
-          userInfo: updatedUserInfo,
-          token: token,
+
+      if (response.data.success) {
+        // Process the response to include genetic compatibility data
+        const processedProfiles = response.data.users.map(profile => ({
+          ...profile,
+          // Ensure genetic_compatibility is properly structured
+          genetic_compatibility: profile.genetic_compatibility || {
+            overall_score: profile.compatibilityScore || 0,
+            category_scores: profile.dnaCompatibility?.categoryScores || {},
+            risk_flags: profile.dnaCompatibility?.riskFlags || []
+          }
         }));
+        
+        setProfiles(processedProfiles);
+        setCurrentPage(1);
       }
     } catch (error) {
-      console.error("Error fetching genetic markers:", error);
-      if (error.response) {
-        console.error("Server response:", error.response.data);
+      console.error("Error fetching DNA matches:", error);
+      if (error.response?.status === 404) {
+        setHasGeneticData(false);
+        toast.info('Process your DNA file to see genetic compatibility matches');
+      } else {
+        toast.error('Failed to load DNA matches');
       }
+      setProfiles([]);
+    } finally {
+      setLoading(false);
     }
   };
-      fetchGeneticMarkers();
-    }, []);
- const handleProfileUpdate = () => {
-    setRefreshTrigger(prev => prev + 1); // Trigger refetch
+
+ const fetchUserGeneticData = async () => {
+  try {
+    if (!token) {
+      console.error("No token found");
+      return false;
+    }
+
+    // Check if user already has genetic data
+    const response = await axios.get(
+      `${config.baseURL}/api/genetic-markers/genetic-data`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = response.data;
+    
+    if (data.success && data.hasGeneticData && data.data) {
+      // Update user info with genetic data
+      const updatedUserInfo = {
+        ...user, 
+        genetic_data: data.data
+      };
+      dispatch(setUser({
+        userInfo: updatedUserInfo,
+        token: token,
+      }));
+      return true;
+    } else {
+      // If no genetic data found, show message
+      console.log('No genetic data found:', data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error fetching genetic data:", error);
+    if (error.response?.status === 404) {
+      console.log('Genetic data endpoint not found');
+    }
+    return false;
+  }
+};
+
+  const handleProfileUpdate = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
-
-  useEffect(() => {
-    if (searchFor) fetchFilteredProfiles();
-  }, [filters, searchFor, key, refreshTrigger]);
-
-  // const handleConnectClick = async (id, profileId) => {
-  //   setProfiles((prev) =>
-  //     prev.map((profile) =>
-  //       profile.user_id === id ? { ...profile, connectionRequest: true } : profile
-  //     )
-  //   );
-  //   try {
-  //     await axios.post(`${config.baseURL}/api/notifications/send`, {
-  //       receiver_user_id: id,
-  //       receiver_profile_id:profileId,
-  //       sender_user_id: user?.user_id,
-  //       sender_profile_id: user?.profileId,
-  //       type: "connect",
-  //       message: `${user?.first_name} wants to connect with you`,
-  //     });
-  //     toast.success("Request sent successfully")
-  //   } catch (error) {
-  //     console.error("Error sending notification", error);
-  //   }
-  // };
 
   const handleConnectClick = (id) => {
     setProfiles((prev) =>
@@ -121,13 +130,20 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
     );
   };
 
+  useEffect(() => {
+    fetchUserGeneticData();
+  }, []);
+
+  useEffect(() => {
+    if (searchFor && user?.user_id) {
+      fetchDNAMatches();
+    }
+  }, [filters, searchFor, key, refreshTrigger, user?.user_id]);
+
   // Pagination logic
   const indexOfLastProfile = currentPage * profilesPerPage;
   const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
-  const currentProfiles = profiles.slice(
-    indexOfFirstProfile,
-    indexOfLastProfile
-  );
+  const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfLastProfile);
 
   return (
     <div className="p-4">
@@ -136,26 +152,65 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
           <RefineSearchSidebar setFilters={setFilters} />
         </div>
         <div className="col-md-9">
-          <h4>New Members Who Match Your Preferences</h4>
-          <div className="dan-card card border-0 shadow-sm mb-3">
-            {currentProfiles.length > 0 ? (
-              currentProfiles.map((profile) => (
-                <ProfileCard
-                  key={profile.id}
-                  profile={profile}
-                  handleConnectClick={handleConnectClick}
-                  activeIndex={activeCarouselIndex}
-                  setActiveIndex={setActiveCarouselIndex}
-                  chatBoxOpen={chatBoxOpen}
-                  dnaMatches={dnaMatches}
-                  user={user}
-                  onProfileUpdate={handleProfileUpdate}
-                />
-              ))
-            ) : (
-              <div className="p-4 text-muted">No new matches found.</div>
-            )}
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 className="mb-1">🧬 DNA Compatibility Matches</h4>
+              <p className="text-muted mb-0">
+                Members with high genetic compatibility based on your DNA analysis
+              </p>
+            </div>
+           
           </div>
+
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading DNA matches...</span>
+              </div>
+              <p className="mt-2 text-muted">Analyzing genetic compatibility...</p>
+            </div>
+          ) : (
+            <div className="dan-card card border-0 shadow-sm mb-3">
+              {currentProfiles.length > 0 ? (
+                currentProfiles.map((profile, index) => (
+                  <ProfileCard
+                    key={profile.user_id || index}
+                    profile={profile}
+                    handleConnectClick={handleConnectClick}
+                    activeIndex={activeCarouselIndex}
+                    setActiveIndex={setActiveCarouselIndex}
+                    chatBoxOpen={chatBoxOpen}
+                    dnaMatches={dnaMatches}
+                    user={user}
+                    onProfileUpdate={handleProfileUpdate}
+                  />
+                ))
+              ) : (
+                <div className="text-center p-5">
+                  <div className="mb-3">
+                    <i className="fas fa-dna fa-3x text-muted"></i>
+                  </div>
+                  <h5 className="text-muted">
+                    {hasGeneticData ? "No DNA Matches Found" : "DNA Analysis Required"}
+                  </h5>
+                  <p className="text-muted mb-3">
+                    {hasGeneticData 
+                      ? "No genetically compatible matches found with current filters. Try adjusting your search criteria."
+                      : "Process your DNA file to discover genetically compatible matches based on your genetic profile."
+                    }
+                  </p>
+                  {!hasGeneticData && (
+                    <div className="alert alert-info">
+                      <small>
+                        <strong>How to get started:</strong> Upload and process your DNA file in your profile settings to enable genetic compatibility matching.
+                      </small>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {profiles.length > profilesPerPage && (
             <Pagination
               totalProfiles={profiles.length}
@@ -164,6 +219,27 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
               setCurrentPage={setCurrentPage}
             />
           )}
+
+          {/* Information Section */}
+          <div className="mt-4 p-4 border rounded bg-light">
+            <h6>🧬 About DNA Compatibility Matching</h6>
+            <p className="small mb-2">
+              Our genetic compatibility analysis evaluates multiple factors to help you find the best matches:
+            </p>
+            <ul className="small mb-0">
+              <li><strong>Emotional Chemistry:</strong> Genetic factors influencing bonding and attachment</li>
+              <li><strong>Health Harmony:</strong> Shared health risks and reproductive compatibility</li>
+              <li><strong>Personality Match:</strong> Genetic traits affecting behavior and stress response</li>
+              <li><strong>Immune Attraction:</strong> Immune system compatibility for healthier offspring</li>
+              <li><strong>Birth Defect Risk:</strong> Carrier status analysis for genetic conditions</li>
+            </ul>
+            <div className="mt-3 p-3 bg-white rounded border">
+              <small className="text-muted">
+                <strong>Note:</strong> Genetic compatibility is one factor in relationship success. 
+                Always consult healthcare professionals for medical advice.
+              </small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
