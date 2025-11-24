@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Button, Alert, Card } from "react-bootstrap";
 import RefineSearchSidebar from "./components/RefineSearchSidebar";
 import ProfileCard from "./components/ProfileCard";
 import Pagination from "./components/Pagination";
@@ -16,6 +17,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const [dnaMatches, setDnaMatches] = useState(true);
   const [loading, setLoading] = useState(false);
   const [hasGeneticData, setHasGeneticData] = useState(false);
+  const [userGeneticData, setUserGeneticData] = useState(null);
   const profilesPerPage = 5;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.userInfo);
@@ -46,18 +48,32 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
 
       if (response.data.success) {
         // Process the response to include genetic compatibility data
-        const processedProfiles = response.data.users.map(profile => ({
-          ...profile,
-          // Ensure genetic_compatibility is properly structured
-          genetic_compatibility: profile.genetic_compatibility || {
-            overall_score: profile.compatibilityScore || 0,
-            category_scores: profile.dnaCompatibility?.categoryScores || {},
-            risk_flags: profile.dnaCompatibility?.riskFlags || []
-          }
-        }));
+        const processedProfiles = response.data.users.map(profile => {
+          // Calculate overall compatibility score
+          const compatibilityScore = calculateOverallCompatibility(profile);
+          
+          return {
+            ...profile,
+            // Ensure genetic_compatibility is properly structured
+            genetic_compatibility: profile.genetic_compatibility || {
+              overall_score: compatibilityScore,
+              compatibility_level: getCompatibilityLevel(compatibilityScore),
+              category_scores: profile.dnaCompatibility?.categoryScores || {},
+              risk_flags: profile.dnaCompatibility?.riskFlags || []
+            },
+            dna_compatibility: profile.dna_compatibility || null,
+            dna_compatibility_score: compatibilityScore
+          };
+        });
         
-        setProfiles(processedProfiles);
+        // Sort by compatibility score (highest first)
+        const sortedProfiles = processedProfiles.sort((a, b) => 
+          (b.dna_compatibility_score || 0) - (a.dna_compatibility_score || 0)
+        );
+        
+        setProfiles(sortedProfiles);
         setCurrentPage(1);
+        setHasGeneticData(true);
       }
     } catch (error) {
       console.error("Error fetching DNA matches:", error);
@@ -73,50 +89,83 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
     }
   };
 
- const fetchUserGeneticData = async () => {
-  try {
-    if (!token) {
-      console.error("No token found");
-      return false;
+  // Calculate overall compatibility score from available data
+  const calculateOverallCompatibility = (profile) => {
+    // Priority 1: Use DNA compatibility overall score
+    if (profile.dna_compatibility?.overall_score) {
+      return profile.dna_compatibility.overall_score;
     }
-
-    // Check if user already has genetic data
-    const response = await axios.get(
-      `${config.baseURL}/api/genetic-markers/genetic-data`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = response.data;
     
-    if (data.success && data.hasGeneticData && data.data) {
-      // Update user info with genetic data
-      const updatedUserInfo = {
-        ...user, 
-        genetic_data: data.data
-      };
-      dispatch(setUser({
-        userInfo: updatedUserInfo,
-        token: token,
-      }));
-      return true;
-    } else {
-      // If no genetic data found, show message
-      console.log('No genetic data found:', data.message);
+    // Priority 2: Use compatibilityScore
+    if (profile.compatibilityScore) {
+      return profile.compatibilityScore;
+    }
+    
+    // Priority 3: Calculate from DNA compatibility category scores
+    if (profile.dnaCompatibility?.categoryScores) {
+      const scores = Object.values(profile.dnaCompatibility.categoryScores);
+      if (scores.length > 0) {
+        return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      }
+    }
+    
+    // Priority 4: Use HLA percentage
+    if (profile.hla_percentage) {
+      return profile.hla_percentage;
+    }
+    
+    return 0;
+  };
+
+  const getCompatibilityLevel = (score) => {
+    if (score >= 80) return "Excellent";
+    if (score >= 60) return "Good";
+    if (score >= 40) return "Moderate";
+    return "Poor";
+  };
+
+  const fetchUserGeneticData = async () => {
+    try {
+      if (!token) {
+        console.error("No token found");
+        return false;
+      }
+
+      // Check if user has genetic data
+      const response = await axios.get(
+        `${config.baseURL}/api/dna/parsed-data`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setUserGeneticData(response.data.data);
+        
+        // Update user info with genetic data
+        const updatedUserInfo = {
+          ...user, 
+          genetic_data: response.data.data
+        };
+        dispatch(setUser({
+          userInfo: updatedUserInfo,
+          token: token,
+        }));
+        return true;
+      } else {
+        console.log('No genetic data found');
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching genetic data:", error);
+      if (error.response?.status === 404) {
+        console.log('No genetic data available');
+      }
       return false;
     }
-  } catch (error) {
-    console.error("Error fetching genetic data:", error);
-    if (error.response?.status === 404) {
-      console.log('Genetic data endpoint not found');
-    }
-    return false;
-  }
-};
+  };
 
   const handleProfileUpdate = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -128,6 +177,11 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
         profile.user_id === id ? { ...profile, connectionRequest: true } : profile
       )
     );
+  };
+
+  const handleUploadDNA = () => {
+    // Navigate to DNA upload page or open upload modal
+    toast.info('Please upload your DNA file in your profile settings');
   };
 
   useEffect(() => {
@@ -145,6 +199,14 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
   const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfLastProfile);
 
+  // Calculate statistics
+  const totalMatches = profiles.length;
+  const excellentMatches = profiles.filter(p => (p.dna_compatibility_score || 0) >= 80).length;
+  const goodMatches = profiles.filter(p => {
+    const score = p.dna_compatibility_score || 0;
+    return score >= 60 && score < 80;
+  }).length;
+
   return (
     <div className="p-4">
       <div className="row">
@@ -159,8 +221,39 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                 Members with high genetic compatibility based on your DNA analysis
               </p>
             </div>
-           
+            <div className="d-flex gap-2">
+              {userGeneticData && (
+                <Button variant="outline-success" size="sm">
+                  🧬 DNA Data Loaded
+                </Button>
+              )}
+              <Button variant="primary" size="sm" onClick={handleUploadDNA}>
+                📁 Upload DNA
+              </Button>
+            </div>
           </div>
+
+          {/* Statistics Card */}
+          {profiles.length > 0 && (
+            <Card className="mb-4 border-0 shadow-sm">
+              <Card.Body className="py-3">
+                <div className="row text-center">
+                  <div className="col-4">
+                    <h4 className="text-primary mb-1">{totalMatches}</h4>
+                    <small className="text-muted">Total Matches</small>
+                  </div>
+                  <div className="col-4">
+                    <h4 className="text-success mb-1">{excellentMatches}</h4>
+                    <small className="text-muted">Excellent Matches</small>
+                  </div>
+                  <div className="col-4">
+                    <h4 className="text-warning mb-1">{goodMatches}</h4>
+                    <small className="text-muted">Good Matches</small>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          )}
 
           {loading ? (
             <div className="text-center py-5">
@@ -201,9 +294,20 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                   </p>
                   {!hasGeneticData && (
                     <div className="alert alert-info">
-                      <small>
-                        <strong>How to get started:</strong> Upload and process your DNA file in your profile settings to enable genetic compatibility matching.
-                      </small>
+                      <div className="d-flex align-items-center">
+                        <div className="me-3">
+                          <i className="fas fa-info-circle fa-2x"></i>
+                        </div>
+                        <div>
+                          <strong>How to get started with DNA Matching:</strong>
+                          <ul className="mb-0 mt-2">
+                            <li>Upload your DNA report (PDF/CSV format)</li>
+                            <li>Process the file with our AI analysis</li>
+                            <li>View genetic compatibility with potential matches</li>
+                            <li>Get detailed insights into health and reproductive compatibility</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -224,19 +328,68 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
           <div className="mt-4 p-4 border rounded bg-light">
             <h6>🧬 About DNA Compatibility Matching</h6>
             <p className="small mb-2">
-              Our genetic compatibility analysis evaluates multiple factors to help you find the best matches:
+              Our advanced genetic compatibility analysis evaluates multiple factors to help you find the best matches:
             </p>
-            <ul className="small mb-0">
-              <li><strong>Emotional Chemistry:</strong> Genetic factors influencing bonding and attachment</li>
-              <li><strong>Health Harmony:</strong> Shared health risks and reproductive compatibility</li>
-              <li><strong>Personality Match:</strong> Genetic traits affecting behavior and stress response</li>
-              <li><strong>Immune Attraction:</strong> Immune system compatibility for healthier offspring</li>
-              <li><strong>Birth Defect Risk:</strong> Carrier status analysis for genetic conditions</li>
-            </ul>
+            <div className="row">
+              <div className="col-md-6">
+                <ul className="small">
+                  <li><strong>💖 Emotional Chemistry:</strong> OXTR, COMT genes influencing bonding</li>
+                  <li><strong>❤️ Health Harmony:</strong> Shared health risks and compatibility</li>
+                  <li><strong>🧠 Personality Match:</strong> Genetic traits affecting behavior</li>
+                  <li><strong>🛡️ Immune Attraction:</strong> HLA compatibility for healthier offspring</li>
+                </ul>
+              </div>
+              <div className="col-md-6">
+                <ul className="small">
+                  <li><strong>👶 Reproductive Health:</strong> Carrier status analysis</li>
+                  <li><strong>⚠️ Birth Defect Risk:</strong> Genetic condition screening</li>
+                  <li><strong>⚡ Lifestyle Balance:</strong> Metabolic and activity compatibility</li>
+                  <li><strong>🧬 Polygenic Health:</strong> Overall genetic health profile</li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Compatibility Score Guide */}
+            <div className="mt-3 p-3 bg-white rounded border">
+              <h6 className="mb-3">🎯 Compatibility Score Guide</h6>
+              <div className="row text-center">
+                <div className="col-3">
+                  <div className="p-2 border rounded bg-success text-white">
+                    <strong>80-100%</strong>
+                    <br />
+                    <small>Excellent</small>
+                  </div>
+                </div>
+                <div className="col-3">
+                  <div className="p-2 border rounded bg-warning">
+                    <strong>60-79%</strong>
+                    <br />
+                    <small>Good</small>
+                  </div>
+                </div>
+                <div className="col-3">
+                  <div className="p-2 border rounded bg-danger text-white">
+                    <strong>40-59%</strong>
+                    <br />
+                    <small>Moderate</small>
+                  </div>
+                </div>
+                <div className="col-3">
+                  <div className="p-2 border rounded bg-secondary text-white">
+                    <strong>0-39%</strong>
+                    <br />
+                    <small>Poor</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-3 p-3 bg-white rounded border">
               <small className="text-muted">
                 <strong>Note:</strong> Genetic compatibility is one factor in relationship success. 
-                Always consult healthcare professionals for medical advice.
+                Always consult healthcare professionals for medical advice. Our analysis provides 
+                insights based on current genetic research but should not replace professional 
+                genetic counseling.
               </small>
             </div>
           </div>

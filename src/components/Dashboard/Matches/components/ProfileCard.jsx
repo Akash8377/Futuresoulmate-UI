@@ -88,50 +88,134 @@ const ProfileCard = ({
     }
   };
 
-  // Get compatibility score from profile data
-  const getCompatibilityScore = () => {
+  // Calculate compatibility score from available data
+  const calculateCompatibilityScore = () => {
+    // Priority 1: Use DNA compatibility score if available
     if (profile.dna_compatibility_score) {
       return profile.dna_compatibility_score;
     }
+    
+    // Priority 2: Use DNA compatibility report overall score
+    if (profile.dna_compatibility?.overall_score) {
+      return profile.dna_compatibility.overall_score;
+    }
+    
+    // Priority 3: Use genetic compatibility overall score
     if (profile.genetic_compatibility?.overall_score) {
       return profile.genetic_compatibility.overall_score;
     }
+    
+    // Priority 4: Use compatibilityScore
     if (profile.compatibilityScore) {
       return profile.compatibilityScore;
     }
+    
+    // Priority 5: Calculate from HLA score if available
+    if (profile.hla_score && profile.max_hla_score) {
+      const hlaPercentage = (profile.hla_score / profile.max_hla_score) * 100;
+      return Math.min(100, Math.round(hlaPercentage * 0.7)); // HLA contributes 70% to overall
+    }
+    
+    // Priority 6: Use hla_percentage directly
+    if (profile.hla_percentage) {
+      return Math.min(100, Math.round(profile.hla_percentage * 0.7));
+    }
+    
     return 0;
   };
 
   const getScoreVariant = (score) => {
-    if (score >= 70) return 'success';
-    if (score >= 50) return 'warning';
+    if (score >= 80) return 'success';
+    if (score >= 60) return 'warning';
     return 'danger';
   };
 
   const getScoreText = (score) => {
-    if (score >= 70) return 'Excellent Match';
-    if (score >= 50) return 'Moderate Match';
+    if (score >= 80) return 'Excellent Match';
+    if (score >= 60) return 'Good Match';
+    if (score >= 40) return 'Moderate Match';
     return 'Poor Match';
+  };
+
+  const getCompatibilityDetails = () => {
+    const score = calculateCompatibilityScore();
+    
+    // Check if we have detailed DNA compatibility data
+    if (profile.dna_compatibility) {
+      return {
+        score,
+        level: profile.dna_compatibility.compatibility_level || getScoreText(score),
+        hasDNAData: true,
+        categories: profile.dna_compatibility.category_scores || {},
+        riskFlags: profile.dna_compatibility.risk_flags || []
+      };
+    }
+    
+    // Check if we have genetic compatibility data
+    if (profile.genetic_compatibility) {
+      return {
+        score,
+        level: profile.genetic_compatibility.compatibility_level || getScoreText(score),
+        hasDNAData: true,
+        categories: profile.genetic_compatibility.category_scores || {},
+        riskFlags: profile.genetic_compatibility.risk_flags || []
+      };
+    }
+    
+    // HLA only data
+    return {
+      score,
+      level: getScoreText(score),
+      hasDNAData: false,
+      isHLAOnly: true,
+      hlaScore: profile.hla_score,
+      hlaPercentage: profile.hla_percentage
+    };
   };
 
   const renderDNACompatibilityBadge = () => {
     if (!dnaMatches) return null;
 
-    const score = getCompatibilityScore();
+    const compatibility = getCompatibilityDetails();
+    const { score, level, hasDNAData, isHLAOnly } = compatibility;
     
+    if (score === 0) return null;
+
     return (
       <Badge 
         bg={getScoreVariant(score)} 
         className="ms-2 dna-compatibility-badge"
         style={{ 
           fontSize: '0.75rem', 
-          padding: '0.25rem 0.5rem', 
-          cursor: 'pointer' 
+          padding: '0.4rem 0.6rem', 
+          cursor: 'pointer',
+          border: '2px solid white',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
         }}
         onClick={fetchDNACompatibility}
-        title={`DNA Compatibility: ${score}% - Click for details`}
+        title={`${hasDNAData ? 'DNA' : 'HLA'} Compatibility: ${score}% - ${level} - Click for details`}
       >
-        🧬 {score}%
+        {hasDNAData ? '🧬' : '🩺'} {score}%
+        {isHLAOnly && <small className="ms-1">(HLA)</small>}
+      </Badge>
+    );
+  };
+
+  const renderHLACompatibilityBadge = () => {
+    if (!dnaMatches || !profile.hla_compatibility) return null;
+
+    return (
+      <Badge 
+        bg={getScoreVariant(profile.hla_percentage)} 
+        className="ms-2"
+        style={{ 
+          fontSize: '0.7rem', 
+          padding: '0.3rem 0.5rem',
+          cursor: 'pointer'
+        }}
+        title={`HLA Compatibility: ${profile.hla_compatibility} (${profile.hla_percentage}%)`}
+      >
+        🛡️ HLA {profile.hla_percentage}%
       </Badge>
     );
   };
@@ -149,18 +233,41 @@ const ProfileCard = ({
       carrier_overlap = [],
       risk_overlap = [],
       interpretation,
-      couple_info = {}
+      couple_info = {},
+      users = {}
     } = compatibilityReport;
 
     return (
-      <Modal show={showDNAModal} onHide={() => setShowDNAModal(false)} size="xl" centered>
+      <Modal show={showDNAModal} onHide={() => setShowDNAModal(false)} size="xl" centered scrollable>
         <Modal.Header closeButton className="bg-light">
           <Modal.Title>
             🧬 FutureSoulmates Genetic Compatibility Report
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
           
+          {/* User Information */}
+          {users && (
+            <div className="row mb-4">
+              <div className="col-6 text-center">
+                <div className="p-3 border rounded bg-primary text-white">
+                  <h6>Your Profile</h6>
+                  <strong>{users.user?.name || 'You'}</strong>
+                  <br />
+                  <small>ID: {users.user?.id}</small>
+                </div>
+              </div>
+              <div className="col-6 text-center">
+                <div className="p-3 border rounded bg-success text-white">
+                  <h6>Partner Profile</h6>
+                  <strong>{users.partner?.name || profile.first_name + ' ' + profile.last_name}</strong>
+                  <br />
+                  <small>ID: {users.partner?.id || profile.user_id}</small>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Header with Risk Level */}
           <div className={`text-center mb-4 p-4 border rounded ${
             overall_score < 50 ? 'bg-danger text-white' : 
@@ -179,13 +286,15 @@ const ProfileCard = ({
               style={{ height: '20px' }}
               className="mb-3"
             />
-            <p className="lead mb-0" style={{ whiteSpace: 'pre-line' }}>{couple_info.summary}</p>
+            {couple_info.summary && (
+              <p className="lead mb-0" style={{ whiteSpace: 'pre-line' }}>{couple_info.summary}</p>
+            )}
           </div>
 
           {/* Highlights */}
           {couple_info.highlights && couple_info.highlights.length > 0 && (
             <div className="mb-4">
-              <h5 className="mb-3">📊 Highlights</h5>
+              <h5 className="mb-3">📊 Key Findings</h5>
               {couple_info.highlights.map((highlight, index) => (
                 <Alert key={index} variant="info" className="small">
                   {highlight}
@@ -230,47 +339,51 @@ const ProfileCard = ({
           {/* Compatibility Breakdown */}
           <div className="mb-4">
             <h5 className="mb-3">🧩 Compatibility Breakdown</h5>
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Genes Tested</th>
-                  <th>Your Genotype</th>
-                  <th>Partner Genotype</th>
-                  <th>Compatibility</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(category_details).map(([category, details]) => (
-                  <tr key={category}>
-                    <td className="text-capitalize fw-medium">
-                      {getCategoryIcon(category)} {category.replace(/_/g, ' ')}
-                    </td>
-                    <td>{details.genes_tested}</td>
-                    <td>
-                      {details.genes?.slice(0, 2).map(g => g.user_genotype).join(', ')}
-                      {details.genes?.length > 2 && '...'}
-                    </td>
-                    <td>
-                      {details.genes?.slice(0, 2).map(g => g.partner_genotype).join(', ')}
-                      {details.genes?.length > 2 && '...'}
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <span className={`badge bg-${getScoreVariant(details.score)} me-2`}>
-                          {details.score}%
-                        </span>
-                        <ProgressBar 
-                          variant={getScoreVariant(details.score)}
-                          now={details.score} 
-                          style={{ width: '60px', height: '6px' }}
-                        />
-                      </div>
-                    </td>
+            <div className="table-responsive">
+              <Table striped bordered hover size="sm">
+                <thead className="table-dark">
+                  <tr>
+                    <th>Category</th>
+                    <th>Score</th>
+                    <th>Genes Tested</th>
+                    <th>Description</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {Object.entries(category_details).map(([category, details]) => (
+                    <tr key={category}>
+                      <td className="text-capitalize fw-medium">
+                        {getCategoryIcon(category)} {category.replace(/_/g, ' ')}
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className={`badge bg-${getScoreVariant(details.score)} me-2`}>
+                            {details.score}%
+                          </span>
+                          <ProgressBar 
+                            variant={getScoreVariant(details.score)}
+                            now={details.score} 
+                            style={{ width: '60px', height: '6px' }}
+                          />
+                        </div>
+                      </td>
+                      <td>{details.genes_tested || 'N/A'}</td>
+                      <td>
+                        <small className="text-muted">{details.description}</small>
+                        {details.genes && details.genes.length > 0 && (
+                          <div className="mt-1">
+                            <small>
+                              <strong>Key Genes:</strong> {details.genes.slice(0, 3).map(g => g.gene).join(', ')}
+                              {details.genes.length > 3 && '...'}
+                            </small>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </div>
 
           {/* Carrier Overlap */}
@@ -279,28 +392,61 @@ const ProfileCard = ({
               <h5 className="mb-3">🧬 Shared Carrier Status</h5>
               <Alert variant="danger" className="small">
                 <strong>🚨 High Reproductive Risk Detected</strong>
-                <Table striped bordered size="sm" className="mt-2">
-                  <thead>
-                    <tr>
-                      <th>Gene</th>
-                      <th>Condition</th>
-                      <th>Your Genotype</th>
-                      <th>Partner Genotype</th>
-                      <th>Offspring Risk</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {carrier_overlap.map((carrier, index) => (
-                      <tr key={index}>
-                        <td><strong>{carrier.gene}</strong></td>
-                        <td>{carrier.condition}</td>
-                        <td>{carrier.user_genotype}</td>
-                        <td>{carrier.partner_genotype}</td>
-                        <td className="text-danger fw-bold">{carrier.risk}</td>
+                <div className="table-responsive mt-2">
+                  <Table striped bordered size="sm">
+                    <thead>
+                      <tr>
+                        <th>Gene</th>
+                        <th>Condition</th>
+                        <th>Your Genotype</th>
+                        <th>Partner Genotype</th>
+                        <th>Offspring Risk</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                    </thead>
+                    <tbody>
+                      {carrier_overlap.map((carrier, index) => (
+                        <tr key={index}>
+                          <td><strong>{carrier.gene}</strong></td>
+                          <td>{carrier.condition}</td>
+                          <td>{carrier.user_genotype || 'N/A'}</td>
+                          <td>{carrier.partner_genotype || 'N/A'}</td>
+                          <td className="text-danger fw-bold">{carrier.risk}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </Alert>
+            </div>
+          )}
+
+          {/* Risk Overlap */}
+          {risk_overlap.length > 0 && (
+            <div className="mb-4">
+              <h5 className="mb-3">📈 Shared Risk Factors</h5>
+              <Alert variant="warning" className="small">
+                <div className="table-responsive">
+                  <Table striped bordered size="sm">
+                    <thead>
+                      <tr>
+                        <th>Gene</th>
+                        <th>Condition</th>
+                        <th>Your Genotype</th>
+                        <th>Partner Genotype</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {risk_overlap.map((risk, index) => (
+                        <tr key={index}>
+                          <td><strong>{risk.gene}</strong></td>
+                          <td>{risk.condition}</td>
+                          <td>{risk.user_genotype || 'N/A'}</td>
+                          <td>{risk.partner_genotype || 'N/A'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
               </Alert>
             </div>
           )}
@@ -308,8 +454,8 @@ const ProfileCard = ({
           {/* Interpretation */}
           {interpretation && (
             <div className="mb-4 p-3 border rounded bg-light">
-              <h5 className="mb-3">🧩 Interpretation</h5>
-              <p className="mb-0">{interpretation}</p>
+              <h5 className="mb-3">🧩 Genetic Interpretation</h5>
+              <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>{interpretation}</p>
             </div>
           )}
 
@@ -414,6 +560,8 @@ const ProfileCard = ({
     ];
   }
 
+  const compatibility = getCompatibilityDetails();
+
   return (
     <>
       <div className="profile-part">
@@ -517,19 +665,7 @@ const ProfileCard = ({
                   {renderDNACompatibilityBadge()}
                   
                   {/* HLA Score (if exists) */}
-                  {dnaMatches && profile.hla_compatibility && (
-                    <span 
-                      className={`hla-score ms-2 badge ${
-                        profile.hla_compatibility === "Excellent" ? "bg-success" :
-                        profile.hla_compatibility === "Good" ? "bg-warning" :
-                        "bg-danger"
-                      }`} 
-                      title={`HLA Compatibility: ${profile.hla_compatibility}`}
-                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-                    >
-                      HLA {profile.hla_percentage}%
-                    </span>
-                  )}
+                  {renderHLACompatibilityBadge()}
                   
                   {/* Action Menu */}
                   <ActionMenu 
@@ -542,6 +678,18 @@ const ProfileCard = ({
                   />
                 </div>
               </h5>
+              
+              {/* Compatibility Level Text */}
+              {dnaMatches && compatibility.score > 0 && (
+                <div className="mb-2">
+                  <small className={`text-${getScoreVariant(compatibility.score)} fw-bold`}>
+                    {compatibility.hasDNAData ? '🧬 ' : '🩺 '}
+                    {compatibility.level}
+                    {compatibility.isHLAOnly && ' (HLA Compatibility)'}
+                  </small>
+                </div>
+              )}
+
               <div className="d-flex gap-3 mb-2 small">
                 {profile.online ? (
                   <span className="text-success">
@@ -603,6 +751,31 @@ const ProfileCard = ({
                     <span className="visually-hidden">Loading compatibility...</span>
                   </div>
                   <p className="small text-muted mt-2">Analyzing genetic compatibility...</p>
+                </div>
+              )}
+              
+              {/* DNA Compatibility Quick View */}
+              {dnaMatches && compatibility.hasDNAData && compatibility.categories && (
+                <div className="mt-2">
+                  <small className="text-muted d-block mb-1">Genetic Compatibility Breakdown:</small>
+                  <div className="d-flex flex-wrap gap-1">
+                    {Object.entries(compatibility.categories).slice(0, 4).map(([category, score]) => (
+                      <Badge 
+                        key={category} 
+                        bg="outline-secondary" 
+                        text="dark"
+                        className="small"
+                        style={{ fontSize: '0.65rem' }}
+                      >
+                        {getCategoryIcon(category)} {category.split('_')[0]}: {score}%
+                      </Badge>
+                    ))}
+                    {Object.keys(compatibility.categories).length > 4 && (
+                      <Badge bg="light" text="dark" className="small" style={{ fontSize: '0.65rem' }}>
+                        +{Object.keys(compatibility.categories).length - 4} more
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               )}
               
