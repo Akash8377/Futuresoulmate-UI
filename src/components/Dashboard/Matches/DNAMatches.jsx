@@ -217,9 +217,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
               <h4 className="mb-1">🧬 DNA Compatibility Matches</h4>
-              <p className="text-muted mb-0">
-                Members with high genetic compatibility based on your DNA analysis
-              </p>
+           
             </div>
             <div className="d-flex gap-2">
               {userGeneticData && (
@@ -227,9 +225,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                   🧬 DNA Data Loaded
                 </Button>
               )}
-              <Button variant="primary" size="sm" onClick={handleUploadDNA}>
-                📁 Upload DNA
-              </Button>
+           
             </div>
           </div>
 
