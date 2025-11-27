@@ -65,19 +65,125 @@ const ActivitySummary = ({ notifications, onEditClick, userInfo, recentVisitors 
     }
   };
 
-  const fetchParsedData = async () => {
-    if (!token) return;
+const fetchParsedData = async () => {
+  if (!token) return;
 
-    try {
-      const response = await axios.get(`${config.baseURL}/api/dna/parsed-data`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  try {
+    console.log('🔄 Fetching parsed genetic data...');
+    const response = await axios.get(`${config.baseURL}/api/dna/parsed-data`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    if (response.data.success) {
       setParsedData(response.data.data);
-    } catch (error) {
-      console.error('Error fetching parsed data:', error);
+      console.log('✅ Parsed data loaded successfully');
+    } else {
+      console.log('ℹ️ No parsed data available');
+      setParsedData(null);
     }
-  };
+  } catch (error) {
+    console.error('❌ Error fetching parsed data:', error);
+    setParsedData(null);
+  }
+};
 
+// Enhanced parse function in the component
+const handleParseDNA = async () => {
+  if (!userDna || !token) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Authentication Required',
+      text: 'Please log in and ensure DNA file is uploaded.',
+      confirmButtonColor: '#3085d6',
+    });
+    return;
+  }
+
+  try {
+    setParsing(true);
+    
+    Swal.fire({
+      title: 'AI Genetic Analysis',
+      html: `
+        <div style="text-align: center;">
+          <div class="spinner-border text-primary mb-3"></div>
+          <p><strong>Analyzing your DNA report...</strong></p>
+          <p><small>Extracting conditions, genes, and risk factors</small></p>
+          <p><small>This may take a few moments</small></p>
+        </div>
+      `,
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const response = await axios.post(
+      `${config.baseURL}/api/dna/parse-pdf`,
+      {},
+      { 
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 120000 // 2 minutes timeout
+      }
+    );
+
+    Swal.close();
+    
+    if (response.data.success) {
+      setParsedData(response.data.data);
+      await fetchGeneticHistory();
+      
+      const action = response.data.database_info.action;
+      const recordId = response.data.database_info.record_id;
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Analysis Complete!',
+        html: `
+          <div style="text-align: left;">
+            <p><strong>✅ Genetic Report Analyzed Successfully</strong></p>
+            <p>🧬 <strong>Action:</strong> ${action} genetic data</p>
+            <p>📊 <strong>Record ID:</strong> ${recordId}</p>
+            <p>🏥 <strong>Conditions Found:</strong> ${response.data.summary.conditions_count}</p>
+            <p>🔬 <strong>Genes Identified:</strong> ${response.data.summary.genes_identified}</p>
+            <p>⚠️ <strong>Risk Factors:</strong> ${response.data.summary.risk_factors}</p>
+            <br>
+            <p><small>Data successfully saved to database</small></p>
+          </div>
+        `,
+        confirmButtonColor: '#3085d6',
+        width: '500px'
+      });
+
+      console.log('🎯 FULL RESPONSE DATA:', response.data);
+    } else {
+      throw new Error(response.data.error || 'Analysis failed');
+    }
+    
+  } catch (error) {
+    console.error('Error parsing DNA report:', error);
+    
+    Swal.fire({
+      icon: 'error',
+      title: 'Analysis Failed',
+      html: `
+        <div style="text-align: left;">
+          <p><strong>Failed to analyze DNA report</strong></p>
+          <p>${error.response?.data?.error || error.message}</p>
+          ${error.response?.data?.retry_attempts ? 
+            `<p><small>Retry attempts: ${error.response.data.retry_attempts}</small></p>` : ''}
+          <br>
+          <p><small>Please try again or contact support if the issue persists.</small></p>
+        </div>
+      `,
+      confirmButtonColor: '#d33',
+      width: '500px'
+    });
+  } finally {
+    setParsing(false);
+  }
+};
   const fetchGeneticHistory = async () => {
     if (!token) return;
 
@@ -225,76 +331,6 @@ const ActivitySummary = ({ notifications, onEditClick, userInfo, recentVisitors 
         text: 'Failed to remove DNA report',
         confirmButtonColor: '#d33',
       });
-    }
-  };
-
-  const handleParseDNA = async () => {
-    if (!userDna || !token) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Authentication Required',
-        text: 'Please log in and ensure DNA file is uploaded.',
-        confirmButtonColor: '#3085d6',
-      });
-      return;
-    }
-
-    try {
-      setParsing(true);
-      Swal.fire({
-        title: 'AI Analysis in Progress...',
-        html: `
-          <div style="text-align: center;">
-            <div class="spinner-border text-primary mb-3"></div>
-            <p>AI is analyzing your genetic data</p>
-            <p><small>Extracting conditions, genes, and risk factors...</small></p>
-          </div>
-        `,
-        allowOutsideClick: false,
-        showConfirmButton: false
-      });
-
-      const response = await axios.post(
-        `${config.baseURL}/api/dna/parse-pdf`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      Swal.close();
-      setParsedData(response.data.data);
-      await fetchGeneticHistory(); // Refresh history
-      
-      const action = response.data.database_action === 'updated' ? 'Updated' : 'Created';
-      
-      Swal.fire({
-        icon: 'success',
-        title: `${action} Successfully!`,
-        html: `
-          <div style="text-align: left;">
-            <p><strong>Genetic Report Analyzed Successfully</strong></p>
-            <p>✅ ${action} genetic data for user</p>
-            <p>🧬 Conditions Found: ${response.data.data.conditions_and_genes?.length || 0}</p>
-            <p>📊 Risk Estimates: ${response.data.data.risk_estimates?.length || 0}</p>
-            <p>👤 User ID: ${response.data.summary?.user_id}</p>
-            <br>
-            <p><small>Database Action: ${response.data.database_action}</small></p>
-          </div>
-        `,
-        confirmButtonColor: '#3085d6',
-      });
-
-      console.log('🎯 FULL PARSED GENETIC DATA:', response.data.data);
-      
-    } catch (error) {
-      console.error('Error parsing DNA report:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Analysis Failed',
-        text: error.response?.data?.error || 'Failed to analyze DNA report',
-        confirmButtonColor: '#d33',
-      });
-    } finally {
-      setParsing(false);
     }
   };
 
