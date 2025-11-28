@@ -87,13 +87,30 @@ const handleSubmit = async (e) => {
     });
 
     if (response.data.success) {
+      const { token, user } = response.data;
+      
+      // Validate token exists and is properly formatted
+      if (!token || typeof token !== 'string') {
+        throw new Error('Invalid token received from server');
+      }
+
+      // Store token securely
+      if (formData.rememberMe) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('userInfo', JSON.stringify(user));
+      } else {
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('userInfo', JSON.stringify(user));
+      }
+
       dispatch(setUser({
-        userInfo: response.data.user,
-        token: response.data.token,
-       rememberMe: formData.rememberMe
+        userInfo: user,
+        token: token,
+        rememberMe: formData.rememberMe
       }));
 
-       connectSocket(response.data.token);
+      connectSocket(token);
+      
       await Swal.fire({
         title: "Success",
         text: "Logged in successfully!",
@@ -114,13 +131,12 @@ const handleSubmit = async (e) => {
         cancelButtonText: "Cancel",
         confirmButtonText: "Recover",
         cancelButtonColor: "#aaa",
-        confirmButtonColor: "#d61962",  // Custom Recover button color
+        confirmButtonColor: "#d61962",
       });
 
       if (result.isConfirmed) {
         await handleRecoverAccount();
       }
-
     } else if (error.response?.status === 401) {
       await Swal.fire({
         title: "Unauthorized",
@@ -132,7 +148,7 @@ const handleSubmit = async (e) => {
     } else {
       await Swal.fire({
         title: "Login Failed",
-        text: "Something went wrong. Please try again.",
+        text: error.message || "Something went wrong. Please try again.",
         icon: "error",
         showConfirmButton: false,
         timer: 2000

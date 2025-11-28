@@ -143,13 +143,13 @@ const handleParseDNA = async () => {
         html: `
           <div style="text-align: left;">
             <p><strong>✅ Genetic Report Analyzed Successfully</strong></p>
-            <p>🧬 <strong>Action:</strong> ${action} genetic data</p>
+            
             <p>📊 <strong>Record ID:</strong> ${recordId}</p>
             <p>🏥 <strong>Conditions Found:</strong> ${response.data.summary.conditions_count}</p>
             <p>🔬 <strong>Genes Identified:</strong> ${response.data.summary.genes_identified}</p>
             <p>⚠️ <strong>Risk Factors:</strong> ${response.data.summary.risk_factors}</p>
             <br>
-            <p><small>Data successfully saved to database</small></p>
+           
           </div>
         `,
         confirmButtonColor: '#3085d6',
@@ -528,24 +528,7 @@ const handleParseDNA = async () => {
         </Card.Header>
         <Card.Body>
           {/* Database Info Alert */}
-          <Alert variant="info" className="py-2">
-            <div className="d-flex justify-content-between align-items-center">
-              <div>
-                <FaDatabase className="me-2" />
-                {/* <strong>User ID:</strong> {parsedData.user_info?.user_id} 
-                <span className="ms-2">•</span> */}
-                <strong className="ms-2">Last Updated:</strong> {lastUpdated}
-              </div>
-              <Button
-                variant="outline-danger"
-                size="sm"
-                onClick={handleDeleteGeneticData}
-              >
-                <FaTimes className="me-1" />
-                Clear Data
-              </Button>
-            </div>
-          </Alert>
+         
 
           <div className="row text-center mb-3">
             <div className="col-3">
@@ -701,33 +684,7 @@ const handleParseDNA = async () => {
             )}
           </Accordion>
 
-          <div className="mt-3 d-flex justify-content-between">
-            <Button 
-              variant="outline-info" 
-              size="sm" 
-              onClick={() => console.log('Full Data:', parsedData)}
-            >
-              View Full Data in Console
-            </Button>
-            <Button 
-              variant="outline-secondary" 
-              size="sm" 
-              onClick={handleParseDNA}
-              disabled={parsing}
-            >
-              {parsing ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" />
-                  Re-analyzing...
-                </>
-              ) : (
-                <>
-                  <FaRobot className="me-1" />
-                  Re-analyze
-                </>
-              )}
-            </Button>
-          </div>
+        
         </Card.Body>
       </Card>
     );
