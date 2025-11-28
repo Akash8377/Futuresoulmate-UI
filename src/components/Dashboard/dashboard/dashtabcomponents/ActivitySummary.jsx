@@ -499,11 +499,11 @@ const handleParseDNA = async () => {
           <div>
             <FaDna className="me-2" />
             AI Genetic Analysis Results
-            {geneticHistory.length > 0 && (
+            {/* {geneticHistory.length > 0 && (
               <Badge bg="light" text="dark" className="ms-2">
                 v{geneticHistory.length}
               </Badge>
-            )}
+            )} */}
           </div>
           <div>
             <Button
@@ -532,8 +532,8 @@ const handleParseDNA = async () => {
             <div className="d-flex justify-content-between align-items-center">
               <div>
                 <FaDatabase className="me-2" />
-                <strong>User ID:</strong> {parsedData.user_info?.user_id} 
-                <span className="ms-2">•</span>
+                {/* <strong>User ID:</strong> {parsedData.user_info?.user_id} 
+                <span className="ms-2">•</span> */}
                 <strong className="ms-2">Last Updated:</strong> {lastUpdated}
               </div>
               <Button
@@ -580,8 +580,8 @@ const handleParseDNA = async () => {
               <div className="d-flex align-items-center">
                 <FaExclamationTriangle className="me-2" />
                 <div>
-                  <strong>{parsedData.carrier_summary.status}</strong>
-                  <br />
+                  {/* <strong>{parsedData.carrier_summary.status}</strong>
+                  <br /> */}
                   <small>{parsedData.carrier_summary.recommendation}</small>
                 </div>
               </div>
