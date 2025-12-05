@@ -44,6 +44,22 @@ const ProfileCard = ({
     setShowFullDescription((prev) => !prev);
   };
 
+  // Helper function to safely get text from recommendation object or string
+  const getRecommendationText = (recommendation) => {
+    if (!recommendation) return 'Consider genetic counseling for detailed analysis';
+    if (typeof recommendation === 'string') return recommendation;
+    if (typeof recommendation === 'object' && recommendation.text) return recommendation.text;
+    return String(recommendation); // Fallback to string conversion
+  };
+
+  // Helper function to safely get text from any value
+  const safeRenderText = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object' && value.text) return value.text;
+    return String(value);
+  };
+
   // Handle profile click navigation
   const handleProfileClick = () => {
     navigate(`/profile/${profile.profileId || profile.user_id}`, {
@@ -153,7 +169,8 @@ const ProfileCard = ({
         categories: profile.geneticCompatibility.categoryScores || {},
         riskFlags: profile.geneticCompatibility.riskFlags || [],
         familyRisk: profile.geneticCompatibility.familyRiskPercentage,
-        interpretation: profile.geneticCompatibility.interpretation
+        interpretation: profile.geneticCompatibility.interpretation,
+        compatibilityDetails: profile.geneticCompatibility.compatibilityDetails
       };
     }
 
@@ -213,7 +230,7 @@ const ProfileCard = ({
         title={`Click for detailed ${hasDNAData ? 'DNA' : 'HLA'} compatibility report`}
       >
         Compatibility {hasDNAData ? '🧬' : '🩺'} {score}%
-  
+
       </Badge>
     );
   };
@@ -260,7 +277,7 @@ const ProfileCard = ({
               <div className="col-6 text-center">
                 <div className="p-3 border rounded bg-primary text-white">
                   <h6>Your Profile</h6>
-                  <strong>{compatibilityReport.users.user?.name || 'You'}</strong>
+                  <strong>{safeRenderText(compatibilityReport.users.user?.name) || 'You'}</strong>
                   <br />
                   {/* <small>ID: {compatibilityReport.users.user?.id}</small> */}
                 </div>
@@ -268,7 +285,7 @@ const ProfileCard = ({
               <div className="col-6 text-center">
                 <div className="p-3 border rounded bg-success text-white">
                   <h6>Partner Profile</h6>
-                  <strong>{compatibilityReport.users.partner?.name || profile.first_name + ' ' + profile.last_name}</strong>
+                  <strong>{safeRenderText(compatibilityReport.users.partner?.name) || profile.first_name + ' ' + profile.last_name}</strong>
                   <br />
                   {/* <small>{compatibilityReport.users.partner?.id || profile.user_id}</small> */}
                 </div>
@@ -284,7 +301,7 @@ const ProfileCard = ({
                 }`}>
                 <h4 className="mb-3">💖 Soulmate Compatibility</h4>
                 <h1 className="display-4 fw-bold mb-2">{compatibility.soulmateScore}/100</h1>
-                <h5 className="mb-3">{compatibility.interpretation?.soulmateLevel}</h5>
+                <h5 className="mb-3">{safeRenderText(compatibility.interpretation?.soulmateLevel)}</h5>
                 <ProgressBar
                   variant={getScoreVariant(compatibility.soulmateScore)}
                   now={compatibility.soulmateScore}
@@ -292,7 +309,7 @@ const ProfileCard = ({
                   className="mb-3"
                 />
                 <p className="mb-0 small text-white">
-                  {compatibility.interpretation?.soulmateDescription}
+                  {safeRenderText(compatibility.interpretation?.soulmateDescription)}
                 </p>
 
               </div>
@@ -305,7 +322,7 @@ const ProfileCard = ({
                 }`}>
                 <h4 className="mb-3">👶 Family Risk Assessment</h4>
                 <h1 className="display-4 fw-bold mb-2">{compatibility.familyRiskPercentage}%</h1>
-                <h5 className="mb-3">{compatibility.interpretation?.familyRiskLevel}</h5>
+                <h5 className="mb-3">{safeRenderText(compatibility.interpretation?.familyRiskLevel)}</h5>
                 <ProgressBar
                   now={compatibility.familyRiskPercentage}
                   style={{ height: '15px', backgroundColor: '#d9d9d9' }}
@@ -318,7 +335,7 @@ const ProfileCard = ({
                 </ProgressBar>
 
                 <p className="mb-0 small text-white">
-                  {compatibility.interpretation?.familyRiskDescription}
+                  {safeRenderText(compatibility.interpretation?.familyRiskDescription)}
                 </p>
               </div>
             </div>
@@ -331,7 +348,7 @@ const ProfileCard = ({
                 compatibility.soulmateScore >= 60 ? 'warning' : 'danger'
             } className="text-center">
               <h5 className="mb-2">💡 Compatibility Recommendation</h5>
-              <p className="mb-0 lead">{compatibility.interpretation.recommendation}</p>
+              <p className="mb-0 lead">{getRecommendationText(compatibility.interpretation.recommendation)}</p>
             </Alert>
           )}
 
@@ -396,18 +413,18 @@ const ProfileCard = ({
                       {flag.severity === 'high' ? '🚨' : '⚠️'}
                     </span>
                     <div>
-                      <strong>{flag.message}</strong>
+                      <strong>{safeRenderText(flag.message)}</strong>
                       {flag.genes && (
                         <div className="mt-1">
                           <small>
-                            <strong>Genes:</strong> {flag.genes.join(', ')}
+                            <strong>Genes:</strong> {Array.isArray(flag.genes) ? flag.genes.join(', ') : safeRenderText(flag.genes)}
                           </small>
                         </div>
                       )}
                       {flag.impact && (
                         <div className="mt-1">
                           <small>
-                            <strong>Impact:</strong> {flag.impact}
+                            <strong>Impact:</strong> {safeRenderText(flag.impact)}
                           </small>
                         </div>
                       )}
@@ -418,64 +435,148 @@ const ProfileCard = ({
             </div>
           )}
 
-          {/* Compatibility Details */}
           {compatibility.compatibilityDetails && (
             <div className="mb-4">
               <h5 className="mb-3">🔍 Detailed Analysis</h5>
               <div className="row">
-                <div className="col-md-6">
-                  <Alert variant="info" className="small">
-                    <strong>💖 Emotional Bonding:</strong><br />
-                    {compatibility.compatibilityDetails.emotionalBonding}
-                  </Alert>
-                </div>
-                <div className="col-md-6">
-                  <Alert variant="info" className="small">
-                    <strong>⚡ Lifestyle Synergy:</strong><br />
-                    {compatibility.compatibilityDetails.lifestyleSynergy}
-                  </Alert>
-                </div>
-                <div className="col-md-6">
-                  <Alert variant="info" className="small">
-                    <strong>❤️ Health Synergy:</strong><br />
-                    {compatibility.compatibilityDetails.healthSynergy}
-                  </Alert>
-                </div>
-                <div className="col-md-6">
-                  <Alert variant="info" className="small">
-                    <strong>🛡️ Genetic Safety:</strong><br />
-                    {compatibility.compatibilityDetails.geneticSafety}
-                  </Alert>
-                </div>
+                {/* Use the actual properties from compatibilityDetails */}
+                {compatibility.compatibilityDetails.geneticDiversity && (
+                  <div className="col-md-6 mb-3">
+                    <Alert variant="info" className="small h-100">
+                      <strong>🧬 Genetic Diversity:</strong><br />
+                      {typeof compatibility.compatibilityDetails.geneticDiversity === 'object'
+                        ? safeRenderText(compatibility.compatibilityDetails.geneticDiversity.message)
+                        : safeRenderText(compatibility.compatibilityDetails.geneticDiversity)}
+                    </Alert>
+                  </div>
+                )}
+
+                {compatibility.compatibilityDetails.sharedRiskProfile && (
+                  <div className="col-md-6 mb-3">
+                    <Alert variant={
+                      compatibility.compatibilityDetails.sharedRiskProfile?.level === 'critical' ? 'danger' :
+                        compatibility.compatibilityDetails.sharedRiskProfile?.level === 'high' ? 'warning' : 'info'
+                    } className="small h-100">
+                      <strong>⚠️ Shared Risk Profile:</strong><br />
+                      {typeof compatibility.compatibilityDetails.sharedRiskProfile === 'object'
+                        ? safeRenderText(compatibility.compatibilityDetails.sharedRiskProfile.message)
+                        : safeRenderText(compatibility.compatibilityDetails.sharedRiskProfile)}
+                    </Alert>
+                  </div>
+                )}
+
+                {compatibility.compatibilityDetails.reproductiveCompatibility && (
+                  <div className="col-md-6 mb-3">
+                    <Alert variant={
+                      compatibility.compatibilityDetails.reproductiveCompatibility?.compatibility === 'poor' ? 'danger' :
+                        compatibility.compatibilityDetails.reproductiveCompatibility?.compatibility === 'moderate' ? 'warning' : 'info'
+                    } className="small h-100">
+                      <strong>👶 Reproductive Compatibility:</strong><br />
+                      {typeof compatibility.compatibilityDetails.reproductiveCompatibility === 'object'
+                        ? safeRenderText(compatibility.compatibilityDetails.reproductiveCompatibility.message)
+                        : safeRenderText(compatibility.compatibilityDetails.reproductiveCompatibility)}
+                    </Alert>
+                  </div>
+                )}
+
+                {compatibility.compatibilityDetails.lifestyleAlignment && (
+                  <div className="col-md-6 mb-3">
+                    <Alert variant="info" className="small h-100">
+                      <strong>⚡ Lifestyle Alignment:</strong><br />
+                      {typeof compatibility.compatibilityDetails.lifestyleAlignment === 'object'
+                        ? safeRenderText(compatibility.compatibilityDetails.lifestyleAlignment.message)
+                        : safeRenderText(compatibility.compatibilityDetails.lifestyleAlignment)}
+                    </Alert>
+                  </div>
+                )}
+
+                {/* Fallback for old property names */}
+                {!compatibility.compatibilityDetails.geneticDiversity &&
+                  compatibility.compatibilityDetails.emotionalBonding && (
+                    <div className="col-md-6 mb-3">
+                      <Alert variant="info" className="small h-100">
+                        <strong>💖 Emotional Bonding:</strong><br />
+                        {safeRenderText(compatibility.compatibilityDetails.emotionalBonding)}
+                      </Alert>
+                    </div>
+                  )}
+
+                {!compatibility.compatibilityDetails.lifestyleAlignment &&
+                  compatibility.compatibilityDetails.lifestyleSynergy && (
+                    <div className="col-md-6 mb-3">
+                      <Alert variant="info" className="small h-100">
+                        <strong>⚡ Lifestyle Synergy:</strong><br />
+                        {safeRenderText(compatibility.compatibilityDetails.lifestyleSynergy)}
+                      </Alert>
+                    </div>
+                  )}
+
+                {!compatibility.compatibilityDetails.healthSynergy &&
+                  compatibility.compatibilityDetails.sharedRiskProfile && (
+                    <div className="col-md-6 mb-3">
+                      <Alert variant="info" className="small h-100">
+                        <strong>❤️ Health Synergy:</strong><br />
+                        {typeof compatibility.compatibilityDetails.sharedRiskProfile === 'object'
+                          ? safeRenderText(compatibility.compatibilityDetails.sharedRiskProfile.message)
+                          : safeRenderText(compatibility.compatibilityDetails.sharedRiskProfile)}
+                      </Alert>
+                    </div>
+                  )}
               </div>
             </div>
           )}
 
-          {/* Recommendations */}
           {compatibility.compatibilityDetails?.recommendations && (
             <div className="mb-4">
               <h5 className="mb-3">💡 Recommendations</h5>
               <div className="p-3 border rounded bg-light">
-                <ul className="mb-0">
-                  {compatibility.compatibilityDetails.recommendations.map((rec, index) => (
-                    <li key={index} className="mb-2">
-                      {rec}
-                    </li>
-                  ))}
-                </ul>
+                {Array.isArray(compatibility.compatibilityDetails.recommendations) ? (
+                  <ul className="mb-0">
+                    {compatibility.compatibilityDetails.recommendations.map((rec, index) => {
+                      // Handle both object format and string format
+                      const recommendationText = safeRenderText(rec);
+                      const priority = typeof rec === 'object' ? rec.priority : 'medium';
+
+                      const priorityColors = {
+                        critical: 'danger',
+                        high: 'warning',
+                        medium: 'info',
+                        low: 'secondary'
+                      };
+
+                      return (
+                        <li key={index} className="mb-2 d-flex align-items-start">
+                          <Badge
+                            bg={priorityColors[priority] || 'info'}
+                            className="me-2 mt-1"
+                            style={{ fontSize: '0.7rem', minWidth: '60px' }}
+                          >
+                            {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                          </Badge>
+                          <span>{recommendationText}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : typeof compatibility.compatibilityDetails.recommendations === 'string' ? (
+                  <p className="mb-0">{safeRenderText(compatibility.compatibilityDetails.recommendations)}</p>
+                ) : (
+                  <p className="mb-0 text-muted">No specific recommendations available</p>
+                )}
               </div>
             </div>
           )}
+
 
           {/* Report Summary */}
           {report?.summary && (
             <div className="p-3 border rounded bg-light">
               <h6 className="mb-2">📊 Report Summary</h6>
               <div className="small text-muted">
-                <strong>Stage:</strong> {report.summary.stage}<br />
-                <strong>Overall Compatibility:</strong> {report.summary.overallCompatibility}<br />
-                <strong>Soulmate Score:</strong> {report.summary.soulmateScore}%<br />
-                <strong>Family Risk Score:</strong> {report.summary.familyRiskScore}%
+                <strong>Stage:</strong> {safeRenderText(report.summary.stage)}<br />
+                <strong>Overall Compatibility:</strong> {safeRenderText(report.summary.overallCompatibility)}<br />
+                <strong>Soulmate Score:</strong> {safeRenderText(report.summary.soulmateScore)}%<br />
+                <strong>Family Risk Score:</strong> {safeRenderText(report.summary.familyRiskScore)}%
               </div>
             </div>
           )}

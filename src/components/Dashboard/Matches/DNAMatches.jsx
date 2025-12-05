@@ -28,6 +28,14 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const lookingFor = user?.looking_for;
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
 
+  // Helper function to safely get text from recommendation object or string
+  const getRecommendationText = (recommendation) => {
+    if (!recommendation) return 'Consider genetic counseling for detailed analysis';
+    if (typeof recommendation === 'string') return recommendation;
+    if (typeof recommendation === 'object' && recommendation.text) return recommendation.text;
+    return String(recommendation); // Fallback to string conversion
+  };
+
   // Calculate compatibility score based on genetic data
   const calculateCompatibilityScore = (userGeneticData, partnerGeneticData, profile) => {
     // Priority 1: Use FutureSoulmates genetic compatibility data if available
@@ -166,6 +174,9 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
             compatibilityLevel = getCompatibilityLevel(compatibilityScore);
           }
 
+          // Get recommendation text safely
+          const recommendationText = getRecommendationText(geneticData?.recommendations);
+
           // Create or preserve genetic compatibility object - prioritize existing data
           const geneticCompatibility = profile.geneticCompatibility || {
             soulmateScore: compatibilityScore,
@@ -193,7 +204,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
               soulmateLevel: compatibilityLevel,
               familyRiskLevel: getRiskLevel(compatibilityScore),
               recommendation: hasGeneticAnalysis ? 
-                (geneticData?.recommendations || 'Consider genetic counseling for detailed analysis') :
+                recommendationText :
                 'Upload DNA report for compatibility analysis',
               soulmateDescription: getSoulmateDescription(compatibilityScore),
               familyRiskDescription: getFamilyRiskDescription(compatibilityScore)
