@@ -212,11 +212,8 @@ const ProfileCard = ({
         onClick={fetchDNACompatibility}
         title={`Click for detailed ${hasDNAData ? 'DNA' : 'HLA'} compatibility report`}
       >
-        DNA Compatibility {hasDNAData ? '🧬' : '🩺'} {score}%
-        {familyRisk && familyRisk <= 30 && (
-          <span className="ms-1" title={`Family Risk: ${familyRisk}%`}>👶</span>
-        )}
-        {isHLAOnly && <small className="ms-1">(HLA)</small>}
+        Compatibility {hasDNAData ? '🧬' : '🩺'} {score}%
+  
       </Badge>
     );
   };
@@ -294,28 +291,33 @@ const ProfileCard = ({
                   style={{ height: '15px' }}
                   className="mb-3"
                 />
-                <p className="mb-0 small">
+                <p className="mb-0 small text-white">
                   {compatibility.interpretation?.soulmateDescription}
                 </p>
+
               </div>
             </div>
 
             {/* Family Risk Assessment */}
             <div className="col-md-6">
               <div className={`text-center p-4 border rounded h-100 ${compatibility.familyRiskPercentage > 50 ? 'bg-danger text-white' :
-                  compatibility.familyRiskPercentage > 30 ? 'bg-warning' : 'bg-info text-white'
+                compatibility.familyRiskPercentage > 30 ? 'bg-warning' : 'bg-info text-white'
                 }`}>
                 <h4 className="mb-3">👶 Family Risk Assessment</h4>
                 <h1 className="display-4 fw-bold mb-2">{compatibility.familyRiskPercentage}%</h1>
                 <h5 className="mb-3">{compatibility.interpretation?.familyRiskLevel}</h5>
                 <ProgressBar
-                  variant={compatibility.familyRiskPercentage > 50 ? 'danger' :
-                    compatibility.familyRiskPercentage > 30 ? 'warning' : 'info'}
                   now={compatibility.familyRiskPercentage}
-                  style={{ height: '15px' }}
+                  style={{ height: '15px', backgroundColor: '#d9d9d9' }}
                   className="mb-3"
-                />
-                <p className="mb-0 small">
+                >
+                  <ProgressBar
+                    now={compatibility.familyRiskPercentage}
+                    style={{ backgroundColor: '#0e5bcb' }}
+                  />
+                </ProgressBar>
+
+                <p className="mb-0 small text-white">
                   {compatibility.interpretation?.familyRiskDescription}
                 </p>
               </div>
@@ -497,9 +499,9 @@ const ProfileCard = ({
               📞 Speak with Genetic Counselor
             </Button>
           )}
-          <Button variant="primary">
+          {/* <Button variant="primary">
             📋 Save Report
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
     );

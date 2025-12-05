@@ -29,7 +29,28 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const searchFor = lookingFor === "Bride" ? "Groom" : "Bride";
 
   // Calculate compatibility score based on genetic data
-  const calculateCompatibilityScore = (userGeneticData, partnerGeneticData) => {
+  const calculateCompatibilityScore = (userGeneticData, partnerGeneticData, profile) => {
+    // Priority 1: Use FutureSoulmates genetic compatibility data if available
+    if (profile.geneticCompatibility?.soulmateScore) {
+      return profile.geneticCompatibility.soulmateScore;
+    }
+
+    // Priority 2: Use existing DNA compatibility score if available
+    if (profile.dna_compatibility_score) {
+      return profile.dna_compatibility_score;
+    }
+
+    // Priority 3: Use genetic compatibility overall score
+    if (profile.genetic_compatibility?.overall_score) {
+      return profile.genetic_compatibility.overall_score;
+    }
+
+    // Priority 4: Use report summary soulmateScore if available
+    if (profile.report?.summary?.soulmateScore) {
+      return profile.report.summary.soulmateScore;
+    }
+
+    // Priority 5: Calculate from carrier status and conditions (your existing logic)
     if (!userGeneticData || !partnerGeneticData || !partnerGeneticData.has_genetic_data) {
       return 0; // Return 0 if no genetic data
     }
@@ -127,13 +148,26 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
           let compatibilityScore = 0;
           let compatibilityLevel = "No Genetic Data";
           
-          if (currentUserGenetic?.has_data && hasGeneticAnalysis) {
-            compatibilityScore = calculateCompatibilityScore(currentUserGenetic, geneticData);
+          // Check if profile already has FutureSoulmates genetic compatibility data
+          const hasFutureSoulmatesData = profile.geneticCompatibility?.soulmateScore;
+          const hasReportData = profile.report?.summary?.soulmateScore;
+          
+          if (hasFutureSoulmatesData) {
+            // Use the existing FutureSoulmates data
+            compatibilityScore = profile.geneticCompatibility.soulmateScore;
+            compatibilityLevel = profile.geneticCompatibility.interpretation?.soulmateLevel || getCompatibilityLevel(compatibilityScore);
+          } else if (hasReportData) {
+            // Use the report summary data
+            compatibilityScore = profile.report.summary.soulmateScore;
+            compatibilityLevel = profile.report.summary.overallCompatibility || getCompatibilityLevel(compatibilityScore);
+          } else if (currentUserGenetic?.has_data && hasGeneticAnalysis) {
+            // Calculate compatibility score only if no FutureSoulmates or report data exists
+            compatibilityScore = calculateCompatibilityScore(currentUserGenetic, geneticData, profile);
             compatibilityLevel = getCompatibilityLevel(compatibilityScore);
           }
 
-          // Create genetic compatibility object
-          const geneticCompatibility = {
+          // Create or preserve genetic compatibility object - prioritize existing data
+          const geneticCompatibility = profile.geneticCompatibility || {
             soulmateScore: compatibilityScore,
             familyRiskScore: Math.max(0, 100 - compatibilityScore),
             familyRiskPercentage: Math.max(0, 100 - compatibilityScore),
@@ -171,22 +205,57 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
             genetic_data: geneticData,
             genetic_insights: geneticInsights,
             geneticCompatibility: geneticCompatibility,
-            dna_compatibility_score: compatibilityScore,
-            compatibilityScore: compatibilityScore,
+            // Ensure we use the correct score - prioritize report data
+            dna_compatibility_score: hasReportData ? profile.report.summary.soulmateScore : compatibilityScore,
+            compatibilityScore: hasReportData ? profile.report.summary.soulmateScore : compatibilityScore,
             compatibility_level: compatibilityLevel,
             has_genetic_analysis: hasGeneticAnalysis,
             has_hla_data: profile.has_hla_data,
             hla_score: profile.has_hla_data ? 65 : 0,
-            // hla_percentage: profile.has_hla_data ? 85 : 0,
-            hla_compatibility: profile.has_hla_data ? 'Good' : 'No Data'
+            hla_compatibility: profile.has_hla_data ? 'Good' : 'No Data',
+            // Preserve report data if it exists
+            report: profile.report
           };
         });
         
-        // Sort by compatibility score (highest first), then by genetic data availability
+        // Sort by compatibility score with FutureSoulmates data prioritized
         const sortedProfiles = processedProfiles.sort((a, b) => {
-          // First sort by compatibility score (only for users with genetic data)
-          if (a.has_genetic_analysis && b.has_genetic_analysis) {
-            return b.dna_compatibility_score - a.dna_compatibility_score;
+          // Get actual scores for comparison
+          const aScore = a.report?.summary?.soulmateScore || a.geneticCompatibility?.soulmateScore || a.dna_compatibility_score || 0;
+          const bScore = b.report?.summary?.soulmateScore || b.geneticCompatibility?.soulmateScore || b.dna_compatibility_score || 0;
+          
+          // First prioritize profiles with report data
+          const aHasReport = a.report?.summary?.soulmateScore > 0;
+          const bHasReport = b.report?.summary?.soulmateScore > 0;
+          
+          if (aHasReport && !bHasReport) {
+            return -1;
+          }
+          else if (!aHasReport && bHasReport) {
+            return 1;
+          }
+          // Both have report data - sort by score
+          else if (aHasReport && bHasReport) {
+            return bScore - aScore;
+          }
+          
+          // Then prioritize profiles with FutureSoulmates genetic compatibility data
+          const aHasFutureSoulmates = a.geneticCompatibility?.soulmateScore > 0;
+          const bHasFutureSoulmates = b.geneticCompatibility?.soulmateScore > 0;
+          
+          if (aHasFutureSoulmates && !bHasFutureSoulmates) {
+            return -1;
+          }
+          else if (!aHasFutureSoulmates && bHasFutureSoulmates) {
+            return 1;
+          }
+          // Both have FutureSoulmates data - sort by score
+          else if (aHasFutureSoulmates && bHasFutureSoulmates) {
+            return bScore - aScore;
+          }
+          // Then sort by regular compatibility score (only for users with genetic data)
+          else if (a.has_genetic_analysis && b.has_genetic_analysis) {
+            return bScore - aScore;
           }
           // Then put users with genetic data first
           else if (a.has_genetic_analysis && !b.has_genetic_analysis) {
@@ -210,7 +279,11 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
         setCurrentPage(1);
         
         // Check if we have any genetic data in the matches
-        const hasAnyGeneticData = sortedProfiles.some(profile => profile.has_genetic_analysis);
+        const hasAnyGeneticData = sortedProfiles.some(profile => 
+          profile.has_genetic_analysis || 
+          profile.geneticCompatibility?.soulmateScore > 0 ||
+          profile.report?.summary?.soulmateScore > 0
+        );
         setHasGeneticData(hasAnyGeneticData);
         
         if (sortedProfiles.length === 0) {
@@ -218,8 +291,13 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
         } else if (!hasAnyGeneticData) {
           toast.info('No matches with genetic data found. Regular matches shown.');
         } else {
-          const geneticMatches = sortedProfiles.filter(p => p.has_genetic_analysis).length;
-          // toast.success(`Found ${geneticMatches} matches with genetic compatibility data`);
+          const geneticMatches = sortedProfiles.filter(p => p.has_genetic_analysis || p.geneticCompatibility?.soulmateScore > 0).length;
+          const reportMatches = sortedProfiles.filter(p => p.report?.summary?.soulmateScore > 0).length;
+          if (reportMatches > 0) {
+            // toast.success(`Found ${reportMatches} matches with detailed compatibility reports`);
+          } else {
+            // toast.success(`Found ${geneticMatches} matches with genetic compatibility data`);
+          }
         }
       } else {
         console.log('❌ API returned success: false');
@@ -368,13 +446,24 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
   const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
   const currentProfiles = profiles.slice(indexOfFirstProfile, indexOfLastProfile);
 
-  // Calculate statistics
+  // Calculate statistics - updated to include report data
   const totalMatches = profiles.length;
-  const usersWithGeneticData = profiles.filter(p => p.has_genetic_analysis).length;
+  const usersWithGeneticData = profiles.filter(p => p.has_genetic_analysis || p.geneticCompatibility?.soulmateScore > 0 || p.report?.summary?.soulmateScore > 0).length;
+  const usersWithReportData = profiles.filter(p => p.report?.summary?.soulmateScore > 0).length;
+  const usersWithFutureSoulmatesData = profiles.filter(p => p.geneticCompatibility?.soulmateScore > 0).length;
   const usersWithHLAData = profiles.filter(p => p.has_hla_data).length;
-  const excellentMatches = profiles.filter(p => p.has_genetic_analysis && (p.dna_compatibility_score || 0) >= 80).length;
-  const goodMatches = profiles.filter(p => p.has_genetic_analysis && (p.dna_compatibility_score || 0) >= 60 && (p.dna_compatibility_score || 0) < 80).length;
-  const moderateMatches = profiles.filter(p => p.has_genetic_analysis && (p.dna_compatibility_score || 0) >= 40 && (p.dna_compatibility_score || 0) < 60).length;
+  const excellentMatches = profiles.filter(p => {
+    const score = p.report?.summary?.soulmateScore || p.geneticCompatibility?.soulmateScore || p.dna_compatibility_score || 0;
+    return (p.has_genetic_analysis || p.geneticCompatibility?.soulmateScore > 0 || p.report?.summary?.soulmateScore > 0) && score >= 80;
+  }).length;
+  const goodMatches = profiles.filter(p => {
+    const score = p.report?.summary?.soulmateScore || p.geneticCompatibility?.soulmateScore || p.dna_compatibility_score || 0;
+    return (p.has_genetic_analysis || p.geneticCompatibility?.soulmateScore > 0 || p.report?.summary?.soulmateScore > 0) && score >= 60 && score < 80;
+  }).length;
+  const moderateMatches = profiles.filter(p => {
+    const score = p.report?.summary?.soulmateScore || p.geneticCompatibility?.soulmateScore || p.dna_compatibility_score || 0;
+    return (p.has_genetic_analysis || p.geneticCompatibility?.soulmateScore > 0 || p.report?.summary?.soulmateScore > 0) && score >= 40 && score < 60;
+  }).length;
 
   return (
     <div className="p-4">
@@ -412,6 +501,12 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                     <small className="text-muted">With DNA Data</small>
                   </div>
                   <div className="col-2">
+                    <h4 className={usersWithReportData > 0 ? "text-info mb-1" : "text-secondary mb-1"}>
+                      {usersWithReportData}
+                    </h4>
+                    <small className="text-muted">Detailed Reports</small>
+                  </div>
+                  <div className="col-2">
                     <h4 className="text-info mb-1">{usersWithHLAData}</h4>
                     <small className="text-muted">With HLA Data</small>
                   </div>
@@ -426,12 +521,6 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                       {goodMatches}
                     </h4>
                     <small className="text-muted">Good</small>
-                  </div>
-                  <div className="col-2">
-                    <h4 className={moderateMatches > 0 ? "text-info mb-1" : "text-secondary mb-1"}>
-                      {moderateMatches}
-                    </h4>
-                    <small className="text-muted">Moderate</small>
                   </div>
                 </div>
               </Card.Body>
@@ -450,32 +539,7 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
               {currentProfiles.length > 0 ? (
                 <>
                   {/* Genetic Data Summary */}
-                  <div className="p-3 bg-light border-bottom">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div>
-                        <small className="text-muted">
-                          Showing {currentProfiles.length} of {profiles.length} matches • 
-                          {hasGeneticData ? (
-                            <>
-                              <span className="text-success"> {usersWithGeneticData} with DNA data</span> • 
-                              {/* <span className="text-info"> {usersWithHLAData} with HLA data</span> */}
-                            </>
-                          ) : (
-                            <span className="text-warning"> Upload DNA for compatibility analysis</span>
-                          )}
-                        </small>
-                      </div>
-                      <div>
-                        <small className="text-muted">
-                          {hasGeneticData ? (
-                            <>Sorted by: <strong>Genetic Compatibility Score</strong></>
-                          ) : (
-                            <>Sorted by: <strong>Profile Recency</strong></>
-                          )}
-                        </small>
-                      </div>
-                    </div>
-                  </div>
+              
 
                   {/* Profiles List */}
                   {currentProfiles.map((profile, index) => (
@@ -564,6 +628,12 @@ const DNAMatches = ({chatBoxOpen, key=null}) => {
                   : "⚠️ Genetic Analysis Inactive - Upload DNA report to enable compatibility scoring"
                 }
               </strong>
+              {usersWithReportData > 0 && (
+                <div className="mt-1">
+                  <Badge bg="info" className="me-1">Detailed Reports</Badge>
+                  <span>Enhanced compatibility analysis available for {usersWithReportData} matches</span>
+                </div>
+              )}
             </Alert>
 
             {/* Compatibility Factors */}

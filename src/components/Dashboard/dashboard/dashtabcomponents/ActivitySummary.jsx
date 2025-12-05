@@ -108,23 +108,23 @@ const handleParseDNA = async () => {
         <div style="text-align: center;">
           <div class="spinner-border text-primary mb-3"></div>
           <p><strong>Analyzing your DNA report...</strong></p>
-          <p><small>Extracting conditions, genes, and risk factors</small></p>
-          <p><small>This may take a few moments</small></p>
+          <p><small>Extracting carrier status, genes, and variants</small></p>
+          <p><small>This may take 30-60 seconds</small></p>
         </div>
       `,
       allowOutsideClick: false,
       showConfirmButton: false,
-      didOpen: () => {
+      willOpen: () => {
         Swal.showLoading();
       }
     });
 
     const response = await axios.post(
       `${config.baseURL}/api/dna/parse-pdf`,
-      {},
+      {}, 
       { 
         headers: { Authorization: `Bearer ${token}` },
-        timeout: 120000 // 2 minutes timeout
+        timeout: 180000 // 3 minutes timeout for AI processing
       }
     );
 
@@ -134,29 +134,40 @@ const handleParseDNA = async () => {
       setParsedData(response.data.data);
       await fetchGeneticHistory();
       
-      const action = response.data.database_info.action;
-      const recordId = response.data.database_info.record_id;
+      const conditionsCount = response.data.data.conditions_and_genes?.length || 0;
       
       Swal.fire({
         icon: 'success',
         title: 'Analysis Complete!',
         html: `
-          <div style="text-align: left;">
-            <p><strong>✅ Genetic Report Analyzed Successfully</strong></p>
-            
-            <p>📊 <strong>Record ID:</strong> ${recordId}</p>
-            <p>🏥 <strong>Conditions Found:</strong> ${response.data.summary.conditions_count}</p>
-            <p>🔬 <strong>Genes Identified:</strong> ${response.data.summary.genes_identified}</p>
-            <p>⚠️ <strong>Risk Factors:</strong> ${response.data.summary.risk_factors}</p>
-            <br>
-           
+          <div style="text-align: left; max-height: 60vh; overflow-y: auto;">
+            <p><strong>✅ Genetic Report Successfully Analyzed</strong></p>
+            <hr>
+            <p><strong>📊 Summary:</strong></p>
+            <ul>
+              <li>🏥 <strong>Conditions Found:</strong> ${conditionsCount}</li>
+              <li>🔬 <strong>Genes Identified:</strong> ${response.data.data.conditions_and_genes?.map(c => c.gene).join(', ') || 'None'}</li>
+              <li>📋 <strong>Carrier Status:</strong> ${response.data.data.carrier_summary?.status || 'Unknown'}</li>
+              <li>🎯 <strong>Parsing Method:</strong> ${response.data.data.report_quality?.parsing_method || 'Unknown'}</li>
+            </ul>
+            ${conditionsCount > 0 ? `
+              <p><strong>⚠️ Detected Conditions:</strong></p>
+              <ul style="list-style-type: none; padding-left: 10px;">
+                ${response.data.data.conditions_and_genes?.map(c => `
+                  <li>• ${c.condition} (${c.gene}) - ${c.variant_details || 'No variant specified'}</li>
+                `).join('')}
+              </ul>
+            ` : ''}
+            <hr>
+            <p><small><strong>Recommendation:</strong> ${response.data.data.carrier_summary?.recommendation || 'Consult healthcare provider'}</small></p>
           </div>
         `,
         confirmButtonColor: '#3085d6',
-        width: '500px'
+        width: '600px'
       });
 
-      console.log('🎯 FULL RESPONSE DATA:', response.data);
+      console.log('🎯 FULL PARSED DATA:', response.data.data);
+      
     } else {
       throw new Error(response.data.error || 'Analysis failed');
     }
@@ -170,11 +181,16 @@ const handleParseDNA = async () => {
       html: `
         <div style="text-align: left;">
           <p><strong>Failed to analyze DNA report</strong></p>
-          <p>${error.response?.data?.error || error.message}</p>
-          ${error.response?.data?.retry_attempts ? 
-            `<p><small>Retry attempts: ${error.response.data.retry_attempts}</small></p>` : ''}
+          <p>Error: ${error.response?.data?.error || error.message}</p>
           <br>
-          <p><small>Please try again or contact support if the issue persists.</small></p>
+          <p><small>Possible issues:</small></p>
+          <ul>
+            <li><small>PDF might be scanned or encrypted</small></li>
+            <li><small>File format not supported</small></li>
+            <li><small>Server timeout - try again</small></li>
+          </ul>
+          <br>
+          <p><small>Please ensure your PDF is a text-based genetic report.</small></p>
         </div>
       `,
       confirmButtonColor: '#d33',
@@ -795,7 +811,7 @@ const handleParseDNA = async () => {
                 )}
               </label>
               <div className="mt-2">
-                <small className="text-muted">Supported formats: PDF, CSV (Max 5MB)</small>
+                <small className="text-muted">Supported formats: PDF (Max 5MB)</small>
                 {!token && (
                   <div className="text-warning small mt-1">
                     Authentication required
